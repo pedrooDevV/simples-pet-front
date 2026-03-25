@@ -1,0 +1,534 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PetShop Pro - Agenda</title>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #3A86FF;
+            --primary-hover: #265DF2;
+            --primary-bg-light: #EAF2FF;
+            --secondary: #2EC4B6;
+            --secondary-bg-light: #DFF7F4;
+            --accent: #FF9F1C;
+            --accent-bg-light: #FFE8CC;
+            --bg-general: #F7F9FC;
+            --white: #FFFFFF;
+            --text-main: #1E293B;
+            --text-secondary: #64748B;
+            --border: #E2E8F0;
+            --shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', -apple-system, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-general);
+            color: var(--text-main);
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* Sidebar - Identical to Dashboard */
+        aside {
+            width: 280px;
+            background-color: var(--white);
+            border-right: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+            position: fixed;
+            height: 100vh;
+            z-index: 10;
+            box-shadow: 4px 0 20px rgba(0,0,0,0.05);
+        }
+
+        .logo-container {
+            padding: 32px 24px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-weight: 800;
+            font-size: 1.4rem;
+            color: var(--primary);
+        }
+
+        .menu-label {
+            padding: 0 24px 8px;
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            font-weight: 700;
+            color: var(--text-secondary);
+            letter-spacing: 1px;
+        }
+
+        nav {
+            flex: 1;
+            padding: 0 16px;
+            overflow-y: auto;
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 14px 16px;
+            text-decoration: none;
+            color: var(--text-secondary);
+            border-radius: 12px;
+            margin-bottom: 6px;
+            transition: 0.2s;
+            font-weight: 600;
+        }
+
+        .nav-item:hover {
+            background-color: var(--primary-bg-light);
+            color: var(--primary);
+        }
+
+        .nav-item.active {
+            background-color: var(--primary);
+            color: var(--white);
+            box-shadow: 0 8px 15px rgba(58, 134, 255, 0.3);
+        }
+
+        .nav-item i {
+            width: 20px;
+            height: 20px;
+        }
+
+        /* Main Content Area */
+        main {
+            margin-left: 280px;
+            flex: 1;
+            padding: 40px;
+            max-width: calc(100vw - 280px);
+        }
+
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 32px;
+        }
+
+        .header-info h1 { font-size: 2rem; font-weight: 800; }
+        .header-info p { color: var(--text-secondary); font-weight: 500; }
+
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 12px;
+            font-weight: 700;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: 0.2s;
+        }
+
+        .btn-primary:hover { background: var(--primary-hover); transform: translateY(-2px); }
+
+        /* Calendar Controls */
+        .calendar-controls {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: var(--white);
+            padding: 16px 24px;
+            border-radius: 16px 16px 0 0;
+            border: 1px solid var(--border);
+            border-bottom: none;
+        }
+
+        .date-navigation {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .current-month { font-weight: 800; font-size: 1.1rem; }
+
+        .nav-btn {
+            background: var(--bg-general);
+            border: 1px solid var(--border);
+            width: 36px;
+            height: 36px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+        .nav-btn:hover { background: var(--border); }
+
+        .view-switcher {
+            display: flex;
+            background: var(--bg-general);
+            padding: 4px;
+            border-radius: 10px;
+            gap: 4px;
+        }
+
+        .view-btn {
+            border: none;
+            background: none;
+            padding: 6px 16px;
+            border-radius: 8px;
+            font-weight: 700;
+            font-size: 0.85rem;
+            cursor: pointer;
+            color: var(--text-secondary);
+            transition: 0.2s;
+        }
+
+        .view-btn.active { background: var(--white); color: var(--primary); box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
+
+        /* Agenda Grid */
+        .calendar-container {
+            background: var(--white);
+            border-radius: 0 0 16px 16px;
+            border: 1px solid var(--border);
+            overflow-x: auto;
+            display: grid;
+            grid-template-columns: 80px repeat(7, 1fr);
+            min-width: 900px;
+        }
+
+        .grid-header {
+            background: #FAFBFC;
+            padding: 16px 0;
+            text-align: center;
+            border-bottom: 1px solid var(--border);
+            border-left: 1px solid var(--border);
+            font-weight: 700;
+            font-size: 0.85rem;
+        }
+
+        .grid-header span { display: block; color: var(--text-secondary); font-size: 0.75rem; margin-top: 4px; }
+
+        .time-slots {
+            grid-column: 1;
+        }
+
+        .time-label {
+            padding: 12px 0;
+            text-align: center;
+            font-size: 0.75rem;
+            font-weight: 700;
+            color: var(--text-secondary);
+            border-bottom: 1px solid var(--border);
+            height: 100px;
+            display: flex;
+            align-items: flex-start;
+            justify-content: center;
+        }
+
+        .day-column {
+            border-left: 1px solid var(--border);
+            position: relative;
+            background-image: linear-gradient(var(--border) 1px, transparent 1px);
+            background-size: 100% 100px;
+            min-height: 600px;
+        }
+
+        .day-column:hover {
+            background-color: rgba(58, 134, 255, 0.02);
+        }
+
+        /* Event Cards */
+        .event-card {
+            position: absolute;
+            left: 4px;
+            right: 4px;
+            background: var(--primary-bg-light);
+            border-left: 4px solid var(--primary);
+            border-radius: 8px;
+            padding: 8px;
+            font-size: 0.75rem;
+            cursor: pointer;
+            overflow: hidden;
+            transition: 0.2s;
+            z-index: 2;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+
+        .event-card:hover { transform: translateY(-2px); z-index: 10; box-shadow: var(--shadow); }
+        .event-card.confirmed { border-left-color: var(--secondary); background: var(--secondary-bg-light); }
+        .event-card.pending { border-left-color: var(--accent); background: var(--accent-bg-light); }
+
+        .event-card strong { display: block; color: var(--text-main); font-weight: 800; margin-bottom: 2px; }
+        .event-card span { display: block; color: var(--text-secondary); font-weight: 600; }
+
+        /* Modal */
+        .modal-overlay {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(15, 23, 42, 0.6);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            backdrop-filter: blur(4px);
+        }
+
+        .modal {
+            background: var(--white);
+            width: 100%;
+            max-width: 480px;
+            border-radius: 20px;
+            padding: 32px;
+            box-shadow: 0 25px 50px -12px rgba(0,0,0,0.25);
+            animation: modalIn 0.3s ease-out;
+        }
+
+        @keyframes modalIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+        }
+
+        .modal-title { font-weight: 800; font-size: 1.4rem; color: var(--text-main); }
+
+        .form-group { margin-bottom: 16px; }
+        .form-group label { display: block; font-weight: 700; font-size: 0.85rem; margin-bottom: 8px; color: var(--text-secondary); }
+        
+        .form-control {
+            width: 100%;
+            padding: 12px 16px;
+            border-radius: 10px;
+            border: 1px solid var(--border);
+            background: var(--bg-general);
+            font-weight: 600;
+            outline: none;
+            transition: 0.2s;
+        }
+        .form-control:focus { border-color: var(--primary); background: var(--white); box-shadow: 0 0 0 4px var(--primary-bg-light); }
+
+        .modal-footer {
+            display: flex;
+            gap: 12px;
+            margin-top: 24px;
+        }
+
+        .btn-ghost { 
+            background: none; 
+            border: 1px solid var(--border); 
+            padding: 12px; 
+            font-weight: 700; 
+            color: var(--text-secondary); 
+            cursor: pointer; 
+            flex: 1; 
+            border-radius: 12px;
+            transition: 0.2s;
+        }
+        .btn-ghost:hover { background: var(--bg-general); }
+
+        .btn-submit {
+            flex: 2;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Sidebar - Integrated and identical to Dashboard -->
+    <aside>
+        <div class="logo-container">
+            <i data-lucide="dog" style="width: 32px; height: 32px;"></i>
+            <span>PetShop Pro</span>
+        </div>
+        
+        <p class="menu-label">Painel</p>
+        <nav>
+            <a href="../TelaInicial/TelaInicia.html" class="nav-item">
+                <i data-lucide="layout-dashboard"></i> Dashboard
+            </a>
+            <a href="../Agenda/Agenda.html" class="nav-item active">
+                <i data-lucide="calendar"></i> Agenda Teams
+            </a>
+            
+            <p class="menu-label" style="margin-top: 24px;">Vendas e Serviços</p>
+            <a href="../Carrinho/Carrinho.html" class="nav-item"><i data-lucide="shopping-cart"></i> Carrinho / PDV</a>
+            <a href="../CatalogoServico/CatalogoServico.html" class="nav-item"><i data-lucide="scissors"></i> Catálogo de Serviços</a>             
+            
+            <p class="menu-label" style="margin-top: 24px;">Cadastros</p>
+            <a href="../Clientes/Cliente.html" class="nav-item"><i data-lucide="users"></i> Clientes</a>
+            <a href="../Pet/Pet.html" class="nav-item"><i data-lucide="paw-print"></i> Animais</a>
+            <a href="../Produtos/Produto.html" class="nav-item"><i data-lucide="package"></i> Itens / Produtos</a>          
+            
+            <p class="menu-label" style="margin-top: 24px;">Gestão</p>
+            <a href="../Estoque/Estoque.html" class="nav-item"><i data-lucide="boxes"></i> Controle de Estoque</a>
+            <a href="../GastosPrevistos/GastosPrevistos.html" class="nav-item"><i data-lucide="trending-down"></i> Gastos Previstos</a>
+            <a href="../NotaFiscal/NotalFisca.html" class="nav-item"><i data-lucide="file-check"></i> Notas Fiscais</a>
+        </nav>
+    </aside>
+
+    <!-- Main Content -->
+    <main>
+        <header>
+            <div class="header-info">
+                <h1>Agenda</h1>
+                <p>Gerencie os serviços e horários da semana</p>
+            </div>
+            <button class="btn-primary" onclick="openModal()">
+                <i data-lucide="plus"></i> Novo Agendamento
+            </button>
+        </header>
+
+        <!-- Calendário Superior -->
+        <div class="calendar-controls">
+            <div class="date-navigation">
+                <button class="nav-btn"><i data-lucide="chevron-left"></i></button>
+                <div class="current-month">23 - 29 de Março, 2026</div>
+                <button class="nav-btn"><i data-lucide="chevron-right"></i></button>
+                <button class="nav-btn" style="width: auto; padding: 0 16px; font-size: 0.8rem; font-weight: 700;">Hoje</button>
+            </div>
+            <div class="view-switcher">
+                <button class="view-btn">Dia</button>
+                <button class="view-btn active">Semana</button>
+                <button class="view-btn">Mês</button>
+            </div>
+        </div>
+
+        <!-- Grade da Agenda -->
+        <div class="calendar-container">
+            <!-- Header Dias -->
+            <div class="grid-header" style="border-left: none;">Horário</div>
+            <div class="grid-header">Seg <span>23</span></div>
+            <div class="grid-header">Ter <span>24</span></div>
+            <div class="grid-header">Qua <span>25</span></div>
+            <div class="grid-header">Qui <span>26</span></div>
+            <div class="grid-header">Sex <span>27</span></div>
+            <div class="grid-header">Sáb <span>28</span></div>
+            <div class="grid-header">Dom <span>29</span></div>
+
+            <!-- Horários -->
+            <div class="time-slots">
+                <div class="time-label">08:00</div>
+                <div class="time-label">09:00</div>
+                <div class="time-label">10:00</div>
+                <div class="time-label">11:00</div>
+                <div class="time-label">12:00</div>
+                <div class="time-label">13:00</div>
+            </div>
+
+            <!-- Coluna Segunda -->
+            <div class="day-column" onclick="openModal()">
+                <div class="event-card confirmed" style="top: 10px; height: 80px;">
+                    <strong>Luna (Mariana)</strong>
+                    <span>Banho Completo</span>
+                </div>
+            </div>
+
+            <!-- Coluna Terça -->
+            <div class="day-column" onclick="openModal()">
+                <div class="event-card pending" style="top: 110px; height: 130px;">
+                    <strong>Thor (Ricardo)</strong>
+                    <span>Tosa Verão + Hidrat.</span>
+                </div>
+            </div>
+
+            <!-- Coluna Quarta -->
+            <div class="day-column" onclick="openModal()"></div>
+
+            <!-- Coluna Quinta -->
+            <div class="day-column" onclick="openModal()">
+                <div class="event-card confirmed" style="top: 210px; height: 80px;">
+                    <strong>Mel (Dra. Ana)</strong>
+                    <span>Corte Unha</span>
+                </div>
+            </div>
+
+            <!-- Colunas Restantes -->
+            <div class="day-column" onclick="openModal()"></div>
+            <div class="day-column" onclick="openModal()"></div>
+            <div class="day-column" onclick="openModal()"></div>
+        </div>
+    </main>
+
+    <!-- Modal Novo Agendamento -->
+    <div class="modal-overlay" id="modalNovo">
+        <div class="modal">
+            <div class="modal-header">
+                <h2 class="modal-title">Novo Agendamento</h2>
+                <button onclick="closeModal()" style="background: none; border: none; cursor: pointer; color: var(--text-secondary);">
+                    <i data-lucide="x"></i>
+                </button>
+            </div>
+            
+            <div class="form-group">
+                <label>Cliente</label>
+                <input type="text" class="form-control" placeholder="Pesquisar cliente...">
+            </div>
+            
+            <div class="form-group">
+                <label>Pet</label>
+                <input type="text" class="form-control" placeholder="Nome do animal">
+            </div>
+            
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+                <div class="form-group">
+                    <label>Data</label>
+                    <input type="date" class="form-control" value="2026-03-24">
+                </div>
+                <div class="form-group">
+                    <label>Horário</label>
+                    <input type="time" class="form-control" value="08:00">
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label>Serviço</label>
+                <select class="form-control">
+                    <option>Banho</option>
+                    <option>Tosa Completa</option>
+                    <option>Tosa Higiênica</option>
+                    <option>Hidratação</option>
+                </select>
+            </div>
+            
+            <div class="modal-footer">
+                <button class="btn-ghost" onclick="closeModal()">Cancelar</button>
+                <button class="btn-primary btn-submit">Salvar Agendamento</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Inicializa os ícones do Lucide
+        lucide.createIcons();
+
+        function openModal() {
+            document.getElementById('modalNovo').style.display = 'flex';
+        }
+
+        function closeModal() {
+            document.getElementById('modalNovo').style.display = 'none';
+        }
+
+        // Fechar modal ao clicar fora da caixa branca
+        window.onclick = function(event) {
+            const modal = document.getElementById('modalNovo');
+            if (event.target == modal) {
+                closeModal();
+            }
+        }
+    </script>
+</body>
+</html>

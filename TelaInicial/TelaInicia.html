@@ -1,0 +1,466 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PetShop Pro - Dashboard Estratégico</title>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        :root {
+            --primary: #3A86FF;
+            --primary-hover: #0056E0;
+            --primary-light: #EAF2FF;
+            --secondary: #00C1B2;
+            --secondary-light: #E0F9F7;
+            --accent: #FF9F1C;
+            --accent-hover: #E68A00;
+            --accent-light: #FFF4E5;
+            --danger: #FF4D4D;
+            --bg-general: #F0F4F8;
+            --white: #FFFFFF;
+            --text-main: #0F172A;
+            --text-secondary: #475569;
+            --border: #CBD5E1;
+            --shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', -apple-system, system-ui, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-general);
+            color: var(--text-main);
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* Sidebar Padronizada */
+        aside {
+            width: 280px;
+            background-color: var(--white);
+            border-right: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+            position: fixed;
+            height: 100vh;
+            z-index: 100;
+            box-shadow: 4px 0 20px rgba(0,0,0,0.05);
+        }
+
+        .logo-container {
+            padding: 32px 24px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-weight: 800;
+            font-size: 1.4rem;
+            color: var(--primary);
+            letter-spacing: -0.5px;
+        }
+
+        .menu-label {
+            padding: 0 24px 8px;
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            font-weight: 700;
+            color: var(--text-secondary);
+            letter-spacing: 1px;
+        }
+
+        nav {
+            flex: 1;
+            padding: 0 16px;
+            overflow-y: auto;
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 14px 16px;
+            text-decoration: none;
+            color: var(--text-secondary);
+            border-radius: 12px;
+            margin-bottom: 6px;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            font-size: 0.95rem;
+            font-weight: 600;
+        }
+
+        .nav-item:hover {
+            background-color: var(--primary-light);
+            color: var(--primary);
+            transform: translateX(4px);
+        }
+
+        .nav-item.active {
+            background-color: var(--primary);
+            color: var(--white);
+            box-shadow: 0 8px 15px rgba(58, 134, 255, 0.35);
+        }
+
+        .nav-item i { width: 20px; height: 20px; }
+
+        /* Main Content */
+        main {
+            margin-left: 280px;
+            flex: 1;
+            padding: 40px;
+        }
+
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 40px;
+        }
+
+        .header-title h1 {
+            font-size: 2.2rem;
+            font-weight: 800;
+            color: var(--text-main);
+            letter-spacing: -1px;
+        }
+
+        /* Summary Cards */
+        .summary-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 24px;
+            margin-bottom: 40px;
+        }
+
+        .card {
+            background: var(--white);
+            padding: 24px;
+            border-radius: 20px;
+            box-shadow: var(--shadow);
+            border: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            transition: transform 0.2s;
+        }
+
+        .card:hover { transform: translateY(-5px); }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+        }
+
+        .card-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .icon-blue { background: var(--primary); color: var(--white); }
+        .icon-green { background: var(--secondary); color: var(--white); }
+        .icon-orange { background: var(--accent); color: var(--white); }
+        .icon-purple { background: #8338EC; color: var(--white); }
+
+        .card-info .card-value { 
+            font-size: 1.8rem; 
+            font-weight: 800; 
+            color: var(--text-main);
+            line-height: 1;
+        }
+        
+        .card-info .card-label { 
+            color: var(--text-secondary); 
+            font-size: 0.85rem; 
+            font-weight: 700;
+            margin-top: 8px;
+            display: block;
+        }
+
+        /* Panel Agenda */
+        .panel {
+            background: var(--white);
+            border-radius: 24px;
+            box-shadow: var(--shadow);
+            border: 1px solid var(--border);
+            overflow: hidden;
+        }
+
+        .panel-header {
+            padding: 24px 32px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: #FAFBFC;
+        }
+
+        .panel-title { font-weight: 800; font-size: 1.3rem; }
+
+        .teams-agenda {
+            padding: 10px 0;
+            min-height: 500px;
+        }
+
+        .agenda-row {
+            display: grid;
+            grid-template-columns: 100px 1fr;
+            padding: 0 32px;
+            border-bottom: 1px solid #f1f5f9;
+            min-height: 90px;
+            position: relative;
+        }
+
+        .agenda-row:last-child { border-bottom: none; }
+
+        .time-col {
+            padding-top: 20px;
+            font-size: 0.9rem;
+            font-weight: 800;
+            color: var(--text-secondary);
+        }
+
+        .event-col {
+            padding: 10px 0;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .event-card {
+            background: var(--primary-light);
+            border-left: 6px solid var(--primary);
+            padding: 16px 20px;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+            width: 100%;
+        }
+
+        .event-card:hover { 
+            filter: brightness(0.97);
+            transform: scale(1.01);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+        }
+
+        .event-card.confirmed { border-left-color: var(--secondary); background: var(--secondary-light); }
+        .event-card.pending { border-left-color: var(--accent); background: var(--accent-light); }
+
+        .event-title { 
+            font-weight: 800; 
+            font-size: 1rem; 
+            display: block; 
+            color: var(--text-main);
+            margin-bottom: 4px;
+        }
+        
+        .event-subtitle { 
+            font-size: 0.85rem; 
+            color: var(--text-secondary); 
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        @media (max-width: 1024px) {
+            .summary-grid { grid-template-columns: repeat(2, 1fr); }
+            main { padding: 24px; }
+            aside { width: 80px; }
+            aside .logo-container span, aside .menu-label, aside .nav-item span { display: none; }
+            main { margin-left: 80px; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Sidebar Integrada -->
+    <aside id="sidebar-target">
+        <div class="logo-container">
+            <i data-lucide="dog" style="width: 32px; height: 32px;"></i>
+            <span>PetShop Pro</span>
+        </div>
+        
+        <p class="menu-label">Painel</p>
+        <nav>
+            <a href="../TelaInicial/TelaInicia.html" class="nav-item active">
+                <i data-lucide="layout-dashboard"></i> <span>Dashboard</span>
+            </a>
+            <a href="../Agenda/Agenda.html" class="nav-item">
+                <i data-lucide="calendar"></i> <span>Agenda Teams</span>
+            </a>
+            
+            <p class="menu-label" style="margin-top: 24px;">Vendas e Serviços</p>
+            <a href="../Carrinho/Carrinho.html" class="nav-item"><i data-lucide="shopping-cart"></i> <span>Carrinho / PDV</span></a>
+            <a href="../CatalogoServico/CatalogoServico.html" class="nav-item"><i data-lucide="scissors"></i> <span>Catálogo de Serviços</span></a>
+            
+            <p class="menu-label" style="margin-top: 24px;">Cadastros</p>
+            <a href="../Clientes/Cliente.html" class="nav-item"><i data-lucide="users"></i> <span>Clientes</span></a>
+            <a href="../Pet/Pet.html" class="nav-item"><i data-lucide="paw-print"></i> <span>Animais</span></a>
+            <a href="../Produtos/Produto.html" class="nav-item"><i data-lucide="package"></i> <span>Itens / Produtos</span></a>
+            
+            <p class="menu-label" style="margin-top: 24px;">Gestão</p>
+            <a href="../Estoque/Estoque.html" class="nav-item"><i data-lucide="boxes"></i> <span>Controle de Estoque</span></a>
+            <a href="../GastosPrevistos/GastosPrevistos.html" class="nav-item"><i data-lucide="trending-down"></i> <span>Gastos Previstos</span></a>
+            <a href="../NotaFiscal/NotalFisca.html" class="nav-item"><i data-lucide="file-check"></i> <span>Notas Fiscais</span></a>
+        </nav>
+    </aside>
+
+    <!-- Main Content -->
+    <main>
+        <header>
+            <div class="header-title">
+                <h1>Visão Geral</h1>
+            </div>
+            <div style="display: flex; gap: 12px;">
+                <button style="background: var(--white); border: 1px solid var(--border); padding: 10px 20px; border-radius: 12px; font-weight: 700; cursor: pointer; display: flex; align-items: center; gap: 8px;">
+                    <i data-lucide="download" style="width: 18px; height: 18px;"></i> Relatório
+                </button>
+                <button style="background: var(--primary); color: white; border: none; padding: 10px 20px; border-radius: 12px; font-weight: 700; cursor: pointer; display: flex; align-items: center; gap: 8px;">
+                    <i data-lucide="plus" style="width: 18px; height: 18px;"></i> Novo Agendamento
+                </button>
+            </div>
+        </header>
+
+        <!-- Cards de Resumo -->
+        <section class="summary-grid">
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-icon icon-purple"><i data-lucide="users"></i></div>
+                </div>
+                <div class="card-info">
+                    <div class="card-value">1.248</div>
+                    <span class="card-label">Clientes Cadastrados</span>
+                </div>
+            </div>
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-icon icon-blue"><i data-lucide="calendar-clock"></i></div>
+                </div>
+                <div class="card-info">
+                    <div class="card-value">18</div>
+                    <span class="card-label">Agendamentos Hoje</span>
+                </div>
+            </div>
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-icon icon-green"><i data-lucide="trending-up"></i></div>
+                </div>
+                <div class="card-info">
+                    <div class="card-value">R$ 2.450</div>
+                    <span class="card-label">Receita Hoje</span>
+                </div>
+            </div>
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-icon icon-orange"><i data-lucide="check-circle-2"></i></div>
+                </div>
+                <div class="card-info">
+                    <div class="card-value">12 / 18</div>
+                    <span class="card-label">Concluídos do Dia</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- Agenda Full Width -->
+        <div class="panel">
+            <div class="panel-header">
+                <h2 class="panel-title">Minha Agenda - Terça-feira, 24 de Março</h2>
+                <div style="display: flex; gap: 8px;">
+                    <button style="background: #FFF; border: 1px solid var(--border); width: 36px; height: 36px; border-radius: 8px; display: flex; align-items: center; justify-content: center;"><i data-lucide="chevron-left" style="width: 18px; height: 18px;"></i></button>
+                    <button style="background: #FFF; border: 1px solid var(--border); width: 36px; height: 36px; border-radius: 8px; display: flex; align-items: center; justify-content: center;"><i data-lucide="chevron-right" style="width: 18px; height: 18px;"></i></button>
+                </div>
+            </div>
+            <div class="teams-agenda">
+                <div class="agenda-row">
+                    <div class="time-col">08:00</div>
+                    <div class="event-col">
+                        <div class="event-card confirmed">
+                            <span class="event-title">Luna (Poodle) - Banho Completo + Tosa Higiênica</span>
+                            <div class="event-subtitle">
+                                <i data-lucide="user" style="width: 14px; height: 14px;"></i> Mariana Silva 
+                                <span style="margin-left: 10px; color: var(--secondary);">• Pago: R$ 85,00</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="agenda-row">
+                    <div class="time-col">09:00</div>
+                    <div class="event-col">
+                        <div class="event-card pending">
+                            <span class="event-title">Thor (Golden) - Banho G + Desembolo</span>
+                            <div class="event-subtitle">
+                                <i data-lucide="user" style="width: 14px; height: 14px;"></i> Ricardo Oliveira
+                                <span style="margin-left: 10px; color: var(--accent);">• Pendente: R$ 130,00</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="agenda-row">
+                    <div class="time-col">10:00</div>
+                    <div class="event-col">
+                        <!-- Slot livre -->
+                    </div>
+                </div>
+
+                <div class="agenda-row">
+                    <div class="time-col">11:00</div>
+                    <div class="event-col">
+                        <div class="event-card confirmed">
+                            <span class="event-title">Mel (SRD) - Corte de Unhas + Hidratação</span>
+                            <div class="event-subtitle">
+                                <i data-lucide="user" style="width: 14px; height: 14px;"></i> Dra. Ana Costa
+                                <span style="margin-left: 10px; color: var(--secondary);">• Pago: R$ 60,00</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="agenda-row">
+                    <div class="time-col">12:00</div>
+                    <div class="time-col" style="color: var(--danger); text-transform: uppercase; font-size: 0.7rem; padding-top: 20px;">Intervalo</div>
+                    <div class="event-col"></div>
+                </div>
+                
+                <div class="agenda-row">
+                    <div class="time-col">13:30</div>
+                    <div class="event-col">
+                        <div class="event-card pending">
+                            <span class="event-title">Bidu (Schnauzer) - Tosa da Raça</span>
+                            <div class="event-subtitle">
+                                <i data-lucide="user" style="width: 14px; height: 14px;"></i> Carlos Ferreira
+                                <span style="margin-left: 10px; color: var(--accent);">• Aguardando Pet</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        // Inicializa os ícones do Lucide
+        lucide.createIcons();
+
+        // Efeito simples de clique nos itens da navegação
+        const navItems = document.querySelectorAll('.nav-item');
+        navItems.forEach(item => {
+            item.addEventListener('click', function(e) {
+                // Remove active de todos
+                navItems.forEach(i => i.classList.remove('active'));
+                // Adiciona no clicado
+                this.classList.add('active');
+            });
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,728 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PetShop Pro - Gastos Previstos</title>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #3A86FF;
+            --primary-hover: #265DF2;
+            --primary-bg-light: #EAF2FF;
+            --secondary: #2EC4B6;
+            --secondary-hover: #28B1A4;
+            --secondary-bg-light: #DFF7F4;
+            --accent: #FF9F1C;
+            --accent-hover: #E68F19;
+            --accent-bg-light: #FFE8CC;
+            --bg-general: #F7F9FC;
+            --white: #FFFFFF;
+            --text-main: #1E293B;
+            --text-secondary: #64748B;
+            --border: #E2E8F0;
+            --shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1);
+            --danger: #EF4444;
+            --danger-light: #FEE2E2;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', -apple-system, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-general);
+            color: var(--text-main);
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* Sidebar Padronizada */
+        aside {
+            width: 280px;
+            background-color: var(--white);
+            border-right: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+            position: fixed;
+            height: 100vh;
+            z-index: 100;
+            box-shadow: 4px 0 20px rgba(0,0,0,0.05);
+        }
+
+        .logo-container {
+            padding: 32px 24px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-weight: 800;
+            font-size: 1.4rem;
+            color: var(--primary);
+        }
+
+        .menu-label {
+            padding: 0 24px 8px;
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            font-weight: 700;
+            color: var(--text-secondary);
+            letter-spacing: 1px;
+        }
+
+        nav {
+            flex: 1;
+            padding: 0 16px;
+            overflow-y: auto;
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 14px 16px;
+            text-decoration: none;
+            color: var(--text-secondary);
+            border-radius: 12px;
+            margin-bottom: 6px;
+            transition: 0.2s;
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        .nav-item:hover {
+            background-color: var(--primary-bg-light);
+            color: var(--primary);
+        }
+
+        .nav-item.active {
+            background-color: var(--primary);
+            color: var(--white);
+            box-shadow: 0 8px 15px rgba(58, 134, 255, 0.3);
+        }
+
+        /* Conteúdo Principal */
+        main {
+            margin-left: 280px;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        header {
+            padding: 24px 40px;
+            background: var(--white);
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 50;
+        }
+
+        .header-info h1 { font-size: 1.5rem; font-weight: 800; }
+        .header-info p { color: var(--text-secondary); font-size: 0.85rem; }
+
+        .btn {
+            padding: 12px 20px;
+            border-radius: 12px;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+            transition: 0.2s;
+            border: none;
+            font-size: 0.9rem;
+        }
+
+        .btn-primary { background: var(--primary); color: white; box-shadow: 0 4px 12px rgba(58, 134, 255, 0.2); }
+        .btn-primary:hover { background: var(--primary-hover); transform: translateY(-2px); }
+
+        .content-container { padding: 32px 40px; }
+
+        /* Cards de Resumo */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 24px;
+            margin-bottom: 32px;
+        }
+
+        .stat-card {
+            background: var(--white);
+            padding: 24px;
+            border-radius: 20px;
+            border: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.05);
+        }
+
+        .stat-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            color: var(--text-secondary);
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+
+        .stat-value {
+            font-size: 1.4rem;
+            font-weight: 800;
+            color: var(--text-main);
+        }
+
+        .stat-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Tabela e Filtros */
+        .card-container {
+            background: var(--white);
+            border-radius: 16px;
+            border: 1px solid var(--border);
+            overflow: hidden;
+            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.05);
+        }
+
+        .table-header {
+            padding: 24px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 16px;
+        }
+
+        .search-box {
+            position: relative;
+            width: 300px;
+        }
+
+        .search-box i {
+            position: absolute;
+            left: 14px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-secondary);
+            width: 18px;
+        }
+
+        .search-box input {
+            width: 100%;
+            padding: 10px 10px 10px 42px;
+            border-radius: 10px;
+            border: 1px solid var(--border);
+            outline: none;
+            transition: 0.2s;
+        }
+
+        .filter-group {
+            display: flex;
+            gap: 12px;
+        }
+
+        .filter-select {
+            padding: 10px 16px;
+            border-radius: 10px;
+            border: 1px solid var(--border);
+            color: var(--text-secondary);
+            font-weight: 600;
+            outline: none;
+            background: var(--white);
+            cursor: pointer;
+        }
+
+        table { width: 100%; border-collapse: collapse; }
+        thead { background: #F8FAFC; }
+        th { padding: 16px 24px; font-size: 0.75rem; text-transform: uppercase; color: var(--text-secondary); font-weight: 700; text-align: left; }
+        td { padding: 18px 24px; border-bottom: 1px solid #F1F5F9; font-size: 0.9rem; color: var(--text-main); }
+        
+        .status-pill {
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .status-pago { background: var(--secondary-bg-light); color: var(--secondary); }
+        .status-pendente { background: var(--accent-bg-light); color: var(--accent); }
+
+        .actions-cell {
+            display: flex;
+            justify-content: flex-end;
+            gap: 8px;
+        }
+
+        .action-btn {
+            width: 32px;
+            height: 32px;
+            border-radius: 8px;
+            border: 1px solid var(--border);
+            background: var(--white);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: 0.2s;
+            color: var(--text-secondary);
+        }
+
+        .action-btn:hover { background: var(--primary-bg-light); color: var(--primary); border-color: var(--primary); }
+        .action-btn.delete:hover { background: var(--danger-light); color: var(--danger); border-color: var(--danger); }
+        .action-btn.pay:hover { background: var(--secondary-bg-light); color: var(--secondary); border-color: var(--secondary); }
+
+        /* Modais */
+        .modal-overlay {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(15, 23, 42, 0.6);
+            backdrop-filter: blur(4px);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 200;
+        }
+
+        .modal {
+            background: var(--white);
+            width: 550px;
+            border-radius: 20px;
+            padding: 32px;
+            box-shadow: var(--shadow);
+            animation: slideIn 0.3s ease-out;
+        }
+
+        @keyframes slideIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+
+        .modal-title { font-size: 1.25rem; font-weight: 800; margin-bottom: 24px; color: var(--primary); display: flex; align-items: center; gap: 10px; }
+        .form-row { display: flex; gap: 16px; margin-bottom: 20px; }
+        .form-group { flex: 1; margin-bottom: 20px; }
+        .form-group label { display: block; font-size: 0.85rem; font-weight: 700; margin-bottom: 8px; color: var(--text-main); }
+        .form-control { width: 100%; padding: 12px; border-radius: 10px; border: 1px solid var(--border); outline: none; transition: 0.2s; }
+        .form-control:focus { border-color: var(--primary); box-shadow: 0 0 0 3px var(--primary-bg-light); }
+
+        .modal-footer { display: flex; gap: 12px; margin-top: 32px; }
+        .btn-full { flex: 1; padding: 14px; border-radius: 12px; border: none; font-weight: 700; cursor: pointer; transition: 0.2s; }
+
+        /* Toast */
+        .toast {
+            position: fixed;
+            bottom: 30px; right: 30px;
+            background: var(--text-main);
+            color: white;
+            padding: 16px 24px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            transform: translateY(150px);
+            transition: 0.4s;
+            z-index: 300;
+        }
+        .toast.show { transform: translateY(0); }
+
+    </style>
+</head>
+<body>
+
+    <!-- Sidebar -->
+    <aside>
+        <div class="logo-container">
+            <i data-lucide="dog" style="width: 32px; height: 32px;"></i>
+            <span>PetShop Pro</span>
+        </div>
+        
+        <p class="menu-label">Painel</p>
+        <nav>
+            <a href="../TelaInicial/TelaInicia.html" class="nav-item">
+                <i data-lucide="layout-dashboard"></i> Dashboard
+            </a>
+            <a href="../Agenda/Agenda.html" class="nav-item">
+                <i data-lucide="calendar"></i> Agenda Teams
+            </a>
+            
+            <p class="menu-label" style="margin-top: 24px;">Vendas e Serviços</p>
+            <a href="../Carrinho/Carrinho.html" class="nav-item">
+                <i data-lucide="shopping-cart"></i> Carrinho / PDV
+            </a>
+            <a href="../CatalogoServico/CatalogoServico.html" class="nav-item">
+                <i data-lucide="scissors"></i> Catálogo de Serviços
+            </a>             
+            
+            <p class="menu-label" style="margin-top: 24px;">Cadastros</p>
+            <a href="../Clientes/Cliente.html" class="nav-item">
+                <i data-lucide="users"></i> Clientes
+            </a>
+            <a href="../Pet/Pet.html" class="nav-item">
+                <i data-lucide="paw-print"></i> Animais
+            </a>
+            <a href="../Produtos/Produto.html" class="nav-item">
+                <i data-lucide="package"></i> Itens / Produtos
+            </a>          
+            
+            <p class="menu-label" style="margin-top: 24px;">Gestão</p>
+            <a href="../Estoque/Estoque.html" class="nav-item">
+                <i data-lucide="boxes"></i> Controle de Estoque
+            </a>
+            <a href="../GastosPrevistos/GastosPrevistos.html" class="nav-item active">
+                <i data-lucide="trending-down"></i> Gastos Previstos
+            </a>
+            <a href="../NotaFiscal/NotalFisca.html" class="nav-item">
+                <i data-lucide="file-check"></i> Notas Fiscais
+            </a>
+        </nav>
+    </aside>
+
+    <main>
+        <header>
+            <div class="header-info">
+                <h1>Gastos Previstos</h1>
+                <p>Planeje e acompanhe suas despesas futuras para manter o caixa saudável.</p>
+            </div>
+            <div class="header-actions">
+                <button class="btn btn-primary" onclick="openModal()">
+                    <i data-lucide="plus-circle"></i> Novo Gasto
+                </button>
+            </div>
+        </header>
+
+        <div class="content-container">
+            <!-- Cards de Resumo -->
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <span>Total do Mês</span>
+                        <div class="stat-icon" style="background: var(--primary-bg-light); color: var(--primary);">
+                            <i data-lucide="dollar-sign" style="width: 20px;"></i>
+                        </div>
+                    </div>
+                    <div class="stat-value" id="stat-total">R$ 0,00</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <span>Já Pagos</span>
+                        <div class="stat-icon" style="background: var(--secondary-bg-light); color: var(--secondary);">
+                            <i data-lucide="check-circle" style="width: 20px;"></i>
+                        </div>
+                    </div>
+                    <div class="stat-value" id="stat-pagos" style="color: var(--secondary);">R$ 0,00</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <span>Pendentes</span>
+                        <div class="stat-icon" style="background: var(--accent-bg-light); color: var(--accent);">
+                            <i data-lucide="clock" style="width: 20px;"></i>
+                        </div>
+                    </div>
+                    <div class="stat-value" id="stat-pendentes" style="color: var(--accent);">R$ 0,00</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <span>Próximo Vencimento</span>
+                        <div class="stat-icon" style="background: var(--danger-light); color: var(--danger);">
+                            <i data-lucide="calendar-alert" style="width: 20px;"></i>
+                        </div>
+                    </div>
+                    <div class="stat-value" id="stat-proximo" style="font-size: 1.1rem; padding-top: 5px;">-</div>
+                </div>
+            </div>
+
+            <!-- Tabela Principal -->
+            <div class="card-container">
+                <div class="table-header">
+                    <div class="search-box">
+                        <i data-lucide="search"></i>
+                        <input type="text" placeholder="Buscar descrição ou categoria..." oninput="filterGastos(this.value)">
+                    </div>
+                    <div class="filter-group">
+                        <select class="filter-select" id="statusFilter" onchange="applyFilters()">
+                            <option value="all">Todos os Status</option>
+                            <option value="Pendente">Pendentes</option>
+                            <option value="Pago">Pagos</option>
+                        </select>
+                        <select class="filter-select" id="categoryFilter" onchange="applyFilters()">
+                            <option value="all">Todas as Categorias</option>
+                            <option value="Aluguel">Aluguel</option>
+                            <option value="Fornecedores">Fornecedores</option>
+                            <option value="Energia">Energia / Água</option>
+                            <option value="Salários">Salários</option>
+                            <option value="Outros">Outros</option>
+                        </select>
+                    </div>
+                </div>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Descrição</th>
+                            <th>Categoria</th>
+                            <th>Valor</th>
+                            <th>Vencimento</th>
+                            <th>Status</th>
+                            <th style="text-align: right;">Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody id="gastos-list">
+                        <!-- Conteúdo via JS -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </main>
+
+    <!-- Modal Novo/Editar Gasto -->
+    <div class="modal-overlay" id="modalOverlay">
+        <div class="modal">
+            <div class="modal-title" id="modalTitle">
+                <i data-lucide="file-plus"></i>
+                <span>Novo Gasto Previsto</span>
+            </div>
+            <form id="gastoForm">
+                <input type="hidden" id="editId">
+                <div class="form-group">
+                    <label for="desc">Descrição do Gasto</label>
+                    <input type="text" id="desc" class="form-control" required placeholder="Ex: Aluguel da Loja">
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="category">Categoria</label>
+                        <select id="category" class="form-control" required>
+                            <option value="Aluguel">Aluguel</option>
+                            <option value="Fornecedores">Fornecedores</option>
+                            <option value="Energia">Energia / Água</option>
+                            <option value="Salários">Salários</option>
+                            <option value="Outros">Outros</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="value">Valor (R$)</label>
+                        <input type="number" id="value" class="form-control" step="0.01" required placeholder="0,00">
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="date">Data de Vencimento</label>
+                        <input type="date" id="date" class="form-control" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="status">Status Inicial</label>
+                        <select id="status" class="form-control">
+                            <option value="Pendente">Pendente</option>
+                            <option value="Pago">Pago</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="obs">Observações (Opcional)</label>
+                    <textarea id="obs" class="form-control" rows="2" placeholder="Informações adicionais..."></textarea>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn-full" style="background: #f1f5f9;" onclick="closeModal()">Cancelar</button>
+                    <button type="submit" class="btn-full" style="background: var(--primary); color: white;" id="saveBtn">Salvar Despesa</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Toast -->
+    <div class="toast" id="toast">
+        <i data-lucide="check-circle"></i>
+        <span id="toastMsg">Operação realizada com sucesso!</span>
+    </div>
+
+    <script>
+        lucide.createIcons();
+
+        // Dados simulados
+        let gastos = [
+            { id: 1, desc: "Aluguel - Unidade Matriz", category: "Aluguel", value: 3500.00, date: "2023-12-05", status: "Pago" },
+            { id: 2, desc: "Fornecedor PetFood Reposição", category: "Fornecedores", value: 1240.50, date: "2023-12-10", status: "Pendente" },
+            { id: 3, desc: "Conta de Energia Elétrica", category: "Energia", value: 450.20, date: "2023-12-12", status: "Pendente" },
+            { id: 4, desc: "Salário - Esteticista Canino", category: "Salários", value: 2200.00, date: "2023-12-05", status: "Pago" },
+            { id: 5, desc: "Manutenção Ar Condicionado", category: "Outros", value: 180.00, date: "2023-12-20", status: "Pendente" }
+        ];
+
+        function updateStats() {
+            const total = gastos.reduce((acc, g) => acc + g.value, 0);
+            const pagos = gastos.filter(g => g.status === 'Pago').reduce((acc, g) => acc + g.value, 0);
+            const pendentes = total - pagos;
+            
+            // Acha o próximo vencimento pendente
+            const pendentesList = gastos.filter(g => g.status === 'Pendente').sort((a,b) => new Date(a.date) - new Date(b.date));
+            const proximo = pendentesList.length > 0 ? formatDateBr(pendentesList[0].date) : 'Nenhum pendente';
+
+            document.getElementById('stat-total').innerText = formatCurrency(total);
+            document.getElementById('stat-pagos').innerText = formatCurrency(pagos);
+            document.getElementById('stat-pendentes').innerText = formatCurrency(pendentes);
+            document.getElementById('stat-proximo').innerText = proximo;
+        }
+
+        function formatCurrency(val) {
+            return val.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+        }
+
+        function formatDateBr(dateStr) {
+            const d = new Date(dateStr + "T12:00:00");
+            return d.toLocaleDateString('pt-BR');
+        }
+
+        function renderGastos(data = gastos) {
+            const list = document.getElementById('gastos-list');
+            list.innerHTML = '';
+
+            data.sort((a,b) => new Date(a.date) - new Date(b.date)).forEach(g => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td>
+                        <div style="font-weight: 700;">${g.desc}</div>
+                    </td>
+                    <td><span style="color: var(--text-secondary)">${g.category}</span></td>
+                    <td style="font-weight: 700;">${formatCurrency(g.value)}</td>
+                    <td>${formatDateBr(g.date)}</td>
+                    <td>
+                        <span class="status-pill status-${g.status.toLowerCase()}">
+                            <i data-lucide="${g.status === 'Pago' ? 'check' : 'clock'}" style="width: 12px;"></i>
+                            ${g.status}
+                        </span>
+                    </td>
+                    <td class="actions-cell">
+                        ${g.status === 'Pendente' ? `
+                            <button class="action-btn pay" title="Marcar como Pago" onclick="markAsPaid(${g.id})">
+                                <i data-lucide="check-square" style="width: 16px;"></i>
+                            </button>
+                        ` : ''}
+                        <button class="action-btn" title="Editar" onclick="editGasto(${g.id})">
+                            <i data-lucide="edit-3" style="width: 16px;"></i>
+                        </button>
+                        <button class="action-btn delete" title="Excluir" onclick="deleteGasto(${g.id})">
+                            <i data-lucide="trash-2" style="width: 16px;"></i>
+                        </button>
+                    </td>
+                `;
+                list.appendChild(tr);
+            });
+            updateStats();
+            lucide.createIcons();
+        }
+
+        function openModal(id = null) {
+            document.getElementById('modalOverlay').style.display = 'flex';
+            const title = document.getElementById('modalTitle');
+            const saveBtn = document.getElementById('saveBtn');
+            const form = document.getElementById('gastoForm');
+            
+            if (id) {
+                const g = gastos.find(item => item.id === id);
+                document.getElementById('editId').value = g.id;
+                document.getElementById('desc').value = g.desc;
+                document.getElementById('category').value = g.category;
+                document.getElementById('value').value = g.value;
+                document.getElementById('date').value = g.date;
+                document.getElementById('status').value = g.status;
+                title.innerHTML = '<i data-lucide="edit"></i> <span>Editar Gasto</span>';
+                saveBtn.innerText = 'Salvar Alterações';
+            } else {
+                form.reset();
+                document.getElementById('editId').value = '';
+                title.innerHTML = '<i data-lucide="file-plus"></i> <span>Novo Gasto Previsto</span>';
+                saveBtn.innerText = 'Salvar Despesa';
+            }
+            lucide.createIcons();
+        }
+
+        function closeModal() {
+            document.getElementById('modalOverlay').style.display = 'none';
+        }
+
+        document.getElementById('gastoForm').addEventListener('submit', (e) => {
+            e.preventDefault();
+            const id = document.getElementById('editId').value;
+            const data = {
+                desc: document.getElementById('desc').value,
+                category: document.getElementById('category').value,
+                value: parseFloat(document.getElementById('value').value),
+                date: document.getElementById('date').value,
+                status: document.getElementById('status').value
+            };
+
+            if (id) {
+                const index = gastos.findIndex(g => g.id == id);
+                gastos[index] = { ...gastos[index], ...data };
+                showToast("Despesa atualizada com sucesso!");
+            } else {
+                data.id = Date.now();
+                gastos.push(data);
+                showToast("Nova despesa registrada!");
+            }
+
+            renderGastos();
+            closeModal();
+        });
+
+        function markAsPaid(id) {
+            const index = gastos.findIndex(g => g.id === id);
+            gastos[index].status = 'Pago';
+            renderGastos();
+            showToast("Gasto marcado como pago!");
+        }
+
+        function deleteGasto(id) {
+            if (confirm("Deseja realmente excluir este gasto previsto?")) {
+                gastos = gastos.filter(g => g.id !== id);
+                renderGastos();
+                showToast("Gasto excluído com sucesso.");
+            }
+        }
+
+        function editGasto(id) {
+            openModal(id);
+        }
+
+        function filterGastos(term) {
+            applyFilters(term);
+        }
+
+        function applyFilters(term = '') {
+            const status = document.getElementById('statusFilter').value;
+            const cat = document.getElementById('categoryFilter').value;
+            
+            const filtered = gastos.filter(g => {
+                const matchesSearch = g.desc.toLowerCase().includes(term.toLowerCase()) || 
+                                    g.category.toLowerCase().includes(term.toLowerCase());
+                const matchesStatus = status === 'all' || g.status === status;
+                const matchesCat = cat === 'all' || g.category === cat;
+                return matchesSearch && matchesStatus && matchesCat;
+            });
+            
+            renderGastos(filtered);
+        }
+
+        function showToast(msg) {
+            const t = document.getElementById('toast');
+            document.getElementById('toastMsg').innerText = msg;
+            t.classList.add('show');
+            setTimeout(() => t.classList.remove('show'), 3000);
+        }
+
+        // Inicialização
+        renderGastos();
+    </script>
+</body>
+</html>
