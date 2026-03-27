@@ -470,6 +470,7 @@
                 <h2 id="modalTitle">Novo Cliente</h2>
                 <i data-lucide="x" class="modal-close" onclick="closeModal()"></i>
             </div>
+
             <form id="clientForm">
                 <input type="hidden" id="clientId">
                 <div class="form-grid">
@@ -483,11 +484,11 @@
                     </div>
                     <div class="form-group">
                         <label for="phone">Telefone / WhatsApp</label>
-                        <input type="text" id="phone" class="form-control" placeholder="(00) 00000-0000" required>
+                        <input type="text" id="phone" class="form-control" placeholder="(00) 00000-0000" maxlength="15" required>
                     </div>
                     <div class="form-group">
                         <label for="cpf">CPF (Opcional)</label>
-                        <input type="text" id="cpf" class="form-control" placeholder="000.000.000-00">
+                        <input type="text" id="cpf" class="form-control" placeholder="000.000.000-00" maxlength="14" required>
                     </div>
                     <div class="form-group">
                         <label for="pets">Qtd. de Pets</label>
@@ -503,6 +504,7 @@
                     <button type="submit" class="btn-block btn-success">Confirmar Cadastro</button>
                 </div>
             </form>
+
         </div>
     </div>
 
@@ -581,7 +583,6 @@
             renderClients(filtered);
         });
 
-        // Modal Logic
         function openModal(mode, id = null) {
             modalOverlay.style.display = 'flex';
             if (mode === 'add') {
@@ -648,8 +649,11 @@
             setTimeout(() => toast.classList.remove('show'), 3000);
         }
 
-        // Init
+      
         renderClients();
     </script>
+
+    <script src="/Clientes/clienteApi.js"></script>
+    <script type="module" src="/Clientes/main.js"></script>
 </body>
 </html>
