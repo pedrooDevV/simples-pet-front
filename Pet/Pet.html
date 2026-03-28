@@ -604,10 +604,19 @@
             <div class="form-group">
               <label for="age">Idade</label>
               <input
-                type="text"
+                min="0"
+                max="30"
+                type="number"
                 id="age"
                 class="form-control"
-                placeholder="Ex: 3 anos"
+                placeholder="Ex: 3"
+                onkeypress="
+                  return event.charCode >= 48 && event.charCode <= 57;
+                "
+                oninput="
+                  if (this.value < 0) this.value = 0;
+                  if (this.value > 30) this.value = 30;
+                "
               />
             </div>
             <div class="form-group">
@@ -660,10 +669,30 @@
       async function carregarClientes() {
         try {
           const response = await fetch("http://localhost:8080/clientes/listar");
-          clientes = await response.json(); // Salva na variável global
-          console.log("Clientes carregados:", clientes); // Verifique no F12 se isso aparece
+          clientes = await response.json();
+
+          const ownerSelect = document.getElementById("ownerId");
+
+          // Limpa o select e adiciona a opção padrão
+          ownerSelect.innerHTML = '<option value="">Selecione o dono</option>';
+
+          // Adiciona cada cliente vindo do banco como uma <option>
+          clientes.forEach((cliente) => {
+            const option = document.createElement("option");
+            option.value = cliente.id; // O valor enviado ao banco será o ID
+            option.textContent = cliente.nome; // O que o usuário vê é o Nome
+            ownerSelect.appendChild(option);
+          });
+
+          console.log("Clientes carregados e Select preenchido!");
+
+          // IMPORTANTE: Se os pets já foram carregados, manda renderizar de novo
+          // para garantir que o "Sem dono" seja substituído pelo nome se o Map falhou
+          if (pets.length > 0) renderPets(pets);
         } catch (error) {
           console.error("Erro ao carregar clientes:", error);
+          document.getElementById("ownerId").innerHTML =
+            '<option value="">Erro ao carregar</option>';
         }
       }
 
@@ -804,14 +833,31 @@
               body: JSON.stringify(payload),
             });
 
+            // --- AQUI ESTÁ A MUDANÇA ---
             if (!res.ok) {
-              const errorMsg = await res.text();
-              throw new Error(errorMsg || "Erro ao salvar pet");
+              const errorData = await res.json(); // Transforma o erro em objeto JS
+
+              // Se o erro vier do Java/Validation, pegamos a mensagem limpa
+              // Geralmente o Spring coloca em 'message' ou em um array de 'errors'
+              let msgErro = "Erro ao salvar";
+
+              if (
+                errorData.message &&
+                errorData.message.includes("Idade máxima permitida é 30")
+              ) {
+                msgErro = "Idade máxima permitida é 30";
+              } else {
+                msgErro = errorData.message || "Verifique os dados enviados";
+              }
+
+              showToast(msgErro); // Exibe no seu Toast bonitão
+              return; // PARA AQUI (não fecha o modal nem limpa o form)
             }
+            // --- FIM DA MUDANÇA ---
 
             const data = await res.json();
 
-            // Atualiza a lista local e fecha o modal
+            // Atualiza a lista e fecha o modal (seu código atual)
             if (id) {
               const index = pets.findIndex((p) => p.id === data.id);
               pets[index] = data;
@@ -824,7 +870,7 @@
             showToast("Pet salvo com sucesso!");
           } catch (err) {
             console.error(err);
-            alert("Erro: " + err.message);
+            showToast("Erro de conexão com o servidor");
           }
         });
 
