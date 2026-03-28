@@ -14,22 +14,40 @@ const sidebarContent = `
         <a href="../TelaInicial/TelaInicia.html" class="nav-item" data-page="dashboard">
             <i data-lucide="layout-dashboard"></i> Dashboard
         </a>
-        <a href="Agenda.html  " class="nav-item" data-page="agenda">
+        <a href="../Agenda/Agenda.html" class="nav-item" data-page="agenda">
             <i data-lucide="calendar"></i> Agenda Teams
         </a>
         
         <p class="menu-label" style="margin-top: 24px;">Vendas e Serviços</p>
-        <a href="#" class="nav-item" data-page="pdv"><i data-lucide="shopping-cart"></i> Carrinho / PDV</a>
-        <a href="#" class="nav-item" data-page="servicos"><i data-lucide="scissors"></i> Catálogo de Serviços</a>
+        <a href="../Carrinho/Carrinho.html" class="nav-item" data-page="pdv">
+            <i data-lucide="shopping-cart"></i> Carrinho / PDV
+        </a>
+        <a href="../CatalogoServico/CatalogoServico.html" class="nav-item" data-page="servicos">
+            <i data-lucide="scissors"></i> Catálogo de Serviços
+        </a>
         
         <p class="menu-label" style="margin-top: 24px;">Cadastros</p>
-        <a href="#" class="nav-item" data-page="clientes"><i data-lucide="users"></i> Clientes</a>
-        <a href="#" class="nav-item" data-page="animais"><i data-lucide="paw-print"></i> Animais</a>
-        <a href="#" class="nav-item" data-page="produtos"><i data-lucide="package"></i> Itens / Produtos</a>
+        <a href="../Clientes/Cliente.html" class="nav-item" data-page="clientes">
+            <i data-lucide="users"></i> Clientes
+        </a>
+        <!-- CORREÇÃO AQUI: Pasta 'Pet' e arquivo 'Pet.html' -->
+        <a href="../Pet/Pet.html" class="nav-item" data-page="animais">
+            <i data-lucide="paw-print"></i> Animais
+        </a>
+        <a href="../Produtos/Produto.html" class="nav-item" data-page="produtos">
+            <i data-lucide="package"></i> Itens / Produtos
+        </a>
         
         <p class="menu-label" style="margin-top: 24px;">Gestão</p>
-        <a href="#" class="nav-item" data-page="estoque"><i data-lucide="boxes"></i> Controle de Estoque</a>
-        <a href="#" class="nav-item" data-page="gastos"><i data-lucide="trending-down"></i> Gastos Previstos</a>
+        <a href="../Estoque/Estoque.html" class="nav-item" data-page="estoque">
+            <i data-lucide="boxes"></i> Controle de Estoque
+        </a>
+        <a href="../GastosPrevistos/GastosPrevistos.html" class="nav-item" data-page="gastos">
+            <i data-lucide="trending-down"></i> Gastos Previstos
+        </a>
+        <a href="../NotaFiscal/NotalFisca.html" class="nav-item" data-page="notas">
+            <i data-lucide="file-check"></i> Notas Fiscais
+        </a>
     </nav>
 `;
 
