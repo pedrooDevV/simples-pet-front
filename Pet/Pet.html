@@ -681,8 +681,6 @@
 
           console.log("Clientes carregados e Select preenchido!");
 
-          // IMPORTANTE: Se os pets já foram carregados, manda renderizar de novo
-          // para garantir que o "Sem dono" seja substituído pelo nome se o Map falhou
           if (pets.length > 0) renderPets(pets);
         } catch (error) {
           console.error("Erro ao carregar clientes:", error);

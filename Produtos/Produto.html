@@ -79,6 +79,18 @@
         letter-spacing: 1px;
       }
 
+      .input-with-button {
+        display: flex;
+        gap: 8px;
+        align-items: center;
+        width: 100%;
+      }
+
+      .input-with-button select {
+        flex: 1;
+        min-width: 0;
+      }
+
       nav {
         flex: 1;
         padding: 0 16px;
@@ -120,20 +132,22 @@
       }
 
       .btn-add-inline {
-        background: var(--primary-bg-light);
-        color: var(--primary);
-        border: 1px solid var(--primary);
+        height: 44px;
         width: 44px;
-        border-radius: 10px;
+        min-width: 44px;
         display: flex;
         align-items: center;
         justify-content: center;
+        background-color: var(--primary-bg-light);
+        color: var(--primary);
+        border: 1px solid var(--primary);
+        border-radius: 10px;
         cursor: pointer;
         transition: 0.2s;
       }
 
       .btn-add-inline:hover {
-        background: var(--primary);
+        background-color: var(--primary);
         color: white;
       }
 
@@ -583,7 +597,6 @@
       </div>
     </main>
 
-    <!-- Modal de Produto -->
     <div class="modal-overlay" id="modalOverlay">
       <div class="modal">
         <div class="modal-header">
@@ -606,13 +619,7 @@
             <div class="form-group">
               <label for="category">Categoria</label>
               <div class="input-with-button">
-                <select id="category" class="form-control">
-                  <option value="Alimentação">Alimentação</option>
-                  <option value="Higiene">Higiene</option>
-                  <option value="Acessórios">Acessórios</option>
-                  <option value="Medicamentos">Medicamentos</option>
-                  <option value="Brinquedos">Brinquedos</option>
-                </select>
+                <select id="category" class="form-control"></select>
                 <button
                   type="button"
                   class="btn-add-inline"
@@ -680,6 +687,44 @@
       </div>
     </div>
 
+    <div class="modal-overlay" id="categoryModalOverlay" style="z-index: 210">
+      <div class="modal small">
+        <div class="modal-header">
+          <h2>Nova Categoria</h2>
+          <i
+            data-lucide="x"
+            style="cursor: pointer"
+            onclick="closeCategoryModal()"
+          ></i>
+        </div>
+        <form id="categoryForm">
+          <div class="form-group full">
+            <label for="newCategoryName">Nome da Categoria *</label>
+            <input
+              type="text"
+              id="newCategoryName"
+              class="form-control"
+              required
+              placeholder="Ex: Roupas, Petiscos..."
+            />
+          </div>
+          <div style="display: flex; gap: 12px; margin-top: 10px">
+            <button
+              type="button"
+              class="btn-block"
+              style="background: #f1f5f9"
+              onclick="closeCategoryModal()"
+            >
+              Cancelar
+            </button>
+            <button type="submit" class="btn-block btn-success">
+              Adicionar
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+
     <!-- Toast -->
     <div class="toast" id="toast">
       <i data-lucide="check-circle"></i>
@@ -689,7 +734,70 @@
     <script>
       lucide.createIcons();
 
-      const API_URL = "http://localhost:8080/produto"; // Ajuste a URL se necessário
+      function openCategoryModal() {
+        document.getElementById("categoryModalOverlay").style.display = "flex";
+        document.getElementById("newCategoryName").focus();
+      }
+
+      function closeCategoryModal() {
+        document.getElementById("categoryModalOverlay").style.display = "none";
+        document.getElementById("categoryForm").reset();
+      }
+
+      document
+        .getElementById("categoryForm")
+        .addEventListener("submit", async (e) => {
+          e.preventDefault();
+
+          const name = document.getElementById("newCategoryName").value.trim();
+
+          if (!name) {
+            showToast("Digite um nome válido!");
+            return;
+          }
+
+          const select = document.getElementById("category");
+
+          const exists = Array.from(select.options).some(
+            (opt) => opt.text.toLowerCase() === name.toLowerCase(),
+          );
+
+          if (exists) {
+            showToast("Esta categoria já existe!");
+            return;
+          }
+
+          try {
+            const res = await fetch("http://localhost:8080/categoria", {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify({
+                descricaoCategoria: name,
+              }),
+            });
+
+            if (!res.ok) {
+              throw new Error("Erro ao salvar categoria");
+            }
+
+            const categoria = await res.json();
+
+            const newOption = new Option(categoria.descricaoCategoria, categoria.id);
+            select.add(newOption);
+            select.value = categoria.id;
+
+            showToast(`Categoria "${categoria.descricaoCategoria}" criada!`);
+            carregarCategorias();
+            closeCategoryModal();
+          } catch (error) {
+            console.error(error);
+            showToast("Erro ao cadastrar categoria!");
+          }
+        });
+
+      const API_URL = "http://localhost:8080/produto";
       let products = [];
 
       async function fetchProducts() {
@@ -701,6 +809,29 @@
         } catch (err) {
           console.error(err);
           showToast("Erro ao carregar produtos!");
+        }
+      }
+
+      async function carregarCategorias() {
+        try {
+          const res = await fetch("http://localhost:8080/categoria", {
+            method: "GET",
+          });
+
+          if (!res.ok) throw new Error("Erro ao buscar categorias");
+
+          const categorias = await res.json();
+
+          const select = document.getElementById("category");
+          select.innerHTML = "";
+
+          categorias.forEach((c) => {
+            const option = new Option(c.descricaoCategoria, c.id);
+            select.add(option);
+          });
+        } catch (error) {
+          console.error(error);
+          showToast("Erro ao carregar categorias!");
         }
       }
 
@@ -737,7 +868,7 @@
                         </div>
                     </div>
                 </td>
-                <td><span style="font-weight: 500; color: var(--text-secondary);">${p.categoriaProdutoId}</span></td>
+                <td><span style="font-weight: 500; color: var(--text-secondary);">${p.descricaoProduto}</span></td>
                 <td><div class="price-badge">R$ ${p.precoProduto.toFixed(2)}</div></td>
                 <td><div class="stock-badge ${stockClass}">${p.quantidadeProduto} un. • ${stockStatus}</div></td>
                     <td>
@@ -819,6 +950,7 @@
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(productData),
               });
+
               if (!res.ok) throw new Error("Erro ao atualizar produto");
               showToast("Produto atualizado com sucesso!");
             } else {
@@ -854,7 +986,6 @@
         const url = `http://localhost:8080/produto/${endpoint}/${id}`;
 
         try {
-          alert("alerta try");
           const res = await fetch(url, { method: "PATCH" });
           if (!res.ok) throw new Error("Erro ao mudar status");
 
@@ -904,6 +1035,7 @@
         renderProducts(filtered);
       });
 
+      carregarCategorias();
       fetchProducts();
     </script>
   </body>

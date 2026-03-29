@@ -977,15 +977,14 @@
         updateCartUI();
 
         // Monta o payload correto pro backend
+        const itemPayload =
+          type === "product"
+            ? { produtoId: id, quantidade: 1 }
+            : { servicoId: id, quantidade: 1 };
+
         const payload = {
           idCliente: idCliente,
-          itens: [
-            {
-              produtoId: type === "product" ? id : null,
-              servicoId: type === "service" ? id : null,
-              quantidade: 1,
-            },
-          ],
+          itens: [itemPayload],
         };
 
         fetch("http://localhost:8080/carrinho", {
@@ -1135,7 +1134,6 @@
         lucide.createIcons();
       }
 
-      // Pesquisa no catálogo
       const searchInput = document.querySelector(".search-bar input");
       searchInput.addEventListener("input", () => {
         const query = searchInput.value.toLowerCase();
@@ -1145,7 +1143,6 @@
         renderCard(filtered);
       });
 
-      // Carrega itens no início
       carregarClientes();
       carregarItens();
     </script>
