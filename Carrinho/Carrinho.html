@@ -213,6 +213,62 @@
         gap: 20px;
       }
 
+      .modal-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(30, 41, 59, 0.4);
+        backdrop-filter: blur(8px);
+        display: none; /* Hidden by default */
+        justify-content: center;
+        align-items: center;
+        z-index: 1000;
+        animation: fadeIn 0.3s ease;
+      }
+
+      .modal-content {
+        background: var(--white);
+        width: 90%;
+        max-width: 600px;
+        border-radius: 20px;
+        box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+        display: flex;
+        flex-direction: column;
+        max-height: 80vh;
+        overflow: hidden;
+      }
+
+      .modal-header {
+        padding: 24px;
+        border-bottom: 1px solid var(--border);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+
+      .modal-body {
+        padding: 24px;
+        overflow-y: auto;
+      }
+
+      .customer-list-item {
+        display: flex;
+        align-items: center;
+        padding: 12px;
+        border-radius: 12px;
+        border: 1px solid transparent;
+        cursor: pointer;
+        transition: 0.2s;
+        margin-bottom: 8px;
+      }
+
+      .customer-list-item:hover {
+        background: var(--primary-bg-light);
+        border-color: var(--primary);
+      }
+
       .item-card {
         background: var(--white);
         border: 1px solid var(--border);
@@ -593,10 +649,13 @@
                   "
                   >Cliente Selecionado</span
                 >
-                <strong style="font-size: 1rem">Mariana Silva</strong>
+                <strong id="selected-customer-name" style="font-size: 1rem"
+                  >Consumidor Final</strong
+                >
               </div>
             </div>
             <button
+              onclick="openCustomerModal()"
               style="
                 background: none;
                 border: 1px solid var(--border);
@@ -622,7 +681,8 @@
             <i data-lucide="search"></i>
             <input
               type="text"
-              placeholder="Buscar produto ou serviço (Ex: Banho, Ração, Coleira...)"
+              id="catalog-search"
+              placeholder="Buscar produto ou serviço..."
             />
           </div>
 
@@ -699,6 +759,53 @@
       </div>
     </main>
 
+    <!-- MODAL DE CLIENTES -->
+    <div class="modal-overlay" id="customer-modal">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h2
+            style="
+              font-weight: 800;
+              display: flex;
+              align-items: center;
+              gap: 10px;
+            "
+          >
+            <i data-lucide="users" style="color: var(--primary)"></i> Selecionar
+            Cliente
+          </h2>
+          <button
+            onclick="closeCustomerModal()"
+            style="
+              background: none;
+              border: none;
+              cursor: pointer;
+              color: var(--text-secondary);
+            "
+          >
+            <i data-lucide="x"></i>
+          </button>
+        </div>
+        <div class="modal-body">
+          <div class="search-bar" style="margin-bottom: 20px">
+            <i data-lucide="search"></i>
+            <input
+              type="text"
+              id="modal-customer-search"
+              placeholder="Pesquise por nome ou CPF..."
+              oninput="filterCustomersModal()"
+            />
+          </div>
+          <div id="customer-list-container">
+            <!-- Lista de clientes será injetada aqui -->
+            <p style="text-align: center; color: var(--text-secondary)">
+              Carregando clientes...
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+
     <script>
       lucide.createIcons();
 
@@ -707,7 +814,9 @@
 
       // Função para carregar serviços do backend
       async function fetchProdutos() {
-        const res = await fetch("http://localhost:8080/produto/ativos-quantidade");
+        const res = await fetch(
+          "http://localhost:8080/produto/ativos-quantidade",
+        );
         if (!res.ok) throw new Error("Erro ao buscar produtos");
         const produtos = await res.json();
 
@@ -720,7 +829,7 @@
       }
 
       async function fetchServicos() {
-        const res = await fetch("http://localhost:8080/servico/listar");
+        const res = await fetch("http://localhost:8080/servico/ativos");
         if (!res.ok) throw new Error("Erro ao buscar serviços");
         const servicos = await res.json();
 
@@ -744,6 +853,35 @@
         } catch (err) {
           console.error(err);
           alert("Erro ao carregar itens");
+        }
+      }
+
+      function openCustomerModal() {
+        document.getElementById("customer-modal").style.display = "flex";
+        renderCustomerList(allCustomers);
+      }
+
+      function closeCustomerModal() {
+        document.getElementById("customer-modal").style.display = "none";
+      }
+
+      function selectCustomer(customer) {
+        localStorage.setItem("idCliente", customer.id);
+
+        try {
+          selectedCustomer = customer;
+
+          const labelInterno = document.getElementById(
+            "selected-customer-name",
+          );
+          const labelHeader = document.getElementById("header-customer-name");
+
+          if (labelInterno) labelInterno.innerText = customer.nome;
+          if (labelHeader) labelHeader.innerText = customer.nome;
+
+          closeCustomerModal();
+        } catch (error) {
+          console.error("Erro ao selecionar cliente:", error);
         }
       }
 
@@ -818,14 +956,43 @@
       }
 
       // Adiciona item ao carrinho
+
       function addToCart(id, name, price, type) {
-        const existingItem = cart.find((item) => item.id === id);
+        const idCliente = localStorage.getItem("idCliente");
+
+        if (!idCliente) {
+          alert("Selecione um cliente antes de adicionar ao carrinho!");
+          return;
+        }
+
+        // Atualiza o carrinho local
+        const existingItem = cart.find((i) => i.id === id);
         if (existingItem) {
           existingItem.qty += 1;
         } else {
           cart.push({ id, name, price, type, qty: 1 });
         }
+
+        // Atualiza a UI local
         updateCartUI();
+
+        // Monta o payload correto pro backend
+        const payload = {
+          idCliente: idCliente,
+          itens: [
+            {
+              produtoId: type === "product" ? id : null,
+              servicoId: type === "service" ? id : null,
+              quantidade: 1,
+            },
+          ],
+        };
+
+        fetch("http://localhost:8080/carrinho", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload),
+        }).catch((error) => console.error("Erro:", error));
       }
 
       // Atualiza quantidade no carrinho
@@ -853,6 +1020,50 @@
         }
       }
 
+      function carregarClientes() {
+        fetch("http://localhost:8080/clientes/listar")
+          .then((response) => {
+            if (!response.ok) throw new Error("Erro ao buscar clientes");
+            return response.json();
+          })
+          .then((data) => {
+            clients = data;
+            renderCustomerList(clients);
+          })
+          .catch((error) => console.error("Erro:", error));
+      }
+
+      function renderCustomerList(list) {
+        const container = document.getElementById("customer-list-container");
+        container.innerHTML = "";
+
+        if (list.length === 0) {
+          container.innerHTML =
+            "<p style='text-align:center; color:gray;'>Nenhum cliente encontrado.</p>";
+          return;
+        }
+
+        list.forEach((c) => {
+          const div = document.createElement("div");
+          div.className = "customer-list-item";
+          div.innerHTML = `
+            <div class="avatar" style="margin-right: 15px;"><i data-lucide="user"></i></div>
+            <div style="flex:1">
+                <strong style="display:block">${c.nome}</strong>
+                 <small style="color: var(--text-secondary)">id#: ${c.id || "Não informado"}</small>
+                 <small style="color: var(--text-secondary)">CPF: ${c.cpf || "Não informado"}</small>
+            </div>
+            <i data-lucide="chevron-right" style="color: var(--primary)"></i>
+          `;
+          div.onclick = () => selectCustomer(c);
+          container.appendChild(div);
+        });
+
+        localStorage.setItem("idCliente", customer.id);
+
+        lucide.createIcons();
+      }
+
       // Finaliza venda
       function finishSale() {
         if (cart.length === 0) {
@@ -868,59 +1079,58 @@
       // Atualiza a interface do carrinho
       function updateCartUI() {
         const container = document.getElementById("cart-items");
-        const subtotalEl = document.getElementById("subtotal");
-        const discountValueEl = document.getElementById("discount-value");
-        const totalEl = document.getElementById("total-final");
-        const discountPercent =
-          parseFloat(document.getElementById("discount-percent").value) || 0;
+        container.innerHTML = "";
 
         if (cart.length === 0) {
           container.innerHTML = `
-        <div style="text-align: center; color: var(--text-secondary); margin-top: 40px;">
-          <i data-lucide="package-open" style="width: 48px; height: 48px; opacity: 0.3; margin-bottom: 16px; margin-left: auto; margin-right: auto; display: block;"></i>
-          <p style="font-weight: 600;">Carrinho vazio</p>
-        </div>
-      `;
+      <div style="text-align:center; color: var(--text-secondary); margin-top:40px;">
+        <i data-lucide="package-open" style="width:48px;height:48px;opacity:0.3;display:block;margin:0 auto;"></i>
+        <p style="font-weight:600;">Carrinho vazio</p>
+      </div>
+    `;
+          document.getElementById("subtotal").innerText = "R$ 0,00";
+          document.getElementById("discount-value").innerText = "- R$ 0,00";
+          document.getElementById("total-final").innerText = "R$ 0,00";
           lucide.createIcons();
-          subtotalEl.innerText = "R$ 0,00";
-          discountValueEl.innerText = "- R$ 0,00";
-          totalEl.innerText = "R$ 0,00";
           return;
         }
 
-        let html = "";
         let subtotal = 0;
 
         cart.forEach((item) => {
-          const subItem = item.price * item.qty;
-          subtotal += subItem;
+          subtotal += item.price * item.qty;
 
-          html += `
-        <div class="cart-item">
-          <div class="cart-item-info">
-            <h4>${item.name}</h4>
-            <span>R$ ${item.price.toFixed(2).replace(".", ",")}</span>
-          </div>
-          <div class="cart-item-qty">
-            <button class="qty-btn" onclick="updateQty(${item.id}, -1)"><i data-lucide="minus-circle" style="width: 16px;"></i></button>
-            <span class="qty-val">${item.qty}</span>
-            <button class="qty-btn" onclick="updateQty(${item.id}, 1)"><i data-lucide="plus-circle" style="width: 16px;"></i></button>
-          </div>
-          <div class="cart-item-price">
-            R$ ${subItem.toFixed(2).replace(".", ",")}
-          </div>
-          <i data-lucide="trash-2" class="btn-remove" style="width: 16px; margin-left: 8px;" onclick="removeItem(${item.id})"></i>
-        </div>
-      `;
+          const div = document.createElement("div");
+          div.className = "cart-item";
+          div.innerHTML = `
+      <div class="cart-item-info">
+        <h4>${item.name}</h4>
+        <span>${item.type}</span>
+      </div>
+      <div class="cart-item-qty">
+        <button class="qty-btn" onclick="updateQty(${item.id}, -1)">-</button>
+        <span class="qty-val">${item.qty}</span>
+        <button class="qty-btn" onclick="updateQty(${item.id}, 1)">+</button>
+      </div>
+      <div class="cart-item-price">R$ ${(item.price * item.qty).toFixed(2).replace(".", ",")}</div>
+      <div class="btn-remove" onclick="removeItem(${item.id})">
+        <i data-lucide="trash-2"></i>
+      </div>
+    `;
+          container.appendChild(div);
         });
 
+        const discountPercent =
+          parseFloat(document.getElementById("discount-percent").value) || 0;
         const discountValue = subtotal * (discountPercent / 100);
-        const totalFinal = subtotal - discountValue;
+        const total = subtotal - discountValue;
 
-        container.innerHTML = html;
-        subtotalEl.innerText = `R$ ${subtotal.toFixed(2).replace(".", ",")}`;
-        discountValueEl.innerText = `- R$ ${discountValue.toFixed(2).replace(".", ",")}`;
-        totalEl.innerText = `R$ ${totalFinal.toFixed(2).replace(".", ",")}`;
+        document.getElementById("subtotal").innerText =
+          `R$ ${subtotal.toFixed(2).replace(".", ",")}`;
+        document.getElementById("discount-value").innerText =
+          `- R$ ${discountValue.toFixed(2).replace(".", ",")}`;
+        document.getElementById("total-final").innerText =
+          `R$ ${total.toFixed(2).replace(".", ",")}`;
 
         lucide.createIcons();
       }
@@ -936,6 +1146,7 @@
       });
 
       // Carrega itens no início
+      carregarClientes();
       carregarItens();
     </script>
   </body>
