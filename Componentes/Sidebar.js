@@ -45,9 +45,6 @@ const sidebarContent = `
         <a href="../GastosPrevistos/GastosPrevistos.html" class="nav-item" data-page="gastos">
             <i data-lucide="trending-down"></i> Gastos Previstos
         </a>
-        <a href="../NotaFiscal/NotalFisca.html" class="nav-item" data-page="notas">
-            <i data-lucide="file-check"></i> Notas Fiscais
-        </a>
     </nav>
 `;
 

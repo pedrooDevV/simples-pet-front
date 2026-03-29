@@ -13,14 +13,13 @@ async function buscarClientePorId(id) {
 }
 
 async function carregarPets() {
-  try {
-    const res = await fetch("http://localhost:8080/animais/listar");
-    if (!res.ok) throw new Error("Erro ao carregar pets");
-    const data = await res.json();
-    pets = data;
-    await renderPets(pets);
-  } catch (err) {
-    console.error(err);
-    alert("Erro ao carregar pets");
-  }
+    try {
+        const response = await fetch("http://localhost:8080/animais/listar");
+        if (!response.ok) throw new Error("Erro ao listar animais");
+        
+        pets = await response.json();
+        renderPets(pets); // Chama a função que desenha a tabela
+    } catch (error) {
+        console.error("Erro ao carregar pets:", error);
+    }
 }

@@ -1,671 +1,942 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="pt-br">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>PetShop Pro - PDV / Carrinho</title>
     <script src="https://unpkg.com/lucide@latest"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
     <style>
-        :root {
-            --primary: #3A86FF;
-            --primary-hover: #265DF2;
-            --primary-bg-light: #EAF2FF;
-            --secondary: #2EC4B6;
-            --secondary-bg-light: #DFF7F4;
-            --accent: #FF9F1C;
-            --accent-bg-light: #FFE8CC;
-            --bg-general: #F7F9FC;
-            --white: #FFFFFF;
-            --text-main: #1E293B;
-            --text-secondary: #64748B;
-            --border: #E2E8F0;
-            --shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1);
-            --danger: #EF4444;
-        }
+      :root {
+        --primary: #3a86ff;
+        --primary-hover: #265df2;
+        --primary-bg-light: #eaf2ff;
+        --secondary: #2ec4b6;
+        --secondary-bg-light: #dff7f4;
+        --accent: #ff9f1c;
+        --accent-bg-light: #ffe8cc;
+        --bg-general: #f7f9fc;
+        --white: #ffffff;
+        --text-main: #1e293b;
+        --text-secondary: #64748b;
+        --border: #e2e8f0;
+        --shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1);
+        --danger: #ef4444;
+      }
 
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Inter', -apple-system, sans-serif;
-        }
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family:
+          "Inter",
+          -apple-system,
+          sans-serif;
+      }
 
-        body {
-            background-color: var(--bg-general);
-            color: var(--text-main);
-            display: flex;
-            min-height: 100vh;
-            overflow: hidden;
-        }
+      body {
+        background-color: var(--bg-general);
+        color: var(--text-main);
+        display: flex;
+        min-height: 100vh;
+        overflow: hidden;
+      }
 
-        /* Sidebar - Padrão do Sistema */
-        aside {
-            width: 280px;
-            background-color: var(--white);
-            border-right: 1px solid var(--border);
-            display: flex;
-            flex-direction: column;
-            position: fixed;
-            height: 100vh;
-            z-index: 100;
-            box-shadow: 4px 0 20px rgba(0,0,0,0.05);
-        }
+      /* Sidebar - Padrão do Sistema */
+      aside {
+        width: 280px;
+        background-color: var(--white);
+        border-right: 1px solid var(--border);
+        display: flex;
+        flex-direction: column;
+        position: fixed;
+        height: 100vh;
+        z-index: 100;
+        box-shadow: 4px 0 20px rgba(0, 0, 0, 0.05);
+      }
 
-        .logo-container {
-            padding: 32px 24px;
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            font-weight: 800;
-            font-size: 1.4rem;
-            color: var(--primary);
-        }
+      .logo-container {
+        padding: 32px 24px;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        font-weight: 800;
+        font-size: 1.4rem;
+        color: var(--primary);
+      }
 
-        .menu-label {
-            padding: 0 24px 8px;
-            font-size: 0.7rem;
-            text-transform: uppercase;
-            font-weight: 700;
-            color: var(--text-secondary);
-            letter-spacing: 1px;
-        }
+      .menu-label {
+        padding: 0 24px 8px;
+        font-size: 0.7rem;
+        text-transform: uppercase;
+        font-weight: 700;
+        color: var(--text-secondary);
+        letter-spacing: 1px;
+      }
 
-        nav {
-            flex: 1;
-            padding: 0 16px;
-            overflow-y: auto;
-        }
+      nav {
+        flex: 1;
+        padding: 0 16px;
+        overflow-y: auto;
+      }
 
-        .nav-item {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            padding: 14px 16px;
-            text-decoration: none;
-            color: var(--text-secondary);
-            border-radius: 12px;
-            margin-bottom: 6px;
-            transition: 0.2s;
-            font-weight: 600;
-            font-size: 0.9rem;
-        }
+      .nav-item {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 14px 16px;
+        text-decoration: none;
+        color: var(--text-secondary);
+        border-radius: 12px;
+        margin-bottom: 6px;
+        transition: 0.2s;
+        font-weight: 600;
+        font-size: 0.9rem;
+      }
 
-        .nav-item:hover {
-            background-color: var(--primary-bg-light);
-            color: var(--primary);
-        }
+      .nav-item:hover {
+        background-color: var(--primary-bg-light);
+        color: var(--primary);
+      }
 
-        .nav-item.active {
-            background-color: var(--primary);
-            color: var(--white);
-            box-shadow: 0 8px 15px rgba(58, 134, 255, 0.3);
-        }
+      .nav-item.active {
+        background-color: var(--primary);
+        color: var(--white);
+        box-shadow: 0 8px 15px rgba(58, 134, 255, 0.3);
+      }
 
-        /* Main Content PDV */
-        main {
-            margin-left: 280px;
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            height: 100vh;
-        }
+      /* Main Content PDV */
+      main {
+        margin-left: 280px;
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        height: 100vh;
+      }
 
-        header {
-            padding: 24px 40px;
-            background: var(--white);
-            border-bottom: 1px solid var(--border);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
+      header {
+        padding: 24px 40px;
+        background: var(--white);
+        border-bottom: 1px solid var(--border);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
 
-        .header-info h1 { font-size: 1.5rem; font-weight: 800; }
-        .header-info p { color: var(--text-secondary); font-size: 0.85rem; }
+      .header-info h1 {
+        font-size: 1.5rem;
+        font-weight: 800;
+      }
+      .header-info p {
+        color: var(--text-secondary);
+        font-size: 0.85rem;
+      }
 
-        /* PDV Layout Split */
-        .pdv-container {
-            display: flex;
-            flex: 1;
-            overflow: hidden;
-        }
+      /* PDV Layout Split */
+      .pdv-container {
+        display: flex;
+        flex: 1;
+        overflow: hidden;
+      }
 
-        /* Lado Esquerdo: Catálogo */
-        .catalog-section {
-            flex: 1;
-            padding: 24px 40px;
-            overflow-y: auto;
-            background: #F8FAFC;
-        }
+      /* Lado Esquerdo: Catálogo */
+      .catalog-section {
+        flex: 1;
+        padding: 24px 40px;
+        overflow-y: auto;
+        background: #f8fafc;
+      }
 
-        .search-bar {
-            position: relative;
-            margin-bottom: 24px;
-        }
+      .search-bar {
+        position: relative;
+        margin-bottom: 24px;
+      }
 
-        .search-bar i {
-            position: absolute;
-            left: 16px;
-            top: 50%;
-            transform: translateY(-50%);
-            color: var(--text-secondary);
-        }
+      .search-bar i {
+        position: absolute;
+        left: 16px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: var(--text-secondary);
+      }
 
-        .search-bar input {
-            width: 100%;
-            padding: 14px 14px 14px 48px;
-            border-radius: 14px;
-            border: 1px solid var(--border);
-            outline: none;
-            font-size: 1rem;
-            font-weight: 500;
-            transition: 0.2s;
-        }
+      .search-bar input {
+        width: 100%;
+        padding: 14px 14px 14px 48px;
+        border-radius: 14px;
+        border: 1px solid var(--border);
+        outline: none;
+        font-size: 1rem;
+        font-weight: 500;
+        transition: 0.2s;
+      }
 
-        .search-bar input:focus {
-            border-color: var(--primary);
-            box-shadow: 0 0 0 4px var(--primary-bg-light);
-        }
+      .search-bar input:focus {
+        border-color: var(--primary);
+        box-shadow: 0 0 0 4px var(--primary-bg-light);
+      }
 
-        .customer-select {
-            background: var(--white);
-            padding: 16px;
-            border-radius: 14px;
-            border: 1px solid var(--border);
-            margin-bottom: 24px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-        }
+      .customer-select {
+        background: var(--white);
+        padding: 16px;
+        border-radius: 14px;
+        border: 1px solid var(--border);
+        margin-bottom: 24px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+      }
 
-        .customer-info {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
+      .customer-info {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+      }
 
-        .customer-info .avatar {
-            width: 40px;
-            height: 40px;
-            background: var(--primary-bg-light);
-            color: var(--primary);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
+      .customer-info .avatar {
+        width: 40px;
+        height: 40px;
+        background: var(--primary-bg-light);
+        color: var(--primary);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
 
-        .catalog-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-            gap: 20px;
-        }
+      .catalog-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+        gap: 20px;
+      }
 
-        .item-card {
-            background: var(--white);
-            border: 1px solid var(--border);
-            border-radius: 16px;
-            padding: 16px;
-            transition: 0.2s;
-            cursor: pointer;
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-        }
+      .item-card {
+        background: var(--white);
+        border: 1px solid var(--border);
+        border-radius: 16px;
+        padding: 16px;
+        transition: 0.2s;
+        cursor: pointer;
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+      }
 
-        .item-card:hover {
-            transform: translateY(-4px);
-            box-shadow: var(--shadow);
-            border-color: var(--primary);
-        }
+      .item-card:hover {
+        transform: translateY(-4px);
+        box-shadow: var(--shadow);
+        border-color: var(--primary);
+      }
 
-        .item-tag {
-            font-size: 0.65rem;
-            text-transform: uppercase;
-            font-weight: 800;
-            padding: 4px 8px;
-            border-radius: 6px;
-            width: fit-content;
-        }
+      .item-tag {
+        font-size: 0.65rem;
+        text-transform: uppercase;
+        font-weight: 800;
+        padding: 4px 8px;
+        border-radius: 6px;
+        width: fit-content;
+      }
 
-        .tag-service { background: var(--secondary-bg-light); color: var(--secondary); }
-        .tag-product { background: var(--accent-bg-light); color: var(--accent); }
+      .tag-service {
+        background: var(--secondary-bg-light);
+        color: var(--secondary);
+      }
+      .tag-product {
+        background: var(--accent-bg-light);
+        color: var(--accent);
+      }
 
-        .item-name { font-weight: 700; font-size: 0.95rem; color: var(--text-main); min-height: 40px; }
-        .item-price { font-weight: 800; font-size: 1.1rem; color: var(--primary); }
+      .item-name {
+        font-weight: 700;
+        font-size: 0.95rem;
+        color: var(--text-main);
+        min-height: 40px;
+      }
+      .item-price {
+        font-weight: 800;
+        font-size: 1.1rem;
+        color: var(--primary);
+      }
 
-        .btn-add {
-            width: 100%;
-            padding: 10px;
-            border-radius: 10px;
-            border: none;
-            background: var(--primary-bg-light);
-            color: var(--primary);
-            font-weight: 700;
-            cursor: pointer;
-            transition: 0.2s;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-        }
+      .btn-add {
+        width: 100%;
+        padding: 10px;
+        border-radius: 10px;
+        border: none;
+        background: var(--primary-bg-light);
+        color: var(--primary);
+        font-weight: 700;
+        cursor: pointer;
+        transition: 0.2s;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+      }
 
-        .item-card:hover .btn-add {
-            background: var(--primary);
-            color: var(--white);
-        }
+      .item-card:hover .btn-add {
+        background: var(--primary);
+        color: var(--white);
+      }
 
-        /* Lado Direito: Carrinho */
+      /* Lado Direito: Carrinho */
+      .cart-section {
+        width: 450px;
+        background: var(--white);
+        border-left: 1px solid var(--border);
+        display: flex;
+        flex-direction: column;
+        box-shadow: -4px 0 20px rgba(0, 0, 0, 0.02);
+      }
+
+      .cart-header {
+        padding: 24px;
+        border-bottom: 1px solid var(--border);
+        display: flex;
+        align-items: center;
+        gap: 12px;
+      }
+
+      .cart-header h2 {
+        font-size: 1.2rem;
+        font-weight: 800;
+      }
+
+      .cart-items {
+        flex: 1;
+        overflow-y: auto;
+        padding: 20px;
+      }
+
+      .cart-item {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 12px 0;
+        border-bottom: 1px solid #f1f5f9;
+      }
+
+      .cart-item-info {
+        flex: 1;
+      }
+      .cart-item-info h4 {
+        font-size: 0.9rem;
+        font-weight: 700;
+        margin-bottom: 2px;
+      }
+      .cart-item-info span {
+        font-size: 0.8rem;
+        color: var(--text-secondary);
+        font-weight: 600;
+      }
+
+      .cart-item-qty {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        background: var(--bg-general);
+        padding: 4px 8px;
+        border-radius: 8px;
+      }
+
+      .qty-btn {
+        background: none;
+        border: none;
+        cursor: pointer;
+        color: var(--text-secondary);
+        display: flex;
+        align-items: center;
+      }
+
+      .qty-val {
+        font-weight: 700;
+        font-size: 0.9rem;
+        min-width: 20px;
+        text-align: center;
+      }
+
+      .cart-item-price {
+        font-weight: 700;
+        font-size: 0.9rem;
+        text-align: right;
+        min-width: 80px;
+      }
+
+      .btn-remove {
+        color: #cbd5e1;
+        cursor: pointer;
+        transition: 0.2s;
+      }
+      .btn-remove:hover {
+        color: var(--danger);
+      }
+
+      /* Checkout Footer */
+      .cart-footer {
+        padding: 24px;
+        border-top: 1px solid var(--border);
+        background: #fafbfc;
+      }
+
+      .summary-row {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 12px;
+        font-weight: 600;
+        color: var(--text-secondary);
+        font-size: 0.9rem;
+        align-items: center;
+      }
+
+      .discount-input-wrapper {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        background: var(--white);
+        border: 1px solid var(--border);
+        padding: 4px 10px;
+        border-radius: 8px;
+        width: 100px;
+      }
+
+      .discount-input-wrapper input {
+        border: none;
+        outline: none;
+        width: 100%;
+        text-align: right;
+        font-weight: 700;
+        color: var(--secondary);
+        font-size: 0.9rem;
+      }
+
+      .total-row {
+        display: flex;
+        justify-content: space-between;
+        margin: 16px 0 24px;
+        padding-top: 16px;
+        border-top: 2px dashed var(--border);
+      }
+
+      .total-row span {
+        font-weight: 800;
+        font-size: 1.2rem;
+      }
+      .total-row .total-value {
+        font-size: 1.8rem;
+        color: var(--primary);
+      }
+
+      .action-btns {
+        display: flex;
+        gap: 12px;
+      }
+
+      .btn-cancel {
+        padding: 14px;
+        border-radius: 12px;
+        border: 1px solid var(--border);
+        background: var(--white);
+        color: var(--text-secondary);
+        font-weight: 700;
+        cursor: pointer;
+        flex: 1;
+      }
+
+      .btn-finish {
+        padding: 14px;
+        border-radius: 12px;
+        border: none;
+        background: var(--secondary);
+        color: white;
+        font-weight: 800;
+        cursor: pointer;
+        flex: 2;
+        font-size: 1rem;
+        transition: 0.2s;
+        box-shadow: 0 4px 12px rgba(46, 196, 182, 0.3);
+      }
+
+      .btn-finish:hover {
+        background: #25a599;
+        transform: translateY(-2px);
+      }
+
+      ::-webkit-scrollbar {
+        width: 6px;
+      }
+      ::-webkit-scrollbar-track {
+        background: transparent;
+      }
+      ::-webkit-scrollbar-thumb {
+        background: #cbd5e1;
+        border-radius: 10px;
+      }
+
+      .filter-container {
+        display: flex;
+        gap: 12px;
+        margin-bottom: 20px;
+      }
+
+      .filter-btn {
+        padding: 8px 20px;
+        border-radius: 10px;
+        border: 1px solid var(--border);
+        background: var(--white);
+        color: var(--text-secondary);
+        font-weight: 700;
+        font-size: 0.85rem;
+        cursor: pointer;
+        transition: 0.2s;
+      }
+
+      .filter-btn:hover {
+        background: var(--primary-bg-light);
+        color: var(--primary);
+      }
+
+      .filter-btn.active {
+        background: var(--primary);
+        color: var(--white);
+        border-color: var(--primary);
+        box-shadow: 0 4px 10px rgba(58, 134, 255, 0.2);
+      }
+
+      @media (max-width: 1200px) {
         .cart-section {
-            width: 450px;
-            background: var(--white);
-            border-left: 1px solid var(--border);
-            display: flex;
-            flex-direction: column;
-            box-shadow: -4px 0 20px rgba(0,0,0,0.02);
+          width: 380px;
         }
-
-        .cart-header {
-            padding: 24px;
-            border-bottom: 1px solid var(--border);
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-
-        .cart-header h2 { font-size: 1.2rem; font-weight: 800; }
-
-        .cart-items {
-            flex: 1;
-            overflow-y: auto;
-            padding: 20px;
-        }
-
-        .cart-item {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            padding: 12px 0;
-            border-bottom: 1px solid #F1F5F9;
-        }
-
-        .cart-item-info { flex: 1; }
-        .cart-item-info h4 { font-size: 0.9rem; font-weight: 700; margin-bottom: 2px; }
-        .cart-item-info span { font-size: 0.8rem; color: var(--text-secondary); font-weight: 600; }
-
-        .cart-item-qty {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            background: var(--bg-general);
-            padding: 4px 8px;
-            border-radius: 8px;
-        }
-
-        .qty-btn {
-            background: none;
-            border: none;
-            cursor: pointer;
-            color: var(--text-secondary);
-            display: flex;
-            align-items: center;
-        }
-
-        .qty-val { font-weight: 700; font-size: 0.9rem; min-width: 20px; text-align: center; }
-
-        .cart-item-price { font-weight: 700; font-size: 0.9rem; text-align: right; min-width: 80px; }
-
-        .btn-remove {
-            color: #CBD5E1;
-            cursor: pointer;
-            transition: 0.2s;
-        }
-        .btn-remove:hover { color: var(--danger); }
-
-        /* Checkout Footer */
-        .cart-footer {
-            padding: 24px;
-            border-top: 1px solid var(--border);
-            background: #FAFBFC;
-        }
-
-        .summary-row {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 12px;
-            font-weight: 600;
-            color: var(--text-secondary);
-            font-size: 0.9rem;
-            align-items: center;
-        }
-
-        .discount-input-wrapper {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            background: var(--white);
-            border: 1px solid var(--border);
-            padding: 4px 10px;
-            border-radius: 8px;
-            width: 100px;
-        }
-
-        .discount-input-wrapper input {
-            border: none;
-            outline: none;
-            width: 100%;
-            text-align: right;
-            font-weight: 700;
-            color: var(--secondary);
-            font-size: 0.9rem;
-        }
-
-        .total-row {
-            display: flex;
-            justify-content: space-between;
-            margin: 16px 0 24px;
-            padding-top: 16px;
-            border-top: 2px dashed var(--border);
-        }
-
-        .total-row span { font-weight: 800; font-size: 1.2rem; }
-        .total-row .total-value { font-size: 1.8rem; color: var(--primary); }
-
-        .action-btns {
-            display: flex;
-            gap: 12px;
-        }
-
-        .btn-cancel {
-            padding: 14px;
-            border-radius: 12px;
-            border: 1px solid var(--border);
-            background: var(--white);
-            color: var(--text-secondary);
-            font-weight: 700;
-            cursor: pointer;
-            flex: 1;
-        }
-
-        .btn-finish {
-            padding: 14px;
-            border-radius: 12px;
-            border: none;
-            background: var(--secondary);
-            color: white;
-            font-weight: 800;
-            cursor: pointer;
-            flex: 2;
-            font-size: 1rem;
-            transition: 0.2s;
-            box-shadow: 0 4px 12px rgba(46, 196, 182, 0.3);
-        }
-
-        .btn-finish:hover { background: #25a599; transform: translateY(-2px); }
-
-        ::-webkit-scrollbar { width: 6px; }
-        ::-webkit-scrollbar-track { background: transparent; }
-        ::-webkit-scrollbar-thumb { background: #CBD5E1; border-radius: 10px; }
-
-        @media (max-width: 1200px) {
-            .cart-section { width: 380px; }
-        }
+      }
     </style>
-</head>
-<body>
-
+  </head>
+  <body>
     <aside>
-        <div class="logo-container">
-            <i data-lucide="dog" style="width: 32px; height: 32px;"></i>
-            <span>PetShop Pro</span>
-        </div>
-        
-        <p class="menu-label">Painel</p>
-        <nav>
-            <a href="../TelaInicial/TelaInicia.html" class="nav-item">
-                <i data-lucide="layout-dashboard"></i> Dashboard
-            </a>
-            <a href="../Agenda/Agenda.html" class="nav-item">
-                <i data-lucide="calendar"></i> Agenda Teams
-            </a>
-            
-            <p class="menu-label" style="margin-top: 24px;">Vendas e Serviços</p>
-            <a href="../Carrinho/Carrinho.html" class="nav-item active"><i data-lucide="shopping-cart"></i> Carrinho / PDV</a>
-            <a href="../CatalogoServico/CatalogoServico.html" class="nav-item"><i data-lucide="scissors"></i> Catálogo de Serviços</a>             
-            
-            <p class="menu-label" style="margin-top: 24px;">Cadastros</p>
-            <a href="../Clientes/Cliente.html" class="nav-item"><i data-lucide="users"></i> Clientes</a>
-            <a href="../Pet/Pet.html" class="nav-item"><i data-lucide="paw-print"></i> Animais</a>
-            <a href="../Produtos/Produto.html" class="nav-item"><i data-lucide="package"></i> Itens / Produtos</a>           
-            
-            <p class="menu-label" style="margin-top: 24px;">Gestão</p>
-            <a href="../Estoque/Estoque.html" class="nav-item"><i data-lucide="boxes"></i> Controle de Estoque</a>
-            <a href="../GastosPrevistos/GastosPrevistos.html" class="nav-item"><i data-lucide="trending-down"></i> Gastos Previstos</a>
-            <a href="../NotaFiscal/NotalFisca.html" class="nav-item"><i data-lucide="file-check"></i> Notas Fiscais</a>
-        </nav>
+      <div class="logo-container">
+        <i data-lucide="dog" style="width: 32px; height: 32px"></i>
+        <span>PetShop Pro</span>
+      </div>
+
+      <p class="menu-label">Painel</p>
+      <nav>
+        <a href="../TelaInicial/TelaInicia.html" class="nav-item">
+          <i data-lucide="layout-dashboard"></i> Dashboard
+        </a>
+        <a href="../Agenda/Agenda.html" class="nav-item">
+          <i data-lucide="calendar"></i> Agenda Teams
+        </a>
+
+        <p class="menu-label" style="margin-top: 24px">Vendas e Serviços</p>
+        <a href="../Carrinho/Carrinho.html" class="nav-item active"
+          ><i data-lucide="shopping-cart"></i> Carrinho / PDV</a
+        >
+        <a href="../CatalogoServico/CatalogoServico.html" class="nav-item"
+          ><i data-lucide="scissors"></i> Catálogo de Serviços</a
+        >
+
+        <p class="menu-label" style="margin-top: 24px">Cadastros</p>
+        <a href="../Clientes/Cliente.html" class="nav-item"
+          ><i data-lucide="users"></i> Clientes</a
+        >
+        <a href="../Pet/Pet.html" class="nav-item"
+          ><i data-lucide="paw-print"></i> Animais</a
+        >
+        <a href="../Produtos/Produto.html" class="nav-item"
+          ><i data-lucide="package"></i> Itens / Produtos</a
+        >
+
+        <p class="menu-label" style="margin-top: 24px">Gestão</p>
+        <a href="../Estoque/Estoque.html" class="nav-item"
+          ><i data-lucide="boxes"></i> Controle de Estoque</a
+        >
+        <a href="../GastosPrevistos/GastosPrevistos.html" class="nav-item"
+          ><i data-lucide="trending-down"></i> Gastos Previstos</a
+        >
+      </nav>
     </aside>
 
     <main>
-        <header>
-            <div class="header-info">
-                <h1>Carrinho / PDV</h1>
-                <p>Finalize vendas e serviços com rapidez</p>
-            </div>
-            <div class="customer-info" style="cursor: pointer; background: var(--bg-general); padding: 8px 16px; border-radius: 12px; border: 1px solid var(--border);">
-                <i data-lucide="user" style="color: var(--primary); width: 20px;"></i>
-                <span style="font-weight: 700; font-size: 0.9rem;">Caixa Livre</span>
-            </div>
-        </header>
-
-        <div class="pdv-container">
-            <section class="catalog-section">
-                
-                <div class="customer-select">
-                    <div class="customer-info">
-                        <div class="avatar"><i data-lucide="user"></i></div>
-                        <div>
-                            <span style="display: block; font-size: 0.75rem; color: var(--text-secondary); font-weight: 600;">Cliente Selecionado</span>
-                            <strong style="font-size: 1rem;">Mariana Silva</strong>
-                        </div>
-                    </div>
-                    <button style="background: none; border: 1px solid var(--border); padding: 8px 16px; border-radius: 8px; font-weight: 700; cursor: pointer; color: var(--primary); font-size: 0.8rem;">
-                        Alterar Cliente
-                    </button>
-                </div>
-
-                <div class="search-bar">
-                    <i data-lucide="search"></i>
-                    <input type="text" placeholder="Buscar produto ou serviço (Ex: Banho, Ração, Coleira...)">
-                </div>
-
-                <div class="catalog-grid" id="catalog-grid">
-                    <div class="item-card" onclick="addToCart('Banho Completo (P)', 45.00, 'service')">
-                        <span class="item-tag tag-service">Serviço</span>
-                        <div class="item-name">Banho Completo (P)</div>
-                        <div class="item-price">R$ 45,00</div>
-                        <button class="btn-add"><i data-lucide="plus"></i> Adicionar</button>
-                    </div>
-                    <div class="item-card" onclick="addToCart('Tosa Higiênica', 35.00, 'service')">
-                        <span class="item-tag tag-service">Serviço</span>
-                        <div class="item-name">Tosa Higiênica</div>
-                        <div class="item-price">R$ 35,00</div>
-                        <button class="btn-add"><i data-lucide="plus"></i> Adicionar</button>
-                    </div>
-                    <div class="item-card" onclick="addToCart('Ração Premium 1kg', 89.90, 'product')">
-                        <span class="item-tag tag-product">Produto</span>
-                        <div class="item-name">Ração Golden Formula Premium 1kg</div>
-                        <div class="item-price">R$ 89,90</div>
-                        <button class="btn-add"><i data-lucide="plus"></i> Adicionar</button>
-                    </div>
-                    <div class="item-card" onclick="addToCart('Coleira Blue Paw', 24.50, 'product')">
-                        <span class="item-tag tag-product">Produto</span>
-                        <div class="item-name">Coleira Blue Paw G</div>
-                        <div class="item-price">R$ 24,50</div>
-                        <button class="btn-add"><i data-lucide="plus"></i> Adicionar</button>
-                    </div>
-                    <div class="item-card" onclick="addToCart('Hidratação de Pelos', 25.00, 'service')">
-                        <span class="item-tag tag-service">Serviço</span>
-                        <div class="item-name">Hidratação de Pelos Profissional</div>
-                        <div class="item-price">R$ 25,00</div>
-                        <button class="btn-add"><i data-lucide="plus"></i> Adicionar</button>
-                    </div>
-                    <div class="item-card" onclick="addToCart('Brinquedo Mordedor', 18.00, 'product')">
-                        <span class="item-tag tag-product">Produto</span>
-                        <div class="item-name">Brinquedo Mordedor Osso Borracha</div>
-                        <div class="item-price">R$ 18,00</div>
-                        <button class="btn-add"><i data-lucide="plus"></i> Adicionar</button>
-                    </div>
-                </div>
-            </section>
-
-            <section class="cart-section">
-                <div class="cart-header">
-                    <i data-lucide="shopping-cart" style="color: var(--primary);"></i>
-                    <h2>Itens no Carrinho</h2>
-                </div>
-
-                <div class="cart-items" id="cart-items">
-                    <div style="text-align: center; color: var(--text-secondary); margin-top: 40px;">
-                        <i data-lucide="package-open" style="width: 48px; height: 48px; opacity: 0.3; margin-bottom: 16px; margin-left: auto; margin-right: auto; display: block;"></i>
-                        <p style="font-weight: 600;">Carrinho vazio</p>
-                    </div>
-                </div>
-
-                <div class="cart-footer">
-                    <div class="summary-row">
-                        <span>Subtotal</span>
-                        <span id="subtotal">R$ 0,00</span>
-                    </div>
-                    <div class="summary-row">
-                        <span>Desconto (%)</span>
-                        <div class="discount-input-wrapper">
-                            <input type="number" id="discount-percent" value="0" min="0" max="100" oninput="updateCartUI()">
-                            <span style="color: var(--secondary); font-weight: 700;">%</span>
-                        </div>
-                    </div>
-                    <div class="summary-row">
-                        <span>Valor Desconto</span>
-                        <span style="color: var(--secondary);" id="discount-value">- R$ 0,00</span>
-                    </div>
-                    <div class="total-row">
-                        <span>Total Final</span>
-                        <span class="total-value" id="total-final">R$ 0,00</span>
-                    </div>
-                    <div class="action-btns">
-                        <button class="btn-cancel" onclick="clearCart()">Cancelar</button>
-                        <button class="btn-finish" onclick="finishSale()">Finalizar Venda</button>
-                    </div>
-                </div>
-            </section>
+      <header>
+        <div class="header-info">
+          <h1>Carrinho / PDV</h1>
+          <p>Finalize vendas e serviços com rapidez</p>
         </div>
+        <div
+          class="customer-info"
+          style="
+            cursor: pointer;
+            background: var(--bg-general);
+            padding: 8px 16px;
+            border-radius: 12px;
+            border: 1px solid var(--border);
+          "
+        >
+          <i data-lucide="user" style="color: var(--primary); width: 20px"></i>
+          <span style="font-weight: 700; font-size: 0.9rem">Caixa Livre</span>
+        </div>
+      </header>
+
+      <div class="pdv-container">
+        <section class="catalog-section">
+          <div class="customer-select">
+            <div class="customer-info">
+              <div class="avatar"><i data-lucide="user"></i></div>
+              <div>
+                <span
+                  style="
+                    display: block;
+                    font-size: 0.75rem;
+                    color: var(--text-secondary);
+                    font-weight: 600;
+                  "
+                  >Cliente Selecionado</span
+                >
+                <strong style="font-size: 1rem">Mariana Silva</strong>
+              </div>
+            </div>
+            <button
+              style="
+                background: none;
+                border: 1px solid var(--border);
+                padding: 8px 16px;
+                border-radius: 8px;
+                font-weight: 700;
+                cursor: pointer;
+                color: var(--primary);
+                font-size: 0.8rem;
+              "
+            >
+              Alterar Cliente
+            </button>
+          </div>
+
+          <div class="filter-container">
+            <button class="filter-btn active" data-filter="all">Tudo</button>
+            <button class="filter-btn" data-filter="product">Produtos</button>
+            <button class="filter-btn" data-filter="service">Serviços</button>
+          </div>
+
+          <div class="search-bar">
+            <i data-lucide="search"></i>
+            <input
+              type="text"
+              placeholder="Buscar produto ou serviço (Ex: Banho, Ração, Coleira...)"
+            />
+          </div>
+
+          <div class="catalog-grid" id="catalog-grid"></div>
+        </section>
+
+        <section class="cart-section">
+          <div class="cart-header">
+            <i data-lucide="shopping-cart" style="color: var(--primary)"></i>
+            <h2>Itens no Carrinho</h2>
+          </div>
+
+          <div class="cart-items" id="cart-items">
+            <div
+              style="
+                text-align: center;
+                color: var(--text-secondary);
+                margin-top: 40px;
+              "
+            >
+              <i
+                data-lucide="package-open"
+                style="
+                  width: 48px;
+                  height: 48px;
+                  opacity: 0.3;
+                  margin-bottom: 16px;
+                  margin-left: auto;
+                  margin-right: auto;
+                  display: block;
+                "
+              ></i>
+              <p style="font-weight: 600">Carrinho vazio</p>
+            </div>
+          </div>
+
+          <div class="cart-footer">
+            <div class="summary-row">
+              <span>Subtotal</span>
+              <span id="subtotal">R$ 0,00</span>
+            </div>
+            <div class="summary-row">
+              <span>Desconto (%)</span>
+              <div class="discount-input-wrapper">
+                <input
+                  type="number"
+                  id="discount-percent"
+                  value="0"
+                  min="0"
+                  max="100"
+                  oninput="updateCartUI()"
+                />
+                <span style="color: var(--secondary); font-weight: 700">%</span>
+              </div>
+            </div>
+            <div class="summary-row">
+              <span>Valor Desconto</span>
+              <span style="color: var(--secondary)" id="discount-value"
+                >- R$ 0,00</span
+              >
+            </div>
+            <div class="total-row">
+              <span>Total Final</span>
+              <span class="total-value" id="total-final">R$ 0,00</span>
+            </div>
+            <div class="action-btns">
+              <button class="btn-cancel" onclick="clearCart()">Cancelar</button>
+              <button class="btn-finish" onclick="finishSale()">
+                Finalizar Venda
+              </button>
+            </div>
+          </div>
+        </section>
+      </div>
     </main>
 
     <script>
-        lucide.createIcons();
+      lucide.createIcons();
 
-        let cart = [];
+      let items = []; // Vai armazenar produtos e serviços juntos
+      let cart = [];
 
-        function addToCart(name, price, type) {
-            const existingItem = cart.find(item => item.name === name);
-            if (existingItem) {
-                existingItem.qty += 1;
+      // Função para carregar serviços do backend
+      async function fetchProdutos() {
+        const res = await fetch("http://localhost:8080/produto/ativos-quantidade");
+        if (!res.ok) throw new Error("Erro ao buscar produtos");
+        const produtos = await res.json();
+
+        return produtos.map((p) => ({
+          id: p.id,
+          nome: p.nomeProduto,
+          preco: p.precoProduto,
+          type: "product",
+        }));
+      }
+
+      async function fetchServicos() {
+        const res = await fetch("http://localhost:8080/servico/listar");
+        if (!res.ok) throw new Error("Erro ao buscar serviços");
+        const servicos = await res.json();
+
+        return servicos.map((s) => ({
+          id: s.id,
+          nome: s.nomeServico,
+          preco: s.precoServico,
+          type: "service",
+        }));
+      }
+
+      async function carregarItens() {
+        try {
+          const [servicos, produtos] = await Promise.all([
+            fetchServicos(),
+            fetchProdutos(),
+          ]);
+
+          items = [...servicos, ...produtos];
+          renderCard(items);
+        } catch (err) {
+          console.error(err);
+          alert("Erro ao carregar itens");
+        }
+      }
+
+      const filterButtons = document.querySelectorAll(".filter-btn");
+
+      filterButtons.forEach((btn) => {
+        btn.addEventListener("click", async () => {
+          // troca botão ativo
+          filterButtons.forEach((b) => b.classList.remove("active"));
+          btn.classList.add("active");
+
+          const filter = btn.dataset.filter;
+
+          try {
+            if (filter === "product") {
+              const produtos = await fetchProdutos();
+              items = produtos;
+              renderCard(produtos);
+            } else if (filter === "service") {
+              const servicos = await fetchServicos();
+              items = servicos;
+              renderCard(servicos);
             } else {
-                cart.push({ name, price, type, qty: 1 });
+              // ALL
+              await carregarItens();
             }
-            updateCartUI();
+          } catch (err) {
+            console.error(err);
+            alert("Erro ao aplicar filtro");
+          }
+        });
+      });
+
+      // Renderiza os cards no catálogo
+      function renderCard(lista) {
+        const catalog = document.getElementById("catalog-grid");
+        catalog.innerHTML = "";
+
+        if (!lista || lista.length === 0) {
+          catalog.innerHTML = `
+        <p style="text-align:center; color: var(--text-secondary); margin-top: 40px;">
+          Nenhum item encontrado
+        </p>`;
+          return;
         }
 
-        function updateQty(name, delta) {
-            const item = cart.find(item => item.name === name);
-            if (item) {
-                item.qty += delta;
-                if (item.qty <= 0) {
-                    cart = cart.filter(i => i.name !== name);
-                }
-            }
-            updateCartUI();
+        lista.forEach((item) => {
+          const card = document.createElement("div");
+          card.classList.add("item-card");
+
+          const tagClass =
+            item.type === "product" ? "tag-product" : "tag-service";
+          const tagLabel = item.type === "product" ? "Produto" : "Serviço";
+
+          card.innerHTML = `
+        <span class="item-tag ${tagClass}">${tagLabel}</span>
+        <div class="item-name">${item.nome}</div>
+        <div class="item-price">R$ ${item.preco.toFixed(2).replace(".", ",")}</div>
+        <button class="btn-add">
+          <i data-lucide="plus"></i> Adicionar
+        </button>
+      `;
+
+          card.querySelector(".btn-add").addEventListener("click", () => {
+            addToCart(item.id, item.nome, item.preco, item.type);
+          });
+
+          catalog.appendChild(card);
+        });
+
+        lucide.createIcons();
+      }
+
+      // Adiciona item ao carrinho
+      function addToCart(id, name, price, type) {
+        const existingItem = cart.find((item) => item.id === id);
+        if (existingItem) {
+          existingItem.qty += 1;
+        } else {
+          cart.push({ id, name, price, type, qty: 1 });
+        }
+        updateCartUI();
+      }
+
+      // Atualiza quantidade no carrinho
+      function updateQty(id, delta) {
+        const item = cart.find((i) => i.id === id);
+        if (item) {
+          item.qty += delta;
+          if (item.qty <= 0) cart = cart.filter((i) => i.id !== id);
+        }
+        updateCartUI();
+      }
+
+      // Remove item do carrinho
+      function removeItem(id) {
+        cart = cart.filter((item) => item.id !== id);
+        updateCartUI();
+      }
+
+      // Limpa o carrinho
+      function clearCart() {
+        if (cart.length > 0 && confirm("Deseja realmente limpar o carrinho?")) {
+          cart = [];
+          document.getElementById("discount-percent").value = 0;
+          updateCartUI();
+        }
+      }
+
+      // Finaliza venda
+      function finishSale() {
+        if (cart.length === 0) {
+          alert("Adicione itens ao carrinho primeiro!");
+          return;
+        }
+        alert("Venda finalizada com sucesso! Gerando recibo...");
+        cart = [];
+        document.getElementById("discount-percent").value = 0;
+        updateCartUI();
+      }
+
+      // Atualiza a interface do carrinho
+      function updateCartUI() {
+        const container = document.getElementById("cart-items");
+        const subtotalEl = document.getElementById("subtotal");
+        const discountValueEl = document.getElementById("discount-value");
+        const totalEl = document.getElementById("total-final");
+        const discountPercent =
+          parseFloat(document.getElementById("discount-percent").value) || 0;
+
+        if (cart.length === 0) {
+          container.innerHTML = `
+        <div style="text-align: center; color: var(--text-secondary); margin-top: 40px;">
+          <i data-lucide="package-open" style="width: 48px; height: 48px; opacity: 0.3; margin-bottom: 16px; margin-left: auto; margin-right: auto; display: block;"></i>
+          <p style="font-weight: 600;">Carrinho vazio</p>
+        </div>
+      `;
+          lucide.createIcons();
+          subtotalEl.innerText = "R$ 0,00";
+          discountValueEl.innerText = "- R$ 0,00";
+          totalEl.innerText = "R$ 0,00";
+          return;
         }
 
-        function removeItem(name) {
-            cart = cart.filter(item => item.name !== name);
-            updateCartUI();
-        }
+        let html = "";
+        let subtotal = 0;
 
-        function clearCart() {
-            if(cart.length > 0 && confirm("Deseja realmente limpar o carrinho?")) {
-                cart = [];
-                document.getElementById('discount-percent').value = 0;
-                updateCartUI();
-            }
-        }
+        cart.forEach((item) => {
+          const subItem = item.price * item.qty;
+          subtotal += subItem;
 
-        function finishSale() {
-            if(cart.length === 0) {
-                alert("Adicione itens ao carrinho primeiro!");
-                return;
-            }
-            alert("Venda finalizada com sucesso! Gerando recibo...");
-            cart = [];
-            document.getElementById('discount-percent').value = 0;
-            updateCartUI();
-        }
+          html += `
+        <div class="cart-item">
+          <div class="cart-item-info">
+            <h4>${item.name}</h4>
+            <span>R$ ${item.price.toFixed(2).replace(".", ",")}</span>
+          </div>
+          <div class="cart-item-qty">
+            <button class="qty-btn" onclick="updateQty(${item.id}, -1)"><i data-lucide="minus-circle" style="width: 16px;"></i></button>
+            <span class="qty-val">${item.qty}</span>
+            <button class="qty-btn" onclick="updateQty(${item.id}, 1)"><i data-lucide="plus-circle" style="width: 16px;"></i></button>
+          </div>
+          <div class="cart-item-price">
+            R$ ${subItem.toFixed(2).replace(".", ",")}
+          </div>
+          <i data-lucide="trash-2" class="btn-remove" style="width: 16px; margin-left: 8px;" onclick="removeItem(${item.id})"></i>
+        </div>
+      `;
+        });
 
-        function updateCartUI() {
-            const container = document.getElementById('cart-items');
-            const subtotalEl = document.getElementById('subtotal');
-            const discountValueEl = document.getElementById('discount-value');
-            const totalEl = document.getElementById('total-final');
-            const discountPercent = parseFloat(document.getElementById('discount-percent').value) || 0;
-            
-            if (cart.length === 0) {
-                container.innerHTML = `
-                    <div style="text-align: center; color: var(--text-secondary); margin-top: 40px;">
-                        <i data-lucide="package-open" style="width: 48px; height: 48px; opacity: 0.3; margin-bottom: 16px; margin-left: auto; margin-right: auto; display: block;"></i>
-                        <p style="font-weight: 600;">Carrinho vazio</p>
-                    </div>
-                `;
-                lucide.createIcons();
-                subtotalEl.innerText = "R$ 0,00";
-                discountValueEl.innerText = "- R$ 0,00";
-                totalEl.innerText = "R$ 0,00";
-                return;
-            }
+        const discountValue = subtotal * (discountPercent / 100);
+        const totalFinal = subtotal - discountValue;
 
-            let html = '';
-            let subtotal = 0;
+        container.innerHTML = html;
+        subtotalEl.innerText = `R$ ${subtotal.toFixed(2).replace(".", ",")}`;
+        discountValueEl.innerText = `- R$ ${discountValue.toFixed(2).replace(".", ",")}`;
+        totalEl.innerText = `R$ ${totalFinal.toFixed(2).replace(".", ",")}`;
 
-            cart.forEach(item => {
-                const subItem = item.price * item.qty;
-                subtotal += subItem;
-                html += `
-                    <div class="cart-item">
-                        <div class="cart-item-info">
-                            <h4>${item.name}</h4>
-                            <span>R$ ${item.price.toFixed(2).replace('.', ',')}</span>
-                        </div>
-                        <div class="cart-item-qty">
-                            <button class="qty-btn" onclick="updateQty('${item.name}', -1)"><i data-lucide="minus-circle" style="width: 16px;"></i></button>
-                            <span class="qty-val">${item.qty}</span>
-                            <button class="qty-btn" onclick="updateQty('${item.name}', 1)"><i data-lucide="plus-circle" style="width: 16px;"></i></button>
-                        </div>
-                        <div class="cart-item-price">
-                            R$ ${subItem.toFixed(2).replace('.', ',')}
-                        </div>
-                        <i data-lucide="trash-2" class="btn-remove" style="width: 16px; margin-left: 8px;" onclick="removeItem('${item.name}')"></i>
-                    </div>
-                `;
-            });
+        lucide.createIcons();
+      }
 
-            const discountValue = subtotal * (discountPercent / 100);
-            const totalFinal = subtotal - discountValue;
+      // Pesquisa no catálogo
+      const searchInput = document.querySelector(".search-bar input");
+      searchInput.addEventListener("input", () => {
+        const query = searchInput.value.toLowerCase();
+        const filtered = items.filter((item) =>
+          item.nome.toLowerCase().includes(query),
+        );
+        renderCard(filtered);
+      });
 
-            container.innerHTML = html;
-            subtotalEl.innerText = `R$ ${subtotal.toFixed(2).replace('.', ',')}`;
-            discountValueEl.innerText = `- R$ ${discountValue.toFixed(2).replace('.', ',')}`;
-            totalEl.innerText = `R$ ${totalFinal.toFixed(2).replace('.', ',')}`;
-            
-            lucide.createIcons();
-        }
+      // Carrega itens no início
+      carregarItens();
     </script>
-</body>
+  </body>
 </html>
