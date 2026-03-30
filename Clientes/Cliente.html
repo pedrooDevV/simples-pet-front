@@ -138,6 +138,22 @@
         font-size: 0.85rem;
       }
 
+      .btn-info {
+        color: #3b82f6; /* Azul */
+        background: #eff6ff;
+        border: 1px solid #dbeafe;
+      }
+
+      .btn-info:hover {
+        background: #dbeafe;
+      }
+
+      /* Ajuste para manter os botões alinhados */
+      .actions {
+        display: flex;
+        gap: 8px;
+        justify-content: flex-end;
+      }
       .btn-primary {
         background: var(--primary);
         color: white;
@@ -708,6 +724,11 @@
         data.forEach((c) => {
           const tr = document.createElement("tr");
 
+          // Tratamos a observação para evitar erros caso seja nula
+          const obs = c.observacao
+            ? c.observacao.replace(/'/g, "\\'")
+            : "Nenhuma observação cadastrada.";
+
           tr.innerHTML = `
         <td>
           <div class="client-info">
@@ -731,6 +752,11 @@
         </td>
         <td style="text-align: right;">
           <div class="actions">
+            <!-- NOVO BOTÃO DE INFO -->
+            <button class="btn-icon btn-info" title="Ver Observação" onclick="showObservation('${c.observacoes}')">
+              <i data-lucide="info" style="width: 18px;"></i>
+            </button>
+
             <button class="btn-icon btn-edit" title="Editar" onclick="openModal('edit', ${c.id})">
               <i data-lucide="edit-3" style="width: 18px;"></i>
             </button>
@@ -746,6 +772,10 @@
 
         document.getElementById("count-clients").innerText = data.length;
         lucide.createIcons();
+      }
+
+      function showObservation(text) {
+        alert("Observação do Cliente:\n\n" + text);
       }
 
       // =========================

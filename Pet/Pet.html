@@ -68,6 +68,25 @@
         color: var(--primary);
       }
 
+      .header-info h1 {
+        font-size: 1.5rem;
+        font-weight: 800;
+      }
+      .header-info p {
+        color: var(--text-secondary);
+        font-size: 0.85rem;
+      }
+
+      .btn-info {
+        color: #3b82f6; /* Azul */
+        background: #eff6ff;
+        border: 1px solid #dbeafe;
+      }
+
+      .btn-info:hover {
+        background: #dbeafe;
+      }
+
       .menu-label {
         padding: 0 24px 8px;
         font-size: 0.7rem;
@@ -749,6 +768,9 @@
       <td style="font-weight: 500;">${p.idade}</td>
       <td style="text-align: right;">
         <div class="actions">
+          <button class="btn-icon btn-info" title="Ver Observação" onclick="showObservation('${p.observacoes || "Sem observações"}')">
+  <i data-lucide="info" style="width: 18px;"></i>
+</button>
           <button class="btn-icon btn-edit" onclick="openModal('edit', ${p.id})"><i data-lucide="edit-3" style="width: 18px;"></i></button>
           <button class="btn-icon btn-delete" onclick="deletePet(${p.id})"><i data-lucide="trash-2" style="width: 18px;"></i></button>
         </div>
@@ -759,6 +781,15 @@
 
         document.getElementById("count-pets").innerText = petsList.length;
         lucide.createIcons();
+      }
+
+      function showObservation(texto) {
+        // Se o texto vier como "undefined" ou vazio, limpamos a mensagem
+        const mensagem =
+          texto && texto !== "undefined"
+            ? texto
+            : "Nenhuma observação disponível para este pet.";
+        alert("Observações:\n" + mensagem);
       }
 
       // 4️⃣ Modal Logic
@@ -826,25 +857,23 @@
               body: JSON.stringify(payload),
             });
 
-            // --- AQUI ESTÁ A MUDANÇA ---
             if (!res.ok) {
-              const errorData = await res.json(); // Transforma o erro em objeto JS
-
-              // Se o erro vier do Java/Validation, pegamos a mensagem limpa
-              // Geralmente o Spring coloca em 'message' ou em um array de 'errors'
               let msgErro = "Erro ao salvar";
 
-              if (
-                errorData.message &&
-                errorData.message.includes("Idade máxima permitida é 30")
-              ) {
-                msgErro = "Idade máxima permitida é 30";
-              } else {
-                msgErro = errorData.message || "Verifique os dados enviados";
+              // Tenta parsear JSON, mas se falhar, pega o texto cru
+              try {
+                const errorData = await res.json();
+                if (errorData.message) {
+                  msgErro = errorData.message;
+                }
+              } catch {
+                // Se não tiver JSON, pega o texto simples
+                const text = await res.text();
+                if (text) msgErro = text;
               }
 
-              showToast(msgErro); // Exibe no seu Toast bonitão
-              return; // PARA AQUI (não fecha o modal nem limpa o form)
+              showToast(msgErro);
+              return; // não fecha modal
             }
             // --- FIM DA MUDANÇA ---
 

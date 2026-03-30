@@ -386,6 +386,19 @@
         border-color: var(--primary);
       }
 
+      .btn-success {
+        background: var(--secondary);
+        color: white;
+      }
+
+      .btn-success:hover {
+        background: var(--secondary-hover);
+      }
+
+      /* Ajuste para inputs que ocupam a linha toda no modal pequeno */
+      .form-group.full {
+        width: 100%;
+      }
       /* Modal */
       .modal-overlay {
         position: fixed;
@@ -784,7 +797,10 @@
 
             const categoria = await res.json();
 
-            const newOption = new Option(categoria.descricaoCategoria, categoria.id);
+            const newOption = new Option(
+              categoria.descricaoCategoria,
+              categoria.id,
+            );
             select.add(newOption);
             select.value = categoria.id;
 
