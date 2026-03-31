@@ -99,6 +99,10 @@
         font-size: 0.9rem;
       }
 
+      .monthFilter {
+        cursor: pointer;
+      }
+
       .nav-item:hover {
         background-color: var(--primary-bg-light);
         color: var(--primary);
@@ -380,6 +384,60 @@
         }
       }
 
+      .btn-info {
+        color: #3b82f6; /* Azul */
+        background: #eff6ff;
+        border: 1px solid #dbeafe;
+      }
+
+      .btn-info:hover {
+        background: #dbeafe;
+      }
+
+      .obs-modal-container {
+        display: none; /* oculto por padrão */
+        position: fixed;
+        z-index: 1000;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        overflow: auto;
+        background-color: rgba(0, 0, 0, 0.5); /* fundo semi-transparente */
+        backdrop-filter: blur(3px); /* leve blur */
+      }
+
+      /* Caixa do modal */
+      .obs-modal-box {
+        background-color: #fff;
+        margin: 10% auto;
+        padding: 25px;
+        border-radius: 14px;
+        width: 600px; /* largura */
+        max-width: 95%;
+        height: 400px; /* altura fixa maior */
+        max-height: 80vh; /* nunca ultrapassa 80% da altura da tela */
+        overflow-y: auto; /* adiciona scroll vertical se precisar */
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.35);
+        position: relative;
+        font-family: "Inter", sans-serif;
+      }
+
+      /* Botão de fechar */
+      .obs-modal-close {
+        position: absolute;
+        top: 12px;
+        right: 18px;
+        font-size: 26px;
+        cursor: pointer;
+        color: #333;
+        font-weight: bold;
+      }
+
+      .obs-modal-close:hover {
+        color: #e74c3c;
+      }
+
       .modal-title {
         font-size: 1.25rem;
         font-weight: 800;
@@ -524,6 +582,23 @@
       .toast.show {
         transform: translateY(0);
       }
+
+      .header-actions {
+        display: flex;
+        gap: 12px;
+        align-items: center;
+      }
+
+      .month-picker {
+        padding: 10px 16px;
+        border-radius: 10px;
+        border: 1px solid var(--border);
+        font-weight: 600;
+        color: var(--text-main);
+        background-color: #f8fafc;
+        cursor: pointer;
+        outline: none;
+      }
     </style>
   </head>
   <body>
@@ -578,13 +653,19 @@
     <main>
       <header>
         <div class="header-info">
-          <h1>Gastos Previstos</h1>
+          <h1 id="pageTitle">Gastos de Janeiro 2024</h1>
           <p>
             Planeje e acompanhe suas despesas futuras para manter o caixa
             saudável.
           </p>
         </div>
         <div class="header-actions">
+          <input
+            type="month"
+            id="monthFilter"
+            class="month-picker"
+            onchange="changeGlobalMonth(this.value)"
+          />
           <button class="btn btn-primary" onclick="openModal()">
             <i data-lucide="plus-circle"></i> Novo Gasto
           </button>
@@ -707,6 +788,7 @@
                 <th>Valor</th>
                 <th>Vencimento</th>
                 <th>Status</th>
+                <th>Data</th>
                 <th style="text-align: right">Ações</th>
               </tr>
             </thead>
@@ -772,13 +854,24 @@
           </div>
 
           <div class="form-row">
-            <!-- Data -->
+            <!-- NOVO CAMPO: DATA DO GASTO -->
+            <div class="form-group">
+              <label for="expenseDate">Data do Gasto</label>
+              <input
+                type="date"
+                id="expenseDate"
+                class="form-control"
+                required
+              />
+            </div>
+
             <div class="form-group">
               <label for="date">Data de Vencimento</label>
               <input type="date" id="date" class="form-control" required />
             </div>
+          </div>
 
-            <!-- Status -->
+          <div class="form-row">
             <div class="form-group">
               <label for="status">Status Inicial</label>
               <select id="status" class="form-control">
@@ -869,6 +962,12 @@
       <span id="toastMsg">Operação realizada com sucesso!</span>
     </div>
 
+    <div id="obsModalContainer" class="obs-modal-container">
+      <div class="obs-modal-box">
+        <span class="obs-modal-close">&times;</span>
+        <p id="obsModalText"></p>
+      </div>
+    </div>
     <script>
       lucide.createIcons();
 
@@ -876,6 +975,7 @@
       const CATEGORIA_URL = "http://localhost:8080/categoria-gasto";
 
       let gastos = [];
+      let selectedMonth = "";
 
       /** =======================
        *  Modal de Gasto
@@ -896,6 +996,7 @@
           document.getElementById("desc").value = gasto.descricaoGasto;
           document.getElementById("category").value = gasto.idCategoriaGasto;
           document.getElementById("value").value = gasto.valorGasto;
+          document.getElementById("expenseDate").value = gasto.dataAtual;
           document.getElementById("date").value = gasto.dataVencimento;
           document.getElementById("status").value = gasto.pago
             ? "Pago"
@@ -925,6 +1026,61 @@
         document.getElementById("categoryForm").reset();
       }
 
+      function showObservation(texto) {
+        const mensagem =
+          texto && texto !== "undefined"
+            ? texto
+            : "Nenhuma observação disponível para este pet.";
+
+        const modal = document.getElementById("obsModalContainer");
+        const obsText = document.getElementById("obsModalText");
+        const closeBtn = document.querySelector(".obs-modal-close");
+
+        obsText.textContent = mensagem;
+        modal.style.display = "block";
+
+        // Fecha ao clicar no X
+        closeBtn.onclick = () => (modal.style.display = "none");
+
+        // Fecha ao clicar fora da caixa
+        window.onclick = (event) => {
+          if (event.target === modal) modal.style.display = "none";
+        };
+      }
+
+      window.onload = () => {
+        const today = new Date();
+        const year = today.getFullYear();
+        const month = String(today.getMonth() + 1).padStart(2, "0");
+        const formatted = `${year}-${month}`;
+
+        selectedMonth = formatted; // agora a variável global tem valor
+        document.getElementById("monthFilter").value = formatted;
+
+        carregarCategorias(); // carrega categorias antes de listar gastos
+        changeGlobalMonth(formatted); // atualiza título e chama carregarGastos()
+      };
+
+      function changeGlobalMonth(val) {
+        selectedMonth = val; // atualiza a variável global
+
+        const [ano, mes] = val.split("-");
+
+        const date = new Date(ano, mes - 1);
+        const monthName = date.toLocaleString("pt-BR", { month: "long" });
+        const capitalizedMonth =
+          monthName.charAt(0).toUpperCase() + monthName.slice(1);
+
+        document.getElementById("pageTitle").textContent =
+          `Gastos de ${capitalizedMonth} ${ano}`;
+        document
+          .querySelectorAll(".stat-month-label")
+          .forEach((el) => (el.textContent = `Total de ${capitalizedMonth}`));
+
+        atualizarEstatisticasMes(parseInt(ano), parseInt(mes));
+        carregarGastos(); // agora selectedMonth já está definido
+      }
+
       /** =======================
        *  Toast
        * ======================= */
@@ -947,8 +1103,6 @@
           const res = await fetch(`${CATEGORIA_URL}/listar`);
           if (!res.ok) throw new Error("Erro ao buscar categorias");
           const categorias = await res.json();
-
-          console.log("Exemplo de categoria vinda do Java:", categorias[0]);
 
           categoriasMap = {}; // reinicia
           categorias.forEach((cat) => {
@@ -978,7 +1132,7 @@
           e.preventDefault();
 
           const input = document.getElementById("newCategoryName");
-          const name = input.value.trim();
+          const name = input.value;
 
           if (!name) {
             showToast("Digite um nome válido!", true);
@@ -987,13 +1141,14 @@
           }
 
           const payload = { descricaoGastom: name };
-          console.log("Payload enviado:", payload);
 
           try {
             const res = await fetch(CATEGORIA_URL, {
               method: "POST",
               headers: { "Content-Type": "application/json" },
-              body: JSON.stringify(payload),
+              body: JSON.stringify({
+                descricaoGastom: name,
+              }),
             });
 
             if (!res.ok) {
@@ -1025,12 +1180,18 @@
        *  Gastos
        * ======================= */
       async function carregarGastos() {
+        if (!selectedMonth) return; // evita chamar com valor vazio
+
         try {
-          const res = await fetch(API_URL);
-          if (!res.ok) throw new Error("Erro ao buscar gastos");
+          const [ano, mes] = selectedMonth.split("-");
+
+          const res = await fetch(
+            `${API_URL}/listar-por-data?ano=${ano}&mes=${mes}`,
+          );
+          if (!res.ok) throw new Error("Erro ao carregar gastos");
           gastos = await res.json();
+
           renderGastos(gastos);
-          atualizarEstatisticas();
         } catch (err) {
           console.error(err);
           showToast("Erro ao carregar gastos!", true);
@@ -1040,39 +1201,71 @@
       async function salvarGasto(event) {
         event.preventDefault();
 
-        // IDs do HTML
-
+        // Seletores dos inputs
         const categorySelect = document.getElementById("category");
-        const categoryValue = categorySelect ? categorySelect.value : "";
+        const descricaoInput = document.getElementById("desc");
+        const valorInput = document.getElementById("value");
+        const dataVencInput = document.getElementById("date");
+        const dataAtualInput = document.getElementById("expenseDate");
+        const statusInput = document.getElementById("status");
+        const observacaoInput = document.getElementById("obs");
+        const idInput = document.getElementById("editId");
 
-        const descricao = document.getElementById("desc")?.value || "";
-        const valor = parseFloat(document.getElementById("value")?.value || 0);
-        const data = document.getElementById("date")?.value || "";
+        // Pega os valores
+        const categoriaId = parseInt(categorySelect?.value || "", 10);
+        const descricao = descricaoInput?.value?.trim() || "";
+        const valor = parseFloat(valorInput?.value || 0);
+        const dataVencimento = dataVencInput?.value || "";
+        const dataAtual = dataAtualInput?.value || "";
+        const status = statusInput?.value || "";
+        const pago = status === "Pago";
+        const observacao = observacaoInput?.value?.trim() || "";
+        const id = idInput?.value || null;
 
-        const categoriaId = parseInt(categoryValue, 10);
-
-        if (!categoryValue || isNaN(categoriaId)) {
+        // Validações
+        if (!categoriaId || isNaN(categoriaId)) {
           showToast("Por favor, selecione uma Categoria!", true);
           categorySelect.focus();
-          return; // INTERROMPE a execução aqui para não enviar null ao banco
+          return;
         }
 
-        const status = document.getElementById("status")?.value || "";
-        const pago = status === "Pago";
-        const id = document.getElementById("editId")?.value || null;
-        const observacao = document.getElementById("obs")?.value || "";
+        if (!descricao) {
+          showToast("Digite a descrição do gasto!", true);
+          descricaoInput.focus();
+          return;
+        }
 
-        // Monta o payload correto
+        if (!valor || valor <= 0) {
+          showToast("Digite um valor válido!", true);
+          valorInput.focus();
+          return;
+        }
+
+        if (!dataVencimento) {
+          showToast("Escolha uma data de vencimento!", true);
+          dataVencInput.focus();
+          return;
+        }
+
+        if (!dataAtual) {
+          showToast("Escolha uma data válida!", true);
+          dataAtualInput.focus();
+          return;
+        }
+
+        // Monta o payload
         const payload = {
           descricaoGasto: descricao,
-          idCategoriaGasto: categoriaId, // número correto
+          idCategoriaGasto: categoriaId,
           valorGasto: valor,
-          dataVencimento: data,
+          dataVencimento: dataVencimento,
+          dataAtual: dataAtual,
           pago: pago,
           observacao: observacao,
         };
 
         try {
+          // Se tiver id, é edição (PUT), senão é criação (POST)
           const url = id ? `${API_URL}/${id}` : API_URL;
           const method = id ? "PUT" : "POST";
 
@@ -1088,6 +1281,7 @@
             throw new Error("Erro ao salvar gasto");
           }
 
+          // Atualiza a lista e fecha modal
           await carregarGastos();
           closeModal();
           showToast("Gasto salvo com sucesso!");
@@ -1122,11 +1316,22 @@
         ${g.pago ? "Pago" : "Pendente"}
       </span>
     </td>
+    <td>
+    <span>
+      ${g.dataAtual}
+      </span>
+    </td>
     <td class="actions-cell">
 
-        <button class="action-btn pay" title="Marcar como Pago" onclick="markAsPaid(${g.id})">
-                                <i data-lucide="check-square" style="width: 16px;"></i>
-                            </button>
+      
+       <button class="action-btn pay" 
+  title="${g.pago ? "Marcar como Pendente" : "Marcar como Pago"}"
+  onclick="togglePago(${g.id}, ${g.pago})">
+  <i data-lucide="${g.pago ? "rotate-ccw" : "check-square"}" style="width: 16px;"></i>
+</button>
+       <button class="btn-icon btn-info" title="Ver Observação" onclick="showObservation('${g.observacaoGasto || "Sem observações"}')">
+  <i data-lucide="info" style="width: 18px;"></i>
+</button>
       <button class="action-btn" onclick='openModal(true, ${JSON.stringify(g)})'>
         <i data-lucide="edit"></i>
       </button>
@@ -1168,65 +1373,75 @@
         renderGastos(filtered);
       }
 
-      async function markAsPaid(id) {
-        if (!confirm("Deseja marcar este gasto como pago?")) return;
+      async function togglePago(id, pagoAtual) {
+        const acao = pagoAtual ? "pendente" : "pago";
+        const mensagem = pagoAtual
+          ? "Deseja marcar como pendente?"
+          : "Deseja marcar como pago?";
+
+        if (!confirm(mensagem)) return;
 
         try {
-          // AJUSTE AQUI: Use crases e verifique se a variável API_URL existe
-          // Se a sua constante for GASTOS_URL, troque o nome abaixo
-          const response = await fetch(`${API_URL}/pago/${id}`, {
+          const response = await fetch(`${API_URL}/${acao}/${id}`, {
             method: "PATCH",
             headers: {
               "Content-Type": "application/json",
             },
           });
 
-          if (response.status === 405) {
-            console.error(
-              "Erro 405: O método PATCH não é permitido ou a URL está errada.",
-            );
-            throw new Error("Método não permitido pelo servidor.");
-          }
-
           if (!response.ok) {
-            throw new Error("Erro ao atualizar o status do gasto");
+            throw new Error("Erro ao atualizar status");
           }
 
-          alert("Gasto marcado como pago!");
-          carregarGastos(); // Recarrega a tabela
+          showToast(`Gasto atualizado para ${acao}!`);
+          carregarGastos(); // recarrega tabela
         } catch (error) {
-          console.error("Erro detalhado:", error);
-          alert("Erro: " + error.message);
+          console.error(error);
+          showToast("Erro ao atualizar status!", true);
         }
       }
 
       /** =======================
        *  Estatísticas
        * ======================= */
-      function atualizarEstatisticas() {
-        const total = gastos.reduce((acc, g) => acc + g.valorGasto, 0);
-        const pagos = gastos
-          .filter((g) => g.pago)
-          .reduce((acc, g) => acc + g.valorGasto, 0);
-        const pendentes = gastos
-          .filter((g) => !g.pago)
-          .reduce((acc, g) => acc + g.valorGasto, 0);
+      async function atualizarEstatisticasMes(ano, mes) {
+        try {
+          const responses = await Promise.all([
+            fetch(`${API_URL}/calcular-total-mes?ano=${ano}&mes=${mes}`),
+            fetch(`${API_URL}/calcular-pago-mes?ano=${ano}&mes=${mes}`),
+            fetch(`${API_URL}/calcular-pendente-mes?ano=${ano}&mes=${mes}`),
+            fetch(`${API_URL}/vencimento-proximo-mes?ano=${ano}&mes=${mes}`),
+          ]);
 
-        document.getElementById("stat-total").textContent =
-          `R$ ${total.toFixed(2)}`;
-        document.getElementById("stat-pagos").textContent =
-          `R$ ${pagos.toFixed(2)}`;
-        document.getElementById("stat-pendentes").textContent =
-          `R$ ${pendentes.toFixed(2)}`;
+          // Função auxiliar para extrair o JSON com segurança
+          const safeJson = async (response) => {
+            if (!response.ok) return 0; // Se a requisição falhou (404, 500)
+            const text = await response.text();
+            return text ? JSON.parse(text) : 0; // Se texto for vazio, retorna 0
+          };
 
-        const proximos = gastos
-          .filter((g) => !g.pago)
-          .sort(
-            (a, b) => new Date(a.dataVencimento) - new Date(b.dataVencimento),
-          );
+          const total = await safeJson(responses[0]);
+          const pagos = await safeJson(responses[1]);
+          const pendentes = await safeJson(responses[2]);
 
-        document.getElementById("stat-proximo").textContent =
-          proximos.length > 0 ? proximos[0].dataVencimento : "-";
+          // Para o vencimento, que é um objeto ou string, tratamos diferente do 0
+          const proximoResText = await responses[3].text();
+          const proximo = proximoResText ? JSON.parse(proximoResText) : null;
+
+          // Atualiza o HTML garantindo que são números antes do toFixed
+          document.getElementById("stat-total").textContent =
+            `R$ ${(Number(total) || 0).toFixed(2)}`;
+          document.getElementById("stat-pagos").textContent =
+            `R$ ${(Number(pagos) || 0).toFixed(2)}`;
+          document.getElementById("stat-pendentes").textContent =
+            `R$ ${(Number(pendentes) || 0).toFixed(2)}`;
+
+          document.getElementById("stat-proximo").textContent =
+            proximo && proximo.dataVencimento ? proximo.dataVencimento : "-";
+        } catch (err) {
+          console.error("Erro detalhado:", err);
+          showToast("Erro ao atualizar estatísticas!", true);
+        }
       }
 
       /** =======================
@@ -1255,6 +1470,7 @@
       /** =======================
        *  Inicializações
        * ======================= */
+      atualizarEstatisticasMes();
       carregarCategorias();
       carregarGastos();
     </script>

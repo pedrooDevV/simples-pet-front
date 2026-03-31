@@ -449,6 +449,51 @@
         transform: translateY(-1px);
       }
 
+      /* Container do modal */
+      .obs-modal-container {
+        display: none; /* oculto por padrão */
+        position: fixed;
+        z-index: 1000;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        overflow: auto;
+        background-color: rgba(0, 0, 0, 0.5); /* fundo semi-transparente */
+        backdrop-filter: blur(3px); /* leve blur */
+      }
+
+      /* Caixa do modal */
+      .obs-modal-box {
+        background-color: #fff;
+        margin: 10% auto;
+        padding: 25px;
+        border-radius: 14px;
+        width: 600px; /* largura */
+        max-width: 95%;
+        height: 400px; /* altura fixa maior */
+        max-height: 80vh; /* nunca ultrapassa 80% da altura da tela */
+        overflow-y: auto; /* adiciona scroll vertical se precisar */
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.35);
+        position: relative;
+        font-family: "Inter", sans-serif;
+      }
+
+      /* Botão de fechar */
+      .obs-modal-close {
+        position: absolute;
+        top: 12px;
+        right: 18px;
+        font-size: 26px;
+        cursor: pointer;
+        color: #333;
+        font-weight: bold;
+      }
+
+      .obs-modal-close:hover {
+        color: #e74c3c;
+      }
+
       /* Toast */
       .toast {
         position: fixed;
@@ -672,6 +717,13 @@
       <span id="toastMsg">Ação concluída!</span>
     </div>
 
+    <div id="obsModalContainer" class="obs-modal-container">
+      <div class="obs-modal-box">
+        <span class="obs-modal-close">&times;</span>
+        <p id="obsModalText"></p>
+      </div>
+    </div>
+
     <script>
       lucide.createIcons();
 
@@ -784,12 +836,25 @@
       }
 
       function showObservation(texto) {
-        // Se o texto vier como "undefined" ou vazio, limpamos a mensagem
         const mensagem =
           texto && texto !== "undefined"
             ? texto
             : "Nenhuma observação disponível para este pet.";
-        alert("Observações:\n" + mensagem);
+
+        const modal = document.getElementById("obsModalContainer");
+        const obsText = document.getElementById("obsModalText");
+        const closeBtn = document.querySelector(".obs-modal-close");
+
+        obsText.textContent = mensagem;
+        modal.style.display = "block";
+
+        // Fecha ao clicar no X
+        closeBtn.onclick = () => (modal.style.display = "none");
+
+        // Fecha ao clicar fora da caixa
+        window.onclick = (event) => {
+          if (event.target === modal) modal.style.display = "none";
+        };
       }
 
       // 4️⃣ Modal Logic
