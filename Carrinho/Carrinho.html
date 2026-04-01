@@ -923,7 +923,6 @@
       }
 
       const filterButtons = document.querySelectorAll(".filter-btn");
-      const filterButtons = document.querySelectorAll(".filter-btn");
 
       filterButtons.forEach((btn) => {
         btn.addEventListener("click", async () => {
@@ -1104,7 +1103,7 @@
         lucide.createIcons();
       }
         lucide.createIcons();
-      }
+      })},
 
       // Finaliza venda
       function finishSale() {
@@ -1142,7 +1141,7 @@
             console.error("Erro:", err);
             alert("Erro ao finalizar venda");
           });
-      }
+      });
 
       // Atualiza a interface do carrinho
       let timeoutDesconto;
