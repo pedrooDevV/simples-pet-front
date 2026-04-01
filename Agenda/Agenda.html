@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>PetShop Pro - PDV / Carrinho</title>
+    <title>PetShop Pro - Agenda</title>
     <script src="https://unpkg.com/lucide@latest"></script>
     <link
       href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
@@ -18,23 +18,21 @@
         --secondary-bg-light: #dff7f4;
         --accent: #ff9f1c;
         --accent-bg-light: #ffe8cc;
+        --danger: #ff4d4d;
+        --danger-bg-light: #fff0f0;
         --bg-general: #f7f9fc;
         --white: #ffffff;
         --text-main: #1e293b;
         --text-secondary: #64748b;
         --border: #e2e8f0;
         --shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1);
-        --danger: #ef4444;
       }
 
       * {
         margin: 0;
         padding: 0;
         box-sizing: border-box;
-        font-family:
-          "Inter",
-          -apple-system,
-          sans-serif;
+        font-family: "Inter", sans-serif;
       }
 
       body {
@@ -42,10 +40,9 @@
         color: var(--text-main);
         display: flex;
         min-height: 100vh;
-        overflow: hidden;
       }
 
-      /* Sidebar - Padrão do Sistema */
+      /* Sidebar - Identical to Dashboard */
       aside {
         width: 280px;
         background-color: var(--white);
@@ -54,7 +51,7 @@
         flex-direction: column;
         position: fixed;
         height: 100vh;
-        z-index: 100;
+        z-index: 10;
         box-shadow: 4px 0 20px rgba(0, 0, 0, 0.05);
       }
 
@@ -108,477 +105,416 @@
         box-shadow: 0 8px 15px rgba(58, 134, 255, 0.3);
       }
 
-      /* Main Content PDV */
+      .nav-item i {
+        width: 20px;
+        height: 20px;
+      }
+
+      /* Main Content Area */
       main {
         margin-left: 280px;
         flex: 1;
-        display: flex;
-        flex-direction: column;
-        height: 100vh;
+        padding: 40px;
+        max-width: calc(100vw - 280px);
       }
 
       header {
-        padding: 24px 40px;
-        background: var(--white);
-        border-bottom: 1px solid var(--border);
         display: flex;
         justify-content: space-between;
         align-items: center;
+        margin-bottom: 32px;
       }
 
       .header-info h1 {
-        font-size: 1.5rem;
+        font-size: 2rem;
         font-weight: 800;
       }
-
       .header-info p {
         color: var(--text-secondary);
-        font-size: 0.85rem;
-      }
-
-      /* PDV Layout Split */
-      .pdv-container {
-        display: flex;
-        flex: 1;
-        overflow: hidden;
-      }
-
-      /* Lado Esquerdo: Catálogo */
-      .catalog-section {
-        flex: 1;
-        padding: 24px 40px;
-        overflow-y: auto;
-        background: #f8fafc;
-      }
-
-      .search-bar {
-        position: relative;
-        margin-bottom: 24px;
-      }
-
-      .search-bar i {
-        position: absolute;
-        left: 16px;
-        top: 50%;
-        transform: translateY(-50%);
-        color: var(--text-secondary);
-      }
-
-      .search-bar input {
-        width: 100%;
-        padding: 14px 14px 14px 48px;
-        border-radius: 14px;
-        border: 1px solid var(--border);
-        outline: none;
-        font-size: 1rem;
         font-weight: 500;
-        transition: 0.2s;
       }
 
-      .search-bar input:focus {
-        border-color: var(--primary);
-        box-shadow: 0 0 0 4px var(--primary-bg-light);
-      }
-
-      .customer-select {
-        background: var(--white);
-        padding: 16px;
-        border-radius: 14px;
-        border: 1px solid var(--border);
-        margin-bottom: 24px;
+      /* Agenda Selector Styling */
+      .agenda-header-actions {
         display: flex;
         align-items: center;
-        justify-content: space-between;
-      }
-
-      .customer-info {
-        display: flex;
-        align-items: center;
-        gap: 12px;
-      }
-
-      .customer-info .avatar {
-        width: 40px;
-        height: 40px;
-        background: var(--primary-bg-light);
-        color: var(--primary);
-        border-radius: 50%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-      }
-
-      .catalog-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
         gap: 20px;
       }
 
+      .agenda-selector-container {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        background: var(--white);
+        padding: 8px 16px;
+        border-radius: 12px;
+        border: 1px solid var(--border);
+      }
+
+      .agenda-selector-container label {
+        font-size: 0.8rem;
+        font-weight: 700;
+        color: var(--text-secondary);
+        text-transform: uppercase;
+      }
+
+      .agenda-select {
+        border: none;
+        background: var(--bg-general);
+        padding: 6px 12px;
+        border-radius: 8px;
+        font-weight: 700;
+        color: var(--primary);
+        cursor: pointer;
+        outline: none;
+      }
+
+      .btn-primary {
+        background: var(--primary);
+        color: white;
+        border: none;
+        padding: 12px 24px;
+        border-radius: 12px;
+        font-weight: 700;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        transition: 0.2s;
+      }
+
+      .btn-primary:hover {
+        background: var(--primary-hover);
+        transform: translateY(-2px);
+      }
+
+      /* Calendar Controls */
+      .calendar-controls {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        background: var(--white);
+        padding: 16px 24px;
+        border-radius: 16px 16px 0 0;
+        border: 1px solid var(--border);
+        border-bottom: none;
+      }
+
+      .date-navigation {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+      }
+
+      .current-month {
+        font-weight: 800;
+        font-size: 1.1rem;
+      }
+
+      .nav-btn {
+        background: var(--bg-general);
+        border: 1px solid var(--border);
+        width: 36px;
+        height: 36px;
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        transition: 0.2s;
+      }
+      .nav-btn:hover {
+        background: var(--border);
+      }
+
+      .view-switcher {
+        display: flex;
+        background: var(--bg-general);
+        padding: 4px;
+        border-radius: 10px;
+        gap: 4px;
+      }
+
+      .event-card {
+        position: absolute;
+        left: 4px;
+        right: 4px;
+        border-radius: 10px;
+        padding: 10px;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        transition:
+          transform 0.2s,
+          box-shadow 0.2s;
+        border-left-width: 5px;
+      }
+
+      .event-card:hover {
+        transform: scale(1.02);
+        z-index: 10;
+        box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.2);
+      }
+
+      .view-btn {
+        border: none;
+        background: none;
+        padding: 6px 16px;
+        border-radius: 8px;
+        font-weight: 700;
+        font-size: 0.85rem;
+        cursor: pointer;
+        color: var(--text-secondary);
+        transition: 0.2s;
+      }
+
+      .view-btn.active {
+        background: var(--white);
+        color: var(--primary);
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+      }
+
+      /* Agenda Grid */
+      .calendar-container {
+        background: var(--white);
+        border-radius: 0 0 16px 16px;
+        border: 1px solid var(--border);
+        overflow-x: auto;
+        display: grid;
+        grid-template-columns: 80px repeat(7, 1fr);
+        min-width: 900px;
+      }
+
+      .grid-header {
+        background: #fafbfc;
+        padding: 16px 0;
+        text-align: center;
+        border-bottom: 1px solid var(--border);
+        border-left: 1px solid var(--border);
+        font-weight: 700;
+        font-size: 0.85rem;
+      }
+
+      .grid-header span {
+        display: block;
+        color: var(--text-secondary);
+        font-size: 0.75rem;
+        margin-top: 4px;
+      }
+
+      .time-slots {
+        grid-column: 1;
+      }
+
+      .time-label {
+        padding: 12px 0;
+        text-align: center;
+        font-size: 0.75rem;
+        font-weight: 700;
+        color: var(--text-secondary);
+        border-bottom: 1px solid var(--border);
+        height: 100px;
+        display: flex;
+        align-items: flex-start;
+        justify-content: center;
+      }
+
+      .day-column {
+        border-left: 1px solid var(--border);
+        position: relative;
+        background-image: linear-gradient(var(--border) 1px, transparent 1px);
+        background-size: 100% 100px;
+        min-height: 600px;
+      }
+
+      .day-column:hover {
+        background-color: rgba(58, 134, 255, 0.02);
+      }
+
+      /* Event Cards */
+      .event-card {
+        position: absolute;
+        left: 4px;
+        right: 4px;
+        background: var(--primary-bg-light);
+        border-left: 4px solid var(--primary);
+        border-radius: 8px;
+        padding: 8px;
+        font-size: 0.75rem;
+        cursor: pointer;
+        overflow: hidden;
+        transition: 0.2s;
+        z-index: 2;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+      }
+
+      .event-card:hover {
+        transform: translateY(-2px);
+        z-index: 10;
+        box-shadow: var(--shadow);
+      }
+
+      /* Status Colors - Refletindo o Enum Java */
+      .event-card.AGENDADO {
+        border-left-color: var(--primary);
+        background: var(--primary-bg-light);
+      }
+      .event-card.FINALIZADA {
+        border-left-color: var(--secondary);
+        background: var(--secondary-bg-light);
+      }
+      .event-card.CANCELADO {
+        border-left-color: var(--danger);
+        background: var(--danger-bg-light);
+      }
+
+      .event-card strong {
+        display: block;
+        color: var(--text-main);
+        font-weight: 800;
+        margin-bottom: 2px;
+      }
+      .event-card span {
+        display: block;
+        color: var(--text-secondary);
+        font-weight: 600;
+      }
+
+      /* Modal */
       .modal-overlay {
         position: fixed;
         top: 0;
         left: 0;
-        width: 100%;
-        height: 100%;
-        background: rgba(30, 41, 59, 0.4);
-        backdrop-filter: blur(8px);
+        right: 0;
+        bottom: 0;
+        background: rgba(15, 23, 42, 0.6);
         display: none;
-        /* Hidden by default */
         justify-content: center;
         align-items: center;
         z-index: 1000;
-        animation: fadeIn 0.3s ease;
+        backdrop-filter: blur(4px);
       }
 
-      .modal-content {
+      .modal {
         background: var(--white);
-        width: 90%;
-        max-width: 600px;
+        width: 100%;
+        max-width: 480px;
         border-radius: 20px;
+        padding: 32px;
         box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
-        display: flex;
-        flex-direction: column;
-        max-height: 80vh;
-        overflow: hidden;
+        animation: modalIn 0.3s ease-out;
+      }
+
+      @keyframes modalIn {
+        from {
+          opacity: 0;
+          transform: translateY(20px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
       }
 
       .modal-header {
-        padding: 24px;
-        border-bottom: 1px solid var(--border);
         display: flex;
         justify-content: space-between;
         align-items: center;
+        margin-bottom: 24px;
       }
 
-      .modal-body {
-        padding: 24px;
-        overflow-y: auto;
-      }
-
-      .customer-list-item {
-        display: flex;
-        align-items: center;
-        padding: 12px;
-        border-radius: 12px;
-        border: 1px solid transparent;
-        cursor: pointer;
-        transition: 0.2s;
-        margin-bottom: 8px;
-      }
-
-      .customer-list-item:hover {
-        background: var(--primary-bg-light);
-        border-color: var(--primary);
-      }
-
-      .item-card {
-        background: var(--white);
-        border: 1px solid var(--border);
-        border-radius: 16px;
-        padding: 16px;
-        transition: 0.2s;
-        cursor: pointer;
-        display: flex;
-        flex-direction: column;
-        gap: 12px;
-      }
-
-      .item-card:hover {
-        transform: translateY(-4px);
-        box-shadow: var(--shadow);
-        border-color: var(--primary);
-      }
-
-      .item-tag {
-        font-size: 0.65rem;
-        text-transform: uppercase;
+      .modal-title {
         font-weight: 800;
-        padding: 4px 8px;
-        border-radius: 6px;
-        width: fit-content;
-      }
-
-      .tag-service {
-        background: var(--secondary-bg-light);
-        color: var(--secondary);
-      }
-
-      .tag-product {
-        background: var(--accent-bg-light);
-        color: var(--accent);
-      }
-
-      .item-name {
-        font-weight: 700;
-        font-size: 0.95rem;
+        font-size: 1.4rem;
         color: var(--text-main);
-        min-height: 40px;
       }
 
-      .item-price {
-        font-weight: 800;
-        font-size: 1.1rem;
-        color: var(--primary);
+      .form-group {
+        margin-bottom: 16px;
       }
-
-      .btn-add {
-        width: 100%;
-        padding: 10px;
-        border-radius: 10px;
-        border: none;
-        background: var(--primary-bg-light);
-        color: var(--primary);
-        font-weight: 700;
-        cursor: pointer;
-        transition: 0.2s;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        gap: 8px;
-      }
-
-      .item-card:hover .btn-add {
-        background: var(--primary);
-        color: var(--white);
-      }
-
-      /* Lado Direito: Carrinho */
-      .cart-section {
-        width: 450px;
-        background: var(--white);
-        border-left: 1px solid var(--border);
-        display: flex;
-        flex-direction: column;
-        box-shadow: -4px 0 20px rgba(0, 0, 0, 0.02);
-      }
-
-      .cart-header {
-        padding: 24px;
-        border-bottom: 1px solid var(--border);
-        display: flex;
-        align-items: center;
-        gap: 12px;
-      }
-
-      .cart-header h2 {
-        font-size: 1.2rem;
-        font-weight: 800;
-      }
-
-      .cart-items {
-        flex: 1;
-        overflow-y: auto;
-        padding: 20px;
-      }
-
-      .cart-item {
-        display: flex;
-        align-items: center;
-        gap: 12px;
-        padding: 12px 0;
-        border-bottom: 1px solid #f1f5f9;
-      }
-
-      .cart-item-info {
-        flex: 1;
-      }
-
-      .cart-item-info h4 {
-        font-size: 0.9rem;
-        font-weight: 700;
-        margin-bottom: 2px;
-      }
-
-      .cart-item-info span {
-        font-size: 0.8rem;
-        color: var(--text-secondary);
-        font-weight: 600;
-      }
-
-      .cart-item-qty {
-        display: flex;
-        align-items: center;
-        gap: 8px;
-        background: var(--bg-general);
-        padding: 4px 8px;
-        border-radius: 8px;
-      }
-
-      .qty-btn {
-        background: none;
-        border: none;
-        cursor: pointer;
-        color: var(--text-secondary);
-        display: flex;
-        align-items: center;
-      }
-
-      .qty-val {
-        font-weight: 700;
-        font-size: 0.9rem;
-        min-width: 20px;
-        text-align: center;
-      }
-
-      .cart-item-price {
-        font-weight: 700;
-        font-size: 0.9rem;
-        text-align: right;
-        min-width: 80px;
-      }
-
-      .btn-remove {
-        color: #cbd5e1;
-        cursor: pointer;
-        transition: 0.2s;
-      }
-
-      .btn-remove:hover {
-        color: var(--danger);
-      }
-
-      /* Checkout Footer */
-      .cart-footer {
-        padding: 24px;
-        border-top: 1px solid var(--border);
-        background: #fafbfc;
-      }
-
-      .summary-row {
-        display: flex;
-        justify-content: space-between;
-        margin-bottom: 12px;
-        font-weight: 600;
-        color: var(--text-secondary);
-        font-size: 0.9rem;
-        align-items: center;
-      }
-
-      .discount-input-wrapper {
-        display: flex;
-        align-items: center;
-        gap: 8px;
-        background: var(--white);
-        border: 1px solid var(--border);
-        padding: 4px 10px;
-        border-radius: 8px;
-        width: 100px;
-      }
-
-      .discount-input-wrapper input {
-        border: none;
-        outline: none;
-        width: 100%;
-        text-align: right;
-        font-weight: 700;
-        color: var(--secondary);
-        font-size: 0.9rem;
-      }
-
-      .total-row {
-        display: flex;
-        justify-content: space-between;
-        margin: 16px 0 24px;
-        padding-top: 16px;
-        border-top: 2px dashed var(--border);
-      }
-
-      .total-row span {
-        font-weight: 800;
-        font-size: 1.2rem;
-      }
-
-      .total-row .total-value {
-        font-size: 1.8rem;
-        color: var(--primary);
-      }
-
-      .action-btns {
-        display: flex;
-        gap: 12px;
-      }
-
-      .btn-cancel {
-        padding: 14px;
-        border-radius: 12px;
-        border: 1px solid var(--border);
-        background: var(--white);
-        color: var(--text-secondary);
-        font-weight: 700;
-        cursor: pointer;
-        flex: 1;
-      }
-
-      .btn-finish {
-        padding: 14px;
-        border-radius: 12px;
-        border: none;
-        background: var(--secondary);
-        color: white;
-        font-weight: 800;
-        cursor: pointer;
-        flex: 2;
-        font-size: 1rem;
-        transition: 0.2s;
-        box-shadow: 0 4px 12px rgba(46, 196, 182, 0.3);
-      }
-
-      .btn-finish:hover {
-        background: #25a599;
-        transform: translateY(-2px);
-      }
-
-      ::-webkit-scrollbar {
-        width: 6px;
-      }
-
-      ::-webkit-scrollbar-track {
-        background: transparent;
-      }
-
-      ::-webkit-scrollbar-thumb {
-        background: #cbd5e1;
-        border-radius: 10px;
-      }
-
-      .filter-container {
-        display: flex;
-        gap: 12px;
-        margin-bottom: 20px;
-      }
-
-      .filter-btn {
-        padding: 8px 20px;
-        border-radius: 10px;
-        border: 1px solid var(--border);
-        background: var(--white);
-        color: var(--text-secondary);
+      .form-group label {
+        display: block;
         font-weight: 700;
         font-size: 0.85rem;
-        cursor: pointer;
+        margin-bottom: 8px;
+        color: var(--text-secondary);
+      }
+
+      .form-control {
+        width: 100%;
+        padding: 12px 16px;
+        border-radius: 10px;
+        border: 1px solid var(--border);
+        background: var(--bg-general);
+        font-weight: 600;
+        outline: none;
         transition: 0.2s;
       }
-
-      .filter-btn:hover {
-        background: var(--primary-bg-light);
-        color: var(--primary);
-      }
-
-      .filter-btn.active {
-        background: var(--primary);
-        color: var(--white);
+      .form-control:focus {
         border-color: var(--primary);
-        box-shadow: 0 4px 10px rgba(58, 134, 255, 0.2);
+        background: var(--white);
+        box-shadow: 0 0 0 4px var(--primary-bg-light);
       }
 
-      @media (max-width: 1200px) {
-        .cart-section {
-          width: 380px;
-        }
+      /* Status Buttons Section */
+      .status-group {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 8px;
+        margin-top: 8px;
+      }
+      .status-btn {
+        border: 1px solid var(--border);
+        background: var(--white);
+        padding: 10px;
+        border-radius: 10px;
+        font-size: 0.75rem;
+        font-weight: 700;
+        cursor: pointer;
+        transition: 0.2s;
+        color: var(--text-secondary);
+        text-align: center;
+      }
+      .status-btn.active[data-status="AGENDADO"] {
+        background: var(--primary);
+        color: white;
+        border-color: var(--primary);
+      }
+      .status-btn.active[data-status="FINALIZADA"] {
+        background: var(--secondary);
+        color: white;
+        border-color: var(--secondary);
+      }
+      .status-btn.active[data-status="CANCELADO"] {
+        background: var(--danger);
+        color: white;
+        border-color: var(--danger);
+      }
+
+      .modal-footer {
+        display: flex;
+        gap: 12px;
+        margin-top: 24px;
+      }
+
+      .btn-ghost {
+        background: none;
+        border: 1px solid var(--border);
+        padding: 12px;
+        font-weight: 700;
+        color: var(--text-secondary);
+        cursor: pointer;
+        flex: 1;
+        border-radius: 12px;
+        transition: 0.2s;
+      }
+      .btn-ghost:hover {
+        background: var(--bg-general);
+      }
+
+      .btn-submit {
+        flex: 2;
       }
     </style>
   </head>
-
   <body>
     <aside>
       <div class="logo-container">
@@ -591,12 +527,12 @@
         <a href="../TelaInicial/TelaInicia.html" class="nav-item">
           <i data-lucide="layout-dashboard"></i> Dashboard
         </a>
-        <a href="../Agenda/Agenda.html" class="nav-item">
+        <a href="../Agenda/Agenda.html" class="nav-item active">
           <i data-lucide="calendar"></i> Agenda Teams
         </a>
 
         <p class="menu-label" style="margin-top: 24px">Vendas e Serviços</p>
-        <a href="../Carrinho/Carrinho.html" class="nav-item active"
+        <a href="../Carrinho/Carrinho.html" class="nav-item"
           ><i data-lucide="shopping-cart"></i> Carrinho / PDV</a
         >
         <a href="../CatalogoServico/CatalogoServico.html" class="nav-item"
@@ -627,166 +563,67 @@
     <main>
       <header>
         <div class="header-info">
-          <h1>Carrinho / PDV</h1>
-          <p>Finalize vendas e serviços com rapidez</p>
+          <h1>
+            Agenda de:
+            <span id="current-user-name" style="color: var(--primary)"
+              >Felipe</span
+            >
+          </h1>
+          <p>Gerencie os serviços e horários da semana</p>
         </div>
-        <div
-          class="customer-info"
-          style="
-            cursor: pointer;
-            background: var(--bg-general);
-            padding: 8px 16px;
-            border-radius: 12px;
-            border: 1px solid var(--border);
-          "
-        >
-          <i data-lucide="user" style="color: var(--primary); width: 20px"></i>
-          <span style="font-weight: 700; font-size: 0.9rem">Caixa Livre</span>
+
+        <div class="agenda-header-actions">
+          <div class="agenda-selector-container">
+            <label>Agenda:</label>
+            <select
+              id="agenda-switch"
+              class="agenda-select"
+              onchange="changeAgenda()"
+            >
+              <option value="1">Agenda 1: Felipe</option>
+              <option value="2">Agenda 2: Maria</option>
+            </select>
+          </div>
+
+          <button class="btn-primary" onclick="openModal()">
+            <i data-lucide="plus"></i> Novo Agendamento
+          </button>
         </div>
       </header>
 
-      <div class="pdv-container">
-        <section class="catalog-section">
-          <div class="customer-select">
-            <div class="customer-info">
-              <div class="avatar"><i data-lucide="user"></i></div>
-              <div>
-                <span
-                  style="
-                    display: block;
-                    font-size: 0.75rem;
-                    color: var(--text-secondary);
-                    font-weight: 600;
-                  "
-                  >Cliente Selecionado</span
-                >
-                <strong id="selected-customer-name" style="font-size: 1rem"
-                  >Consumidor Final</strong
-                >
-              </div>
-            </div>
-            <button
-              onclick="openCustomerModal()"
-              style="
-                background: none;
-                border: 1px solid var(--border);
-                padding: 8px 16px;
-                border-radius: 8px;
-                font-weight: 700;
-                cursor: pointer;
-                color: var(--primary);
-                font-size: 0.8rem;
-              "
-            >
-              Alterar Cliente
-            </button>
-          </div>
-
-          <div class="filter-container">
-            <button class="filter-btn active" data-filter="all">Tudo</button>
-            <button class="filter-btn" data-filter="product">Produtos</button>
-            <button class="filter-btn" data-filter="service">Serviços</button>
-          </div>
-
-          <div class="search-bar">
-            <i data-lucide="search"></i>
-            <input
-              type="text"
-              id="catalog-search"
-              placeholder="Buscar produto ou serviço..."
-            />
-          </div>
-
-          <div class="catalog-grid" id="catalog-grid"></div>
-        </section>
-
-        <section class="cart-section">
-          <div class="cart-header">
-            <i data-lucide="shopping-cart" style="color: var(--primary)"></i>
-            <h2>Itens no Carrinho</h2>
-          </div>
-
-          <div class="cart-items" id="cart-items">
-            <div
-              style="
-                text-align: center;
-                color: var(--text-secondary);
-                margin-top: 40px;
-              "
-            >
-              <i
-                data-lucide="package-open"
-                style="
-                  width: 48px;
-                  height: 48px;
-                  opacity: 0.3;
-                  margin-bottom: 16px;
-                  margin-left: auto;
-                  margin-right: auto;
-                  display: block;
-                "
-              ></i>
-              <p style="font-weight: 600">Carrinho vazio</p>
-            </div>
-          </div>
-
-          <div class="cart-footer">
-            <div class="summary-row">
-              <span>Subtotal</span>
-              <span id="subtotal">R$ 0,00</span>
-            </div>
-            <div class="summary-row">
-              <span>Desconto (%)</span>
-              <div class="discount-input-wrapper">
-                <input
-                  type="number"
-                  id="discount-percent"
-                  value="0"
-                  min="0"
-                  max="100"
-                  oninput="updateCartUI()"
-                />
-                <span style="color: var(--secondary); font-weight: 700">%</span>
-              </div>
-            </div>
-            <div class="summary-row">
-              <span>Valor Desconto</span>
-              <span style="color: var(--secondary)" id="discount-value"
-                >- R$ 0,00</span
-              >
-            </div>
-            <div class="total-row">
-              <span>Total Final</span>
-              <span class="total-value" id="total-final">R$ 0,00</span>
-            </div>
-            <div class="action-btns">
-              <button class="btn-cancel" onclick="clearCart()">Cancelar</button>
-              <button class="btn-finish" onclick="finishSale()">
-                Finalizar Venda
-              </button>
-            </div>
-          </div>
-        </section>
-      </div>
-    </main>
-
-    <!-- MODAL DE CLIENTES -->
-    <div class="modal-overlay" id="customer-modal">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h2
+      <div class="calendar-controls">
+        <div class="date-navigation">
+          <button class="nav-btn"><i data-lucide="chevron-left"></i></button>
+          <div class="current-month">23 - 29 de Março, 2026</div>
+          <button class="nav-btn"><i data-lucide="chevron-right"></i></button>
+          <button
+            class="nav-btn"
             style="
-              font-weight: 800;
-              display: flex;
-              align-items: center;
-              gap: 10px;
+              width: auto;
+              padding: 0 16px;
+              font-size: 0.8rem;
+              font-weight: 700;
             "
           >
-            <i data-lucide="users" style="color: var(--primary)"></i> Selecionar
-            Cliente
-          </h2>
+            Hoje
+          </button>
+        </div>
+        <div class="view-switcher">
+          <button class="view-btn">Dia</button>
+          <button class="view-btn active">Semana</button>
+          <button class="view-btn">Mês</button>
+        </div>
+      </div>
+
+      <div class="calendar-container" id="calendar-grid"></div>
+    </main>
+
+    <div class="modal-overlay" id="modalNovo">
+      <div class="modal">
+        <div class="modal-header">
+          <h2 class="modal-title" id="modal-title">Detalhes do Agendamento</h2>
           <button
-            onclick="closeCustomerModal()"
+            onclick="closeModal()"
             style="
               background: none;
               border: none;
@@ -797,22 +634,74 @@
             <i data-lucide="x"></i>
           </button>
         </div>
-        <div class="modal-body">
-          <div class="search-bar" style="margin-bottom: 20px">
-            <i data-lucide="search"></i>
-            <input
-              type="text"
-              id="modal-customer-search"
-              placeholder="Pesquise por nome ou CPF..."
-              oninput="filterCustomersModal()"
-            />
+
+        <input type="hidden" id="edit-id" />
+
+        <div class="form-group">
+          <label>Cliente</label>
+          <select id="select-cliente" class="form-control">
+            <option value="">Carregando clientes...</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label>Animal (Pet)</label>
+          <select id="select-pet" class="form-control">
+            <option value="">Carregando animais...</option>
+          </select>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px">
+          <div class="form-group">
+            <label>Data</label>
+            <input type="date" id="input-data" class="form-control" />
           </div>
-          <div id="customer-list-container">
-            <!-- Lista de clientes será injetada aqui -->
-            <p style="text-align: center; color: var(--text-secondary)">
-              Carregando clientes...
-            </p>
+          <div class="form-group">
+            <label>Horário</label>
+            <input type="time" id="input-horario" class="form-control" />
           </div>
+        </div>
+
+        <div class="form-group">
+          <label>Serviço</label>
+          <select id="select-servico" class="form-control">
+            <option value="">Carregando serviços...</option>
+          </select>
+        </div>
+
+        <div class="form-group" id="status-selection-container">
+          <label>Status do Atendimento</label>
+          <div class="status-group">
+            <button
+              class="status-btn"
+              data-status="AGENDADO"
+              onclick="updateStatusViaPatch('agendado')"
+            >
+              Agendada
+            </button>
+            <button
+              class="status-btn"
+              data-status="FINALIZADA"
+              onclick="updateStatusViaPatch('finalizada')"
+            >
+              Finalizada
+            </button>
+            <button
+              class="status-btn"
+              data-status="CANCELADA"
+              onclick="updateStatusViaPatch('cancelado')"
+            >
+              Cancelada
+            </button>
+          </div>
+          <input type="hidden" id="input-status" value="AGENDADO" />
+        </div>
+
+        <div class="modal-footer">
+          <button class="btn-ghost" onclick="closeModal()">Sair</button>
+          <button class="btn-primary btn-submit" onclick="saveChanges()">
+            Salvar Alterações
+          </button>
         </div>
       </div>
     </div>
@@ -820,500 +709,290 @@
     <script>
       lucide.createIcons();
 
-      let items = []; // Vai armazenar produtos e serviços juntos
-      let cart = [];
+      // Configuração da API
+      const API_BASE_URL = "http://localhost:8080/agenda";
+      // Endpoints específicos passados
+      const ENDPOINTS_LISTAR = {
+        clientes: "http://localhost:8080/clientes/listar",
+        animais: "http://localhost:8080/animais/listar",
+        servicos: "http://localhost:8080/servico/listar",
+      };
 
-      function carregarCarrinhoDoBackend(idCliente) {
-        fetch(`http://localhost:8080/carrinho/itens/${idCliente}`)
-          .then((response) => {
-            if (!response.ok) throw new Error("Erro ao buscar carrinho");
-            return response.json();
-          })
-          .then((itens) => {
-            // 👇 CONVERTE DTO → cart do front
-            cart = itens.map((item) => ({
-              id: item.produtoId || item.servicoId,
-              name: item.nome,
-              price: item.valorUnitario,
-              qty: item.quantidade,
-              type: item.produtoId ? "product" : "service",
-            }));
+      let currentStatus = "AGENDADO";
+      let loadedAgendas = [];
 
-            updateCartUI(); // 👈 agora funciona
-          })
-          .catch((error) => {
-            console.error("Erro ao carregar carrinho:", error);
-          });
-      }
-      // Função para carregar serviços do backend
-      async function fetchProdutos() {
-        const res = await fetch(
-          "http://localhost:8080/produto/ativos-quantidade",
-        );
-        if (!res.ok) throw new Error("Erro ao buscar produtos");
-        const produtos = await res.json();
-
-        return produtos.map((p) => ({
-          id: p.id,
-          nome: p.nomeProduto,
-          preco: p.precoProduto,
-          type: "product",
-        }));
-      }
-
-      async function fetchServicos() {
-        const res = await fetch("http://localhost:8080/servico/ativos");
-        if (!res.ok) throw new Error("Erro ao buscar serviços");
-        const servicos = await res.json();
-
-        return servicos.map((s) => ({
-          id: s.id,
-          nome: s.nomeServico,
-          preco: s.precoServico,
-          type: "service",
-        }));
-      }
-
-      async function carregarItens() {
+      // Função para buscar e popular os selects
+      async function carregarListasParaModal() {
         try {
-          const [servicos, produtos] = await Promise.all([
-            fetchServicos(),
-            fetchProdutos(),
+          const [resClie, resAnim, resServ] = await Promise.all([
+            fetch(ENDPOINTS_LISTAR.clientes),
+            fetch(ENDPOINTS_LISTAR.animais),
+            fetch(ENDPOINTS_LISTAR.servicos),
           ]);
 
-          items = [...servicos, ...produtos];
-          renderCard(items);
-        } catch (err) {
-          console.error(err);
-          alert("Erro ao carregar itens");
+          if (!resClie.ok || !resAnim.ok || !resServ.ok)
+            throw new Error("Erro ao resgatar listas");
+
+          const clientes = await resClie.json();
+          const animais = await resAnim.json();
+          const servicos = await resServ.json();
+
+          // Popular Clientes
+          const selectCliente = document.getElementById("select-cliente");
+          selectCliente.innerHTML =
+            '<option value="">Selecione o Cliente</option>';
+          clientes.forEach((c) => {
+            selectCliente.innerHTML += `<option value="${c.id}">${c.nome}</option>`;
+          });
+
+          // Popular Animais
+          const selectPet = document.getElementById("select-pet");
+          selectPet.innerHTML = '<option value="">Selecione o Animal</option>';
+          animais.forEach((a) => {
+            selectPet.innerHTML += `<option value="${a.id}">${a.nome} (${a.especie})</option>`;
+          });
+
+          // Popular Serviços
+          const selectServico = document.getElementById("select-servico");
+          selectServico.innerHTML =
+            '<option value="">Selecione o Serviço</option>';
+          servicos.forEach((s) => {
+            selectServico.innerHTML += `<option value="${s.id}">${s.nomeServico}</option>`;
+          });
+        } catch (error) {
+          console.error("Erro ao carregar dados dos selects:", error);
         }
       }
 
-      function openCustomerModal() {
-        document.getElementById("customer-modal").style.display = "flex";
-        renderCustomerList(allCustomers);
-      }
-
-      function closeCustomerModal() {
-        document.getElementById("customer-modal").style.display = "none";
-      }
-
-      function selectCustomer(customer) {
-        localStorage.setItem("idCliente", customer.id);
+      async function renderCalendar() {
+        const agendaNumero = document.getElementById("agenda-switch").value;
+        const container = document.getElementById("calendar-grid");
 
         try {
-          selectedCustomer = customer;
-
-          const labelInterno = document.getElementById(
-            "selected-customer-name",
+          const response = await fetch(
+            `${API_BASE_URL}/agenda/${agendaNumero}`,
           );
-          const labelHeader = document.getElementById("header-customer-name");
-
-          if (labelInterno) labelInterno.innerText = customer.nome;
-          if (labelHeader) labelHeader.innerText = customer.nome;
-          if (labelInterno) labelInterno.innerText = customer.nome;
-          if (labelHeader) labelHeader.innerText = customer.nome;
-
-          closeCustomerModal();
-
-          carregarCarrinhoDoBackend(customer.id);
+          if (!response.ok) throw new Error("Erro ao buscar dados");
+          loadedAgendas = await response.json();
         } catch (error) {
-          console.error("Erro ao selecionar cliente:", error);
-        }
-      }
-
-      const filterButtons = document.querySelectorAll(".filter-btn");
-
-      filterButtons.forEach((btn) => {
-        btn.addEventListener("click", async () => {
-          // troca botão ativo
-          filterButtons.forEach((b) => b.classList.remove("active"));
-          btn.classList.add("active");
-      filterButtons.forEach((btn) => {
-        btn.addEventListener("click", async () => {
-          // troca botão ativo
-          filterButtons.forEach((b) => b.classList.remove("active"));
-          btn.classList.add("active");
-
-          const filter = btn.dataset.filter;
-
-          try {
-            if (filter === "product") {
-              const produtos = await fetchProdutos();
-              items = produtos;
-              renderCard(produtos);
-            } else if (filter === "service") {
-              const servicos = await fetchServicos();
-              items = servicos;
-              renderCard(servicos);
-            } else {
-              // ALL
-              await carregarItens();
-            }
-          } catch (err) {
-            console.error(err);
-            alert("Erro ao aplicar filtro");
-          }
-        });
-      });
-
-      // Renderiza os cards no catálogo
-      function renderCard(lista) {
-        const catalog = document.getElementById("catalog-grid");
-        catalog.innerHTML = "";
-
-        if (!lista || lista.length === 0) {
-          catalog.innerHTML = `
-        <p style="text-align:center; color: var(--text-secondary); margin-top: 40px;">
-          Nenhum item encontrado
-        </p>`;
-          return;
+          console.error("Erro na API:", error);
+          loadedAgendas = [];
         }
 
-        lista.forEach((item) => {
-          const card = document.createElement("div");
-          card.classList.add("item-card");
+        let html = `
+          <div class="grid-header" style="border-left: none">Horário</div>
+          <div class="grid-header">Seg <span>23</span></div>
+          <div class="grid-header">Ter <span>24</span></div>
+          <div class="grid-header">Qua <span>25</span></div>
+          <div class="grid-header">Qui <span>26</span></div>
+          <div class="grid-header">Sex <span>27</span></div>
+          <div class="grid-header">Sáb <span>28</span></div>
+          <div class="grid-header">Dom <span>29</span></div>
+          
+          <div class="time-slots">
+            <div class="time-label">08:00</div>
+            <div class="time-label">09:00</div>
+            <div class="time-label">10:00</div>
+            <div class="time-label">11:00</div>
+            <div class="time-label">12:00</div>
+            <div class="time-label">13:00</div>
+          </div>
+        `;
 
-          const tagClass =
-            item.type === "product" ? "tag-product" : "tag-service";
-          const tagLabel = item.type === "product" ? "Produto" : "Serviço";
-
-          card.innerHTML = `
-        <span class="item-tag ${tagClass}">${tagLabel}</span>
-        <div class="item-name">${item.nome}</div>
-        <div class="item-price">R$ ${item.preco.toFixed(2).replace(".", ",")}</div>
-        <button class="btn-add">
-          <i data-lucide="plus"></i> Adicionar
-        </button>
-      `;
-
-          card.querySelector(".btn-add").addEventListener("click", () => {
-            addToCart(item.id, item.nome, item.preco, item.type);
+        for (let i = 0; i < 7; i++) {
+          let eventHtml = "";
+          const dayEvents = loadedAgendas.filter((e) => {
+            const dateObj = new Date(e.data);
+            return dateObj.getUTCDay() === i;
           });
 
-          catalog.appendChild(card);
-        });
+          dayEvents.forEach((e) => {
+            const hour = parseInt(e.horaInicio.split(":")[0]);
+            const minutes = parseInt(e.horaInicio.split(":")[1]);
 
-        lucide.createIcons();
-      }
+            // Cálculo de posição: 100px por hora + (minutos/60 * 100)
+            const topPosition = (hour - 8) * 100 + (minutes / 60) * 100;
 
-      // Adiciona item ao carrinho
+            // Formatação do preço para Real
+            const precoFormatado = new Intl.NumberFormat("pt-BR", {
+              style: "currency",
+              currency: "BRL",
+            }).format(e.valorDaAgenda);
 
-      function addToCart(id, name, price, type) {
-        const idCliente = localStorage.getItem("idCliente");
-
-        if (!idCliente) {
-          alert("Selecione um cliente antes de adicionar ao carrinho!");
-          return;
-        }
-
-        const existingItem = cart.find((i) => i.id === id && i.type === type);
-
-        if (existingItem) {
-          existingItem.qty += 1;
-        } else {
-          cart.push({ id, name, price, type, qty: 1 });
-        }
-
-        updateCartUI();
-
-        const itemPayload =
-          type === "product"
-            ? { produtoId: id, quantidade: 1 }
-            : { servicoId: id, quantidade: 1 };
-
-        const payload = {
-          idCliente: idCliente,
-          itens: [itemPayload],
-        };
-
-        fetch("http://localhost:8080/carrinho", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(payload),
-        }).catch((error) => console.error("Erro:", error));
-      }
-
-      // Atualiza quantidade no carrinho
-      function updateQty(id, delta) {
-        const item = cart.find((i) => i.id === id);
-        if (item) {
-          item.qty += delta;
-          if (item.qty <= 0) cart = cart.filter((i) => i.id !== id);
-        }
-        updateCartUI();
-      }
-
-      // Remove item do carrinho
-      function removeItem(id) {
-        cart = cart.filter((item) => item.id !== id);
-        updateCartUI();
-      }
-
-      // Limpa o carrinho
-      function clearCart() {
-        if (cart.length > 0 && confirm("Deseja realmente limpar o carrinho?")) {
-          cart = [];
-          document.getElementById("discount-percent").value = 0;
-          updateCartUI();
-        }
-      }
-
-      function carregarClientes() {
-        fetch("http://localhost:8080/clientes/listar")
-          .then((response) => {
-            if (!response.ok) throw new Error("Erro ao buscar clientes");
-            return response.json();
-          })
-          .then((data) => {
-            clients = data;
-            renderCustomerList(clients);
-          })
-          .catch((error) => console.error("Erro:", error));
-      }
-
-      function renderCustomerList(list) {
-        const container = document.getElementById("customer-list-container");
-        container.innerHTML = "";
-
-        if (list.length === 0) {
-          container.innerHTML =
-            "<p style='text-align:center; color:gray;'>Nenhum cliente encontrado.</p>";
-          return;
-        }
-
-        list.forEach((c) => {
-          const div = document.createElement("div");
-          div.className = "customer-list-item";
-          div.innerHTML = `
-            <div class="avatar" style="margin-right: 15px;"><i data-lucide="user"></i></div>
-            <div style="flex:1">
-                <strong style="display:block">${c.nome}</strong>
-                 <small style="color: var(--text-secondary)">id#: ${c.id || "Não informado"}</small>
-                 <small style="color: var(--text-secondary)">CPF: ${c.cpf || "Não informado"}</small>
+            eventHtml += `
+      <div class="event-card ${e.statusAgenda}" 
+           style="top: ${topPosition}px; height: 90px; display: flex; flex-direction: column; justify-content: space-between;" 
+           onclick="openEditModal(${e.id})">
+        
+        <div>
+            <div style="font-weight: 800; font-size: 0.8rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+                ${e.nomeCliente} • ${e.nomeAnimal}
             </div>
-            <i data-lucide="chevron-right" style="color: var(--primary)"></i>
-          `;
-          div.onclick = () => selectCustomer(c);
-          container.appendChild(div);
-        });
+            <div style="font-size: 0.7rem; opacity: 0.9; margin-top: 2px;">
+                <i data-lucide="scissors" style="width: 10px; height: 10px; display: inline-block;"></i> 
+                ${e.nomeServico}
+            </div>
+        </div>
 
-        localStorage.setItem("idCliente", customer.id);
-
-        lucide.createIcons();
-      }
-        lucide.createIcons();
-      })},
-
-      // Finaliza venda
-      function finishSale() {
-        const idCliente = localStorage.getItem("idCliente");
-
-        if (!idCliente) {
-          alert("Selecione um cliente!");
-          return;
-        }
-
-        if (cart.length === 0) {
-          alert("Adicione itens ao carrinho primeiro!");
-          return;
-        }
-
-        const payload = {
-          idCliente: idCliente,
-        };
-
-        fetch("http://localhost:8080/carrinho/finalizar", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(payload),
-        })
-          .then((res) => {
-            if (!res.ok) throw new Error("Erro ao finalizar venda");
-
-            cart = [];
-            document.getElementById("discount-percent").value = 0;
-            updateCartUI();
-          })
-          .catch((err) => {
-            console.error("Erro:", err);
-            alert("Erro ao finalizar venda");
+        <div style="font-weight: 700; color: var(--primary); background: rgba(255,255,255,0.5); padding: 2px 4px; border-radius: 4px; align-self: flex-start; font-size: 0.7rem; margin-top: 4px;">
+            ${precoFormatado}
+        </div>
+      </div>`;
           });
-      });
 
-      // Atualiza a interface do carrinho
-      let timeoutDesconto;
-      function aplicarDescontoBackend(porcentagem) {
-        const idCliente = 1; // ⚠️ depois pega dinamicamente
-
-        fetch(`http://localhost:8080/carrinho/${idCliente}/${porcentagem}`, {
-          method: "PUT",
-        })
-          .then((res) => {
-            if (!res.ok) throw new Error("Erro ao aplicar desconto");
-            console.log("Desconto salvo no backend");
-          })
-          .catch((err) => console.error("Erro:", err));
-      }
-
-      function updateQty(id, type, delta) {
-        const idCliente = localStorage.getItem("idCliente");
-
-        if (!idCliente) {
-          alert("Selecione um cliente!");
-          return;
+          html += `<div class="day-column">${eventHtml}</div>`;
         }
 
-        const item = cart.find((i) => i.id === id && i.type === type);
+        container.innerHTML = html;
+        document.getElementById("current-user-name").innerText =
+          agendaNumero == "1" ? "Felipe" : "Maria";
+      }
+
+      function openEditModal(id) {
+        const item = loadedAgendas.find((a) => a.id === id);
         if (!item) return;
 
-        item.qty += delta;
+        // Primeiro carregamos as listas, depois setamos os valores
+        carregarListasParaModal().then(() => {
+          document.getElementById("edit-id").value = item.id;
+          document.getElementById("select-cliente").value = item.idCliente;
+          document.getElementById("select-pet").value = item.idAnimal;
+          document.getElementById("select-servico").value = item.idServico;
+          document.getElementById("input-data").value = item.data;
+          document.getElementById("input-horario").value =
+            item.horaInicio.substring(0, 5);
 
-        if (item.qty <= 0) {
-          cart = cart.filter((i) => !(i.id === id && i.type === type));
-        }
-
-        updateCartUI();
-
-        const itemPayload =
-          type === "product"
-            ? { produtoId: id, quantidade: 1 }
-            : { servicoId: id, quantidade: 1 };
-
-        const payload = {
-          idCliente: idCliente,
-          itens: [itemPayload],
-        };
-
-        const url =
-          delta > 0
-            ? `http://localhost:8080/carrinho/adicionar-quantidade/${idCliente}`
-            : `http://localhost:8080/carrinho/remover-quantidade/${idCliente}`;
-
-        fetch(url, {
-          method: "PATCH",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(payload),
-        }).catch((error) => console.error("Erro:", error));
-      }
-
-      function removeItem(id, type) {
-        const idCliente = localStorage.getItem("idCliente");
-
-        if (!idCliente) {
-          alert("Selecione um cliente!");
-          return;
-        }
-
-        cart = cart.filter((item) => !(item.id === id && item.type === type));
-
-        updateCartUI();
-
-        const itemPayload =
-          type === "product" ? { produtoId: id } : { servicoId: id };
-
-        const payload = {
-          idCliente: idCliente,
-          itens: [itemPayload],
-        };
-
-        fetch(`http://localhost:8080/carrinho/deletar-item/${idCliente}`, {
-          method: "DELETE",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(payload),
-        })
-          .then((res) => {
-            if (!res.ok) throw new Error("Erro ao deletar item");
-            console.log("Item removido com sucesso");
-          })
-          .catch((err) => console.error("Erro:", err));
-      }
-
-      function updateCartUI() {
-        const container = document.getElementById("cart-items");
-        container.innerHTML = "";
-
-        if (cart.length === 0) {
-          container.innerHTML = `
-      <div style="text-align:center; color: var(--text-secondary); margin-top:40px;">
-        <i data-lucide="package-open" style="width:48px;height:48px;opacity:0.3;display:block;margin:0 auto;"></i>
-        <p style="font-weight:600;">Carrinho vazio</p>
-      </div>
-    `;
-
-          document.getElementById("subtotal").innerText = "R$ 0,00";
-          document.getElementById("discount-value").innerText = "- R$ 0,00";
-          document.getElementById("total-final").innerText = "R$ 0,00";
-
-          lucide.createIcons();
-          return;
-        }
-
-        let subtotal = 0;
-
-        cart.forEach((item) => {
-          subtotal += item.price * item.qty;
-
-          const div = document.createElement("div");
-          div.className = "cart-item";
-          div.innerHTML = `
-      <div class="cart-item-info">
-        <h4>${item.name}</h4>
-        <span>${item.type}</span>
-      </div>
-<div class="cart-item-qty">
-  <button class="qty-btn" onclick="updateQty(${item.id}, '${item.type}', -1)">-</button>
-  <span class="qty-val">${item.qty}</span>
-  <button class="qty-btn" onclick="updateQty(${item.id}, '${item.type}', 1)">+</button>
-</div>
-      <div class="cart-item-price">
-        R$ ${(item.price * item.qty).toFixed(2).replace(".", ",")}
-      </div>
-<div class="btn-remove" onclick="removeItem(${item.id}, '${item.type}')">
-  <i data-lucide="trash-2"></i>
-</div>
-    `;
-          container.appendChild(div);
+          setStatus(item.statusAgenda);
+          document.getElementById("status-selection-container").style.display =
+            "block";
+          document.getElementById("modal-title").innerText =
+            "Editar Agendamento";
+          document.getElementById("modalNovo").style.display = "flex";
         });
-
-        const discountPercent =
-          parseFloat(document.getElementById("discount-percent").value) || 0;
-
-        clearTimeout(timeoutDesconto);
-        timeoutDesconto = setTimeout(() => {
-          aplicarDescontoBackend(discountPercent);
-        }, 500);
-
-        const discountValue = subtotal * (discountPercent / 100);
-        const total = subtotal - discountValue;
-
-        document.getElementById("subtotal").innerText =
-          `R$ ${subtotal.toFixed(2).replace(".", ",")}`;
-
-        document.getElementById("discount-value").innerText =
-          `- R$ ${discountValue.toFixed(2).replace(".", ",")}`;
-
-        document.getElementById("total-final").innerText =
-          `R$ ${total.toFixed(2).replace(".", ",")}`;
-
-        lucide.createIcons();
       }
 
-      const searchInput = document.querySelector(".search-bar input");
-      searchInput.addEventListener("input", () => {
-        const query = searchInput.value.toLowerCase();
-        const filtered = items.filter((item) =>
-          item.nome.toLowerCase().includes(query),
-        );
-        renderCard(filtered);
-      });
+      function setStatus(status) {
+        currentStatus = status;
+        document.getElementById("input-status").value = status;
+        document.querySelectorAll(".status-btn").forEach((btn) => {
+          btn.classList.remove("active");
+          if (btn.dataset.status === status) btn.classList.add("active");
+        });
+      }
 
-      carregarClientes();
-      carregarItens();e
+      async function updateStatusViaPatch(path) {
+        const id = document.getElementById("edit-id").value;
+        if (!id) return;
+
+        try {
+          const response = await fetch(`${API_BASE_URL}/${path}/${id}`, {
+            method: "PATCH",
+          });
+          if (response.ok) {
+            closeModal();
+            renderCalendar();
+          }
+        } catch (error) {
+          console.error("Erro ao atualizar status", error);
+        }
+      }
+
+      async function saveChanges() {
+        const btn = document.querySelector(".btn-submit");
+        btn.disabled = true; // Trava o botão
+
+        // 1. Captura os elementos do DOM
+        const elId = document.getElementById("edit-id");
+        const elCliente = document.getElementById("select-cliente");
+        const elPet = document.getElementById("select-pet");
+        const elServico = document.getElementById("select-servico");
+        const elData = document.getElementById("input-data");
+        const elHorario = document.getElementById("input-horario");
+        const elAgenda = document.getElementById("agenda-switch");
+
+        // 2. Validação visual rápida
+        if (
+          !elCliente.value ||
+          !elPet.value ||
+          !elServico.value ||
+          !elHorario.value
+        ) {
+          alert(
+            "Erro: Certifique-se de que Cliente, Pet, Serviço e Horário foram selecionados.",
+          );
+          return;
+        }
+
+        // 3. Cálculo da horaFim (Soma 1 hora)
+        const [horas, minutos] = elHorario.value.split(":").map(Number);
+        const d = new Date();
+        d.setHours(horas + 1, minutos, 0);
+        const horaFimStr =
+          d.toTimeString().split(" ")[0].substring(0, 5) + ":00";
+
+        // 4. Montagem do DTO (Garantindo que são números com Number())
+        const agendaDTO = {
+          id: elId.value ? parseInt(elId.value) : null,
+          idCliente: Number(elCliente.value),
+          idAnimal: Number(elPet.value),
+          idServico: Number(elServico.value),
+          data: elData.value,
+          horaInicio: elHorario.value + ":00",
+          horaFim: horaFimStr,
+          numeroAgenda: parseInt(elAgenda.value),
+        };
+
+        // LOG PARA VOCÊ VERIFICAR NO F12 ANTES DE DAR ERRO
+        console.log("Enviando para o Java:", agendaDTO);
+        btn.disabled = false; // Destrava no final
+
+        try {
+          const response = await fetch(API_BASE_URL, {
+            method: agendaDTO.id ? "PUT" : "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(agendaDTO),
+          });
+
+          if (!response.ok) {
+            const errorData = await response.json();
+            alert("Erro no Servidor: " + errorData.message);
+            return;
+          }
+
+          closeModal();
+          renderCalendar();
+        } catch (error) {
+          console.error("Erro na conexão:", error);
+        }
+      }
+
+      function changeAgenda() {
+        renderCalendar();
+      }
+
+      function openModal() {
+        document.getElementById("edit-id").value = "";
+        carregarListasParaModal(); // Carrega clientes/pets/serviços ao abrir novo
+        document.getElementById("select-cliente").value = "";
+        document.getElementById("select-pet").value = "";
+        document.getElementById("select-servico").value = "";
+        document.getElementById("status-selection-container").style.display =
+          "none";
+        document.getElementById("modal-title").innerText = "Novo Agendamento";
+        setStatus("AGENDADA");
+        document.getElementById("modalNovo").style.display = "flex";
+      }
+
+      function closeModal() {
+        document.getElementById("modalNovo").style.display = "none";
+      }
+
+      window.onclick = function (event) {
+        const modal = document.getElementById("modalNovo");
+        if (event.target == modal) closeModal();
+      };
+
+      renderCalendar();
     </script>
   </body>
 </html>
