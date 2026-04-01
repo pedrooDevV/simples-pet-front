@@ -911,6 +911,8 @@
 
           if (labelInterno) labelInterno.innerText = customer.nome;
           if (labelHeader) labelHeader.innerText = customer.nome;
+          if (labelInterno) labelInterno.innerText = customer.nome;
+          if (labelHeader) labelHeader.innerText = customer.nome;
 
           closeCustomerModal();
 
@@ -921,7 +923,13 @@
       }
 
       const filterButtons = document.querySelectorAll(".filter-btn");
+      const filterButtons = document.querySelectorAll(".filter-btn");
 
+      filterButtons.forEach((btn) => {
+        btn.addEventListener("click", async () => {
+          // troca botão ativo
+          filterButtons.forEach((b) => b.classList.remove("active"));
+          btn.classList.add("active");
       filterButtons.forEach((btn) => {
         btn.addEventListener("click", async () => {
           // troca botão ativo
@@ -1093,6 +1101,8 @@
 
         localStorage.setItem("idCliente", customer.id);
 
+        lucide.createIcons();
+      }
         lucide.createIcons();
       }
 

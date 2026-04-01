@@ -7,13 +7,15 @@ clientForm.addEventListener("submit", async (e) => {
 
   const clientId = document.getElementById("clientId").value;
 
+
+
   const clientData = {
     nome: document.getElementById("name").value.trim(),
     email: document.getElementById("email").value.trim(),
     telefone: document.getElementById("phone").value.trim(),
     cpf: document.getElementById("cpf").value.trim(),
     quantidadeDePets: parseInt(document.getElementById("pets").value),
-    notes: document.getElementById("notes").value.trim(),
+    observacoes: document.getElementById("notes").value.trim(),
   };
 
   if (!clientData.nome || !clientData.email || !clientData.telefone || !clientData.cpf) {

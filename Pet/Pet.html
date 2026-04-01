@@ -68,6 +68,25 @@
         color: var(--primary);
       }
 
+      .header-info h1 {
+        font-size: 1.5rem;
+        font-weight: 800;
+      }
+      .header-info p {
+        color: var(--text-secondary);
+        font-size: 0.85rem;
+      }
+
+      .btn-info {
+        color: #3b82f6; /* Azul */
+        background: #eff6ff;
+        border: 1px solid #dbeafe;
+      }
+
+      .btn-info:hover {
+        background: #dbeafe;
+      }
+
       .menu-label {
         padding: 0 24px 8px;
         font-size: 0.7rem;
@@ -430,6 +449,51 @@
         transform: translateY(-1px);
       }
 
+      /* Container do modal */
+      .obs-modal-container {
+        display: none; /* oculto por padrão */
+        position: fixed;
+        z-index: 1000;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        overflow: auto;
+        background-color: rgba(0, 0, 0, 0.5); /* fundo semi-transparente */
+        backdrop-filter: blur(3px); /* leve blur */
+      }
+
+      /* Caixa do modal */
+      .obs-modal-box {
+        background-color: #fff;
+        margin: 10% auto;
+        padding: 25px;
+        border-radius: 14px;
+        width: 600px; /* largura */
+        max-width: 95%;
+        height: 400px; /* altura fixa maior */
+        max-height: 80vh; /* nunca ultrapassa 80% da altura da tela */
+        overflow-y: auto; /* adiciona scroll vertical se precisar */
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.35);
+        position: relative;
+        font-family: "Inter", sans-serif;
+      }
+
+      /* Botão de fechar */
+      .obs-modal-close {
+        position: absolute;
+        top: 12px;
+        right: 18px;
+        font-size: 26px;
+        cursor: pointer;
+        color: #333;
+        font-weight: bold;
+      }
+
+      .obs-modal-close:hover {
+        color: #e74c3c;
+      }
+
       /* Toast */
       .toast {
         position: fixed;
@@ -653,6 +717,13 @@
       <span id="toastMsg">Ação concluída!</span>
     </div>
 
+    <div id="obsModalContainer" class="obs-modal-container">
+      <div class="obs-modal-box">
+        <span class="obs-modal-close">&times;</span>
+        <p id="obsModalText"></p>
+      </div>
+    </div>
+
     <script>
       lucide.createIcons();
 
@@ -749,6 +820,9 @@
       <td style="font-weight: 500;">${p.idade}</td>
       <td style="text-align: right;">
         <div class="actions">
+          <button class="btn-icon btn-info" title="Ver Observação" onclick="showObservation('${p.observacoes || "Sem observações"}')">
+  <i data-lucide="info" style="width: 18px;"></i>
+</button>
           <button class="btn-icon btn-edit" onclick="openModal('edit', ${p.id})"><i data-lucide="edit-3" style="width: 18px;"></i></button>
           <button class="btn-icon btn-delete" onclick="deletePet(${p.id})"><i data-lucide="trash-2" style="width: 18px;"></i></button>
         </div>
@@ -759,6 +833,28 @@
 
         document.getElementById("count-pets").innerText = petsList.length;
         lucide.createIcons();
+      }
+
+      function showObservation(texto) {
+        const mensagem =
+          texto && texto !== "undefined"
+            ? texto
+            : "Nenhuma observação disponível para este pet.";
+
+        const modal = document.getElementById("obsModalContainer");
+        const obsText = document.getElementById("obsModalText");
+        const closeBtn = document.querySelector(".obs-modal-close");
+
+        obsText.textContent = mensagem;
+        modal.style.display = "block";
+
+        // Fecha ao clicar no X
+        closeBtn.onclick = () => (modal.style.display = "none");
+
+        // Fecha ao clicar fora da caixa
+        window.onclick = (event) => {
+          if (event.target === modal) modal.style.display = "none";
+        };
       }
 
       // 4️⃣ Modal Logic
@@ -826,25 +922,23 @@
               body: JSON.stringify(payload),
             });
 
-            // --- AQUI ESTÁ A MUDANÇA ---
             if (!res.ok) {
-              const errorData = await res.json(); // Transforma o erro em objeto JS
-
-              // Se o erro vier do Java/Validation, pegamos a mensagem limpa
-              // Geralmente o Spring coloca em 'message' ou em um array de 'errors'
               let msgErro = "Erro ao salvar";
 
-              if (
-                errorData.message &&
-                errorData.message.includes("Idade máxima permitida é 30")
-              ) {
-                msgErro = "Idade máxima permitida é 30";
-              } else {
-                msgErro = errorData.message || "Verifique os dados enviados";
+              // Tenta parsear JSON, mas se falhar, pega o texto cru
+              try {
+                const errorData = await res.json();
+                if (errorData.message) {
+                  msgErro = errorData.message;
+                }
+              } catch {
+                // Se não tiver JSON, pega o texto simples
+                const text = await res.text();
+                if (text) msgErro = text;
               }
 
-              showToast(msgErro); // Exibe no seu Toast bonitão
-              return; // PARA AQUI (não fecha o modal nem limpa o form)
+              showToast(msgErro);
+              return; // não fecha modal
             }
             // --- FIM DA MUDANÇA ---
 

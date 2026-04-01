@@ -99,6 +99,10 @@
         font-size: 0.9rem;
       }
 
+      .monthFilter {
+        cursor: pointer;
+      }
+
       .nav-item:hover {
         background-color: var(--primary-bg-light);
         color: var(--primary);
@@ -380,6 +384,60 @@
         }
       }
 
+      .btn-info {
+        color: #3b82f6; /* Azul */
+        background: #eff6ff;
+        border: 1px solid #dbeafe;
+      }
+
+      .btn-info:hover {
+        background: #dbeafe;
+      }
+
+      .obs-modal-container {
+        display: none; /* oculto por padrão */
+        position: fixed;
+        z-index: 1000;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        overflow: auto;
+        background-color: rgba(0, 0, 0, 0.5); /* fundo semi-transparente */
+        backdrop-filter: blur(3px); /* leve blur */
+      }
+
+      /* Caixa do modal */
+      .obs-modal-box {
+        background-color: #fff;
+        margin: 10% auto;
+        padding: 25px;
+        border-radius: 14px;
+        width: 600px; /* largura */
+        max-width: 95%;
+        height: 400px; /* altura fixa maior */
+        max-height: 80vh; /* nunca ultrapassa 80% da altura da tela */
+        overflow-y: auto; /* adiciona scroll vertical se precisar */
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.35);
+        position: relative;
+        font-family: "Inter", sans-serif;
+      }
+
+      /* Botão de fechar */
+      .obs-modal-close {
+        position: absolute;
+        top: 12px;
+        right: 18px;
+        font-size: 26px;
+        cursor: pointer;
+        color: #333;
+        font-weight: bold;
+      }
+
+      .obs-modal-close:hover {
+        color: #e74c3c;
+      }
+
       .modal-title {
         font-size: 1.25rem;
         font-weight: 800;
@@ -449,8 +507,97 @@
         transition: 0.4s;
         z-index: 300;
       }
+
+      /* Estilo para o campo de Categoria com o Botão + ao lado */
+      .input-with-button {
+        display: flex;
+        gap: 8px;
+        align-items: center;
+      }
+
+      .btn-add-inline {
+        background: var(--primary-bg-light);
+        color: var(--primary);
+        border: 1px solid var(--primary);
+        border-radius: 10px;
+        width: 42px;
+        height: 42px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        transition: 0.2s;
+        flex-shrink: 0; /* Impede o botão de espremer */
+      }
+
+      .btn-add-inline:hover {
+        background: var(--primary);
+        color: white;
+      }
+
+      /* Estilo específico para o Modal de Categoria (Menor) */
+      .modal.small {
+        max-width: 400px;
+      }
+
+      .modal-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 24px;
+      }
+
+      .modal-header h2 {
+        font-size: 1.25rem;
+        font-weight: 800;
+        color: var(--primary);
+      }
+
+      /* Botões utilitários para o formulário de categoria */
+      .btn-block {
+        flex: 1;
+        padding: 12px;
+        border-radius: 10px;
+        border: none;
+        font-weight: 700;
+        cursor: pointer;
+        transition: 0.2s;
+        font-size: 0.9rem;
+      }
+
+      .btn-success {
+        background: var(--secondary);
+        color: white;
+      }
+
+      .btn-success:hover {
+        background: var(--secondary-hover);
+      }
+
+      /* Ajuste para inputs que ocupam a linha toda no modal pequeno */
+      .form-group.full {
+        width: 100%;
+      }
+
       .toast.show {
         transform: translateY(0);
+      }
+
+      .header-actions {
+        display: flex;
+        gap: 12px;
+        align-items: center;
+      }
+
+      .month-picker {
+        padding: 10px 16px;
+        border-radius: 10px;
+        border: 1px solid var(--border);
+        font-weight: 600;
+        color: var(--text-main);
+        background-color: #f8fafc;
+        cursor: pointer;
+        outline: none;
       }
     </style>
   </head>
@@ -506,13 +653,19 @@
     <main>
       <header>
         <div class="header-info">
-          <h1>Gastos Previstos</h1>
+          <h1 id="pageTitle">Gastos de Janeiro 2024</h1>
           <p>
             Planeje e acompanhe suas despesas futuras para manter o caixa
             saudável.
           </p>
         </div>
         <div class="header-actions">
+          <input
+            type="month"
+            id="monthFilter"
+            class="month-picker"
+            onchange="changeGlobalMonth(this.value)"
+          />
           <button class="btn btn-primary" onclick="openModal()">
             <i data-lucide="plus-circle"></i> Novo Gasto
           </button>
@@ -583,7 +736,7 @@
                 class="stat-icon"
                 style="background: var(--danger-light); color: var(--danger)"
               >
-                <i data-lucide="calendar-alert" style="width: 20px"></i>
+                <i data-lucide="clock" style="width: 20px"></i>
               </div>
             </div>
             <div
@@ -617,17 +770,13 @@
                 <option value="Pendente">Pendentes</option>
                 <option value="Pago">Pagos</option>
               </select>
+
               <select
                 class="filter-select"
                 id="categoryFilter"
                 onchange="applyFilters()"
               >
-                <option value="all">Todas as Categorias</option>
-                <option value="Aluguel">Aluguel</option>
-                <option value="Fornecedores">Fornecedores</option>
-                <option value="Energia">Energia / Água</option>
-                <option value="Salários">Salários</option>
-                <option value="Outros">Outros</option>
+                <option value="all" selected>Todas as Categorias</option>
               </select>
             </div>
           </div>
@@ -639,6 +788,7 @@
                 <th>Valor</th>
                 <th>Vencimento</th>
                 <th>Status</th>
+                <th>Data</th>
                 <th style="text-align: right">Ações</th>
               </tr>
             </thead>
@@ -657,8 +807,11 @@
           <i data-lucide="file-plus"></i>
           <span>Novo Gasto Previsto</span>
         </div>
+
         <form id="gastoForm">
           <input type="hidden" id="editId" />
+
+          <!-- Descrição -->
           <div class="form-group">
             <label for="desc">Descrição do Gasto</label>
             <input
@@ -669,17 +822,24 @@
               placeholder="Ex: Aluguel da Loja"
             />
           </div>
+
           <div class="form-row">
             <div class="form-group">
               <label for="category">Categoria</label>
-              <select id="category" class="form-control" required>
-                <option value="Aluguel">Aluguel</option>
-                <option value="Fornecedores">Fornecedores</option>
-                <option value="Energia">Energia / Água</option>
-                <option value="Salários">Salários</option>
-                <option value="Outros">Outros</option>
-              </select>
+              <div class="input-with-button">
+                <select id="category" class="form-control" required></select>
+                <button
+                  type="button"
+                  class="btn-add-inline"
+                  onclick="openCategoryModal()"
+                  title="Nova Categoria"
+                >
+                  <i data-lucide="plus" style="width: 18px"></i>
+                </button>
+              </div>
             </div>
+
+            <!-- Valor -->
             <div class="form-group">
               <label for="value">Valor (R$)</label>
               <input
@@ -692,11 +852,26 @@
               />
             </div>
           </div>
+
           <div class="form-row">
+            <!-- NOVO CAMPO: DATA DO GASTO -->
+            <div class="form-group">
+              <label for="expenseDate">Data do Gasto</label>
+              <input
+                type="date"
+                id="expenseDate"
+                class="form-control"
+                required
+              />
+            </div>
+
             <div class="form-group">
               <label for="date">Data de Vencimento</label>
               <input type="date" id="date" class="form-control" required />
             </div>
+          </div>
+
+          <div class="form-row">
             <div class="form-group">
               <label for="status">Status Inicial</label>
               <select id="status" class="form-control">
@@ -705,6 +880,8 @@
               </select>
             </div>
           </div>
+
+          <!-- Observações -->
           <div class="form-group">
             <label for="obs">Observações (Opcional)</label>
             <textarea
@@ -714,11 +891,16 @@
               placeholder="Informações adicionais..."
             ></textarea>
           </div>
-          <div class="modal-footer">
+
+          <!-- Rodapé/Botões -->
+          <div
+            class="modal-footer"
+            style="display: flex; gap: 12px; margin-top: 20px"
+          >
             <button
               type="button"
               class="btn-full"
-              style="background: #f1f5f9"
+              style="background: #f1f5f9; flex: 1"
               onclick="closeModal()"
             >
               Cancelar
@@ -726,10 +908,48 @@
             <button
               type="submit"
               class="btn-full"
-              style="background: var(--primary); color: white"
+              style="background: var(--primary); color: white; flex: 1"
               id="saveBtn"
             >
               Salvar Despesa
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <div class="modal-overlay" id="categoryModalOverlay" style="z-index: 210">
+      <div class="modal small">
+        <div class="modal-header">
+          <h2>Nova Categoria</h2>
+          <i
+            data-lucide="x"
+            style="cursor: pointer"
+            onclick="closeCategoryModal()"
+          ></i>
+        </div>
+        <form id="categoryForm">
+          <div class="form-group full">
+            <label for="newCategoryName">Nome da Categoria *</label>
+            <input
+              type="text"
+              id="newCategoryName"
+              class="form-control"
+              required
+              placeholder="Ex: Roupas, Petiscos..."
+            />
+          </div>
+          <div style="display: flex; gap: 12px; margin-top: 10px">
+            <button
+              type="button"
+              class="btn-block"
+              style="background: #f1f5f9"
+              onclick="closeCategoryModal()"
+            >
+              Cancelar
+            </button>
+            <button type="submit" class="btn-block btn-success">
+              Adicionar
             </button>
           </div>
         </form>
@@ -742,202 +962,517 @@
       <span id="toastMsg">Operação realizada com sucesso!</span>
     </div>
 
+    <div id="obsModalContainer" class="obs-modal-container">
+      <div class="obs-modal-box">
+        <span class="obs-modal-close">&times;</span>
+        <p id="obsModalText"></p>
+      </div>
+    </div>
     <script>
       lucide.createIcons();
 
+      const API_URL = "http://localhost:8080/gastos-previstos";
+      const CATEGORIA_URL = "http://localhost:8080/categoria-gasto";
+
       let gastos = [];
+      let selectedMonth = "";
 
-        function carregarGastos(){
+      /** =======================
+       *  Modal de Gasto
+       * ======================= */
+      function openModal(edit = false, gasto = null) {
+        const overlay = document.getElementById("modalOverlay");
+        overlay.style.display = "flex";
 
-            
-        }
+        const title = document
+          .getElementById("modalTitle")
+          .querySelector("span");
+        title.textContent = edit
+          ? "Editar Gasto Previsto"
+          : "Novo Gasto Previsto";
 
-
-
-      function renderGastos(data = gastos) {
-        const list = document.getElementById("gastos-list");
-        list.innerHTML = "";
-
-        data
-          .sort((a, b) => new Date(a.date) - new Date(b.date))
-          .forEach((g) => {
-            const tr = document.createElement("tr");
-            tr.innerHTML = `
-                    <td>
-                        <div style="font-weight: 700;">${g.desc}</div>
-                    </td>
-                    <td><span style="color: var(--text-secondary)">${g.category}</span></td>
-                    <td style="font-weight: 700;">${formatCurrency(g.value)}</td>
-                    <td>${formatDateBr(g.date)}</td>
-                    <td>
-                        <span class="status-pill status-${g.status.toLowerCase()}">
-                            <i data-lucide="${g.status === "Pago" ? "check" : "clock"}" style="width: 12px;"></i>
-                            ${g.status}
-                        </span>
-                    </td>
-                    <td class="actions-cell">
-                        ${
-                          g.status === "Pendente"
-                            ? `
-                            <button class="action-btn pay" title="Marcar como Pago" onclick="markAsPaid(${g.id})">
-                                <i data-lucide="check-square" style="width: 16px;"></i>
-                            </button>
-                        `
-                            : ""
-                        }
-                        <button class="action-btn" title="Editar" onclick="editGasto(${g.id})">
-                            <i data-lucide="edit-3" style="width: 16px;"></i>
-                        </button>
-                        <button class="action-btn delete" title="Excluir" onclick="deleteGasto(${g.id})">
-                            <i data-lucide="trash-2" style="width: 16px;"></i>
-                        </button>
-                    </td>
-                `;
-            list.appendChild(tr);
-          });
-        updateStats();
-        lucide.createIcons();
-      }
-
-      function updateStats() {
-        const total = gastos.reduce((acc, g) => acc + g.value, 0);
-        const pagos = gastos
-          .filter((g) => g.status === "Pago")
-          .reduce((acc, g) => acc + g.value, 0);
-        const pendentes = total - pagos;
-
-        // Acha o próximo vencimento pendente
-        const pendentesList = gastos
-          .filter((g) => g.status === "Pendente")
-          .sort((a, b) => new Date(a.date) - new Date(b.date));
-        const proximo =
-          pendentesList.length > 0
-            ? formatDateBr(pendentesList[0].date)
-            : "Nenhum pendente";
-
-        document.getElementById("stat-total").innerText = formatCurrency(total);
-        document.getElementById("stat-pagos").innerText = formatCurrency(pagos);
-        document.getElementById("stat-pendentes").innerText =
-          formatCurrency(pendentes);
-        document.getElementById("stat-proximo").innerText = proximo;
-      }
-
-      function formatCurrency(val) {
-        return val.toLocaleString("pt-BR", {
-          style: "currency",
-          currency: "BRL",
-        });
-      }
-
-      function formatDateBr(dateStr) {
-        const d = new Date(dateStr + "T12:00:00");
-        return d.toLocaleDateString("pt-BR");
-      }
-
-      function openModal(id = null) {
-        document.getElementById("modalOverlay").style.display = "flex";
-        const title = document.getElementById("modalTitle");
-        const saveBtn = document.getElementById("saveBtn");
-        const form = document.getElementById("gastoForm");
-
-        if (id) {
-          const g = gastos.find((item) => item.id === id);
-          document.getElementById("editId").value = g.id;
-          document.getElementById("desc").value = g.desc;
-          document.getElementById("category").value = g.category;
-          document.getElementById("value").value = g.value;
-          document.getElementById("date").value = g.date;
-          document.getElementById("status").value = g.status;
-          title.innerHTML =
-            '<i data-lucide="edit"></i> <span>Editar Gasto</span>';
-          saveBtn.innerText = "Salvar Alterações";
+        if (edit && gasto) {
+          document.getElementById("editId").value = gasto.id;
+          document.getElementById("desc").value = gasto.descricaoGasto;
+          document.getElementById("category").value = gasto.idCategoriaGasto;
+          document.getElementById("value").value = gasto.valorGasto;
+          document.getElementById("expenseDate").value = gasto.dataAtual;
+          document.getElementById("date").value = gasto.dataVencimento;
+          document.getElementById("status").value = gasto.pago
+            ? "Pago"
+            : "Pendente";
+          document.getElementById("obs").value = gasto.observacaoGasto || "";
         } else {
-          form.reset();
+          document.getElementById("gastoForm").reset();
           document.getElementById("editId").value = "";
-          title.innerHTML =
-            '<i data-lucide="file-plus"></i> <span>Novo Gasto Previsto</span>';
-          saveBtn.innerText = "Salvar Despesa";
         }
-        lucide.createIcons();
       }
 
       function closeModal() {
         document.getElementById("modalOverlay").style.display = "none";
+        document.getElementById("gastoForm").reset();
       }
 
-      document.getElementById("gastoForm").addEventListener("submit", (e) => {
-        e.preventDefault();
-        const id = document.getElementById("editId").value;
-        const data = {
-          desc: document.getElementById("desc").value,
-          category: document.getElementById("category").value,
-          value: parseFloat(document.getElementById("value").value),
-          date: document.getElementById("date").value,
-          status: document.getElementById("status").value,
+      /** =======================
+       *  Modal de Categoria
+       * ======================= */
+      function openCategoryModal() {
+        document.getElementById("categoryModalOverlay").style.display = "flex";
+        document.getElementById("newCategoryName").focus();
+      }
+
+      function closeCategoryModal() {
+        document.getElementById("categoryModalOverlay").style.display = "none";
+        document.getElementById("categoryForm").reset();
+      }
+
+      function showObservation(texto) {
+        const mensagem =
+          texto && texto !== "undefined"
+            ? texto
+            : "Nenhuma observação disponível para este pet.";
+
+        const modal = document.getElementById("obsModalContainer");
+        const obsText = document.getElementById("obsModalText");
+        const closeBtn = document.querySelector(".obs-modal-close");
+
+        obsText.textContent = mensagem;
+        modal.style.display = "block";
+
+        // Fecha ao clicar no X
+        closeBtn.onclick = () => (modal.style.display = "none");
+
+        // Fecha ao clicar fora da caixa
+        window.onclick = (event) => {
+          if (event.target === modal) modal.style.display = "none";
         };
+      }
 
-        if (id) {
-          const index = gastos.findIndex((g) => g.id == id);
-          gastos[index] = { ...gastos[index], ...data };
-          showToast("Despesa atualizada com sucesso!");
-        } else {
-          data.id = Date.now();
-          gastos.push(data);
-          showToast("Nova despesa registrada!");
+      window.onload = () => {
+        const today = new Date();
+        const year = today.getFullYear();
+        const month = String(today.getMonth() + 1).padStart(2, "0");
+        const formatted = `${year}-${month}`;
+
+        selectedMonth = formatted; // agora a variável global tem valor
+        document.getElementById("monthFilter").value = formatted;
+
+        carregarCategorias(); // carrega categorias antes de listar gastos
+        changeGlobalMonth(formatted); // atualiza título e chama carregarGastos()
+      };
+
+      function changeGlobalMonth(val) {
+        selectedMonth = val; // atualiza a variável global
+
+        const [ano, mes] = val.split("-");
+
+        const date = new Date(ano, mes - 1);
+        const monthName = date.toLocaleString("pt-BR", { month: "long" });
+        const capitalizedMonth =
+          monthName.charAt(0).toUpperCase() + monthName.slice(1);
+
+        document.getElementById("pageTitle").textContent =
+          `Gastos de ${capitalizedMonth} ${ano}`;
+        document
+          .querySelectorAll(".stat-month-label")
+          .forEach((el) => (el.textContent = `Total de ${capitalizedMonth}`));
+
+        atualizarEstatisticasMes(parseInt(ano), parseInt(mes));
+        carregarGastos(); // agora selectedMonth já está definido
+      }
+
+      /** =======================
+       *  Toast
+       * ======================= */
+      function showToast(msg, isError = false) {
+        const toast = document.getElementById("toast");
+        const toastMsg = document.getElementById("toastMsg");
+        toastMsg.textContent = msg;
+        toast.style.background = isError ? "#ef4444" : "#1e293b";
+        toast.classList.add("show");
+        setTimeout(() => toast.classList.remove("show"), 3000);
+      }
+
+      /** =======================
+       *  Categorias
+       * ======================= */
+      let categoriasMap = {};
+
+      async function carregarCategorias() {
+        try {
+          const res = await fetch(`${CATEGORIA_URL}/listar`);
+          if (!res.ok) throw new Error("Erro ao buscar categorias");
+          const categorias = await res.json();
+
+          categoriasMap = {}; // reinicia
+          categorias.forEach((cat) => {
+            categoriasMap[cat.id] = cat.descricaoGastom;
+          });
+
+          const selectForm = document.getElementById("category");
+          const selectFilter = document.getElementById("categoryFilter");
+          selectForm.innerHTML =
+            '<option value="">Selecione uma categoria...</option>';
+          selectFilter.innerHTML =
+            '<option value="all">Todas as Categorias</option>';
+
+          categorias.forEach((cat) => {
+            selectForm.innerHTML += `<option value="${cat.id}">${cat.descricaoGastom}</option>`;
+            selectFilter.innerHTML += `<option value="${cat.descricaoGastom}">${cat.descricaoGastom}</option>`;
+          });
+        } catch (err) {
+          console.error(err);
+          showToast("Erro ao carregar categorias!", true);
         }
-
-        renderGastos();
-        closeModal();
-      });
-
-      function markAsPaid(id) {
-        const index = gastos.findIndex((g) => g.id === id);
-        gastos[index].status = "Pago";
-        renderGastos();
-        showToast("Gasto marcado como pago!");
       }
 
-      function deleteGasto(id) {
-        if (confirm("Deseja realmente excluir este gasto previsto?")) {
-          gastos = gastos.filter((g) => g.id !== id);
-          renderGastos();
-          showToast("Gasto excluído com sucesso.");
-        }
-      }
+      document
+        .getElementById("categoryForm")
+        .addEventListener("submit", async (e) => {
+          e.preventDefault();
 
-      function editGasto(id) {
-        openModal(id);
-      }
+          const input = document.getElementById("newCategoryName");
+          const name = input.value;
 
-      function filterGastos(term) {
-        applyFilters(term);
-      }
+          if (!name) {
+            showToast("Digite um nome válido!", true);
+            input.focus();
+            return;
+          }
 
-      function applyFilters(term = "") {
-        const status = document.getElementById("statusFilter").value;
-        const cat = document.getElementById("categoryFilter").value;
+          const payload = { descricaoGastom: name };
 
-        const filtered = gastos.filter((g) => {
-          const matchesSearch =
-            g.desc.toLowerCase().includes(term.toLowerCase()) ||
-            g.category.toLowerCase().includes(term.toLowerCase());
-          const matchesStatus = status === "all" || g.status === status;
-          const matchesCat = cat === "all" || g.category === cat;
-          return matchesSearch && matchesStatus && matchesCat;
+          try {
+            const res = await fetch(CATEGORIA_URL, {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({
+                descricaoGastom: name,
+              }),
+            });
+
+            if (!res.ok) {
+              const errText = await res.text();
+              console.error("Erro do backend:", errText);
+              throw new Error("Erro ao criar categoria");
+            }
+
+            const categoria = await res.json();
+
+            // Atualiza selects
+            const selectForm = document.getElementById("category");
+            const selectFilter = document.getElementById("categoryFilter");
+            selectForm.add(new Option(categoria.descricaoGastom, categoria.id));
+            selectFilter.add(
+              new Option(categoria.descricaoGastom, categoria.descricaoGastom),
+            );
+            selectForm.value = categoria.id;
+
+            showToast(`Categoria "${categoria.descricaoGastom}" criada!`);
+            closeCategoryModal();
+          } catch (err) {
+            console.error(err);
+            showToast("Erro ao cadastrar categoria!", true);
+          }
         });
 
+      /** =======================
+       *  Gastos
+       * ======================= */
+      async function carregarGastos() {
+        if (!selectedMonth) return; // evita chamar com valor vazio
+
+        try {
+          const [ano, mes] = selectedMonth.split("-");
+
+          const res = await fetch(
+            `${API_URL}/listar-por-data?ano=${ano}&mes=${mes}`,
+          );
+          if (!res.ok) throw new Error("Erro ao carregar gastos");
+          gastos = await res.json();
+
+          renderGastos(gastos);
+        } catch (err) {
+          console.error(err);
+          showToast("Erro ao carregar gastos!", true);
+        }
+      }
+
+      async function salvarGasto(event) {
+        event.preventDefault();
+
+        // Seletores dos inputs
+        const categorySelect = document.getElementById("category");
+        const descricaoInput = document.getElementById("desc");
+        const valorInput = document.getElementById("value");
+        const dataVencInput = document.getElementById("date");
+        const dataAtualInput = document.getElementById("expenseDate");
+        const statusInput = document.getElementById("status");
+        const observacaoInput = document.getElementById("obs");
+        const idInput = document.getElementById("editId");
+
+        // Pega os valores
+        const categoriaId = parseInt(categorySelect?.value || "", 10);
+        const descricao = descricaoInput?.value?.trim() || "";
+        const valor = parseFloat(valorInput?.value || 0);
+        const dataVencimento = dataVencInput?.value || "";
+        const dataAtual = dataAtualInput?.value || "";
+        const status = statusInput?.value || "";
+        const pago = status === "Pago";
+        const observacao = observacaoInput?.value?.trim() || "";
+        const id = idInput?.value || null;
+
+        // Validações
+        if (!categoriaId || isNaN(categoriaId)) {
+          showToast("Por favor, selecione uma Categoria!", true);
+          categorySelect.focus();
+          return;
+        }
+
+        if (!descricao) {
+          showToast("Digite a descrição do gasto!", true);
+          descricaoInput.focus();
+          return;
+        }
+
+        if (!valor || valor <= 0) {
+          showToast("Digite um valor válido!", true);
+          valorInput.focus();
+          return;
+        }
+
+        if (!dataVencimento) {
+          showToast("Escolha uma data de vencimento!", true);
+          dataVencInput.focus();
+          return;
+        }
+
+        if (!dataAtual) {
+          showToast("Escolha uma data válida!", true);
+          dataAtualInput.focus();
+          return;
+        }
+
+        // Monta o payload
+        const payload = {
+          descricaoGasto: descricao,
+          idCategoriaGasto: categoriaId,
+          valorGasto: valor,
+          dataVencimento: dataVencimento,
+          dataAtual: dataAtual,
+          pago: pago,
+          observacao: observacao,
+        };
+
+        try {
+          // Se tiver id, é edição (PUT), senão é criação (POST)
+          const url = id ? `${API_URL}/${id}` : API_URL;
+          const method = id ? "PUT" : "POST";
+
+          const res = await fetch(url, {
+            method,
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(payload),
+          });
+
+          if (!res.ok) {
+            const errorData = await res.json();
+            console.error("Erro do backend:", errorData);
+            throw new Error("Erro ao salvar gasto");
+          }
+
+          // Atualiza a lista e fecha modal
+          await carregarGastos();
+          closeModal();
+          showToast("Gasto salvo com sucesso!");
+        } catch (err) {
+          console.error(err);
+          showToast("Erro ao salvar gasto!", true);
+        }
+      }
+
+      /** =======================
+       *  Render / Filtros
+       * ======================= */
+      function renderGastos(lista) {
+        const tbody = document.getElementById("gastos-list");
+        tbody.innerHTML = "";
+        if (!lista.length) {
+          tbody.innerHTML = `<tr><td colspan="6" style="text-align:center">Nenhum gasto encontrado</td></tr>`;
+          return;
+        }
+
+        lista.forEach((g) => {
+          const tr = document.createElement("tr");
+
+          tr.innerHTML = `
+    <td>${g.descricaoGasto}</td>
+    <!-- Aqui deve ser o nome que você definiu no DTO -->
+    <td>${g.descricaoGastom || "Sem Categoria"}</td> 
+    <td>R$ ${g.valorGasto.toFixed(2)}</td>
+    <td>${g.dataVencimento}</td>
+    <td>
+      <span class="status-pill ${g.pago ? "status-pago" : "status-pendente"}">
+        ${g.pago ? "Pago" : "Pendente"}
+      </span>
+    </td>
+    <td>
+    <span>
+      ${g.dataAtual}
+      </span>
+    </td>
+    <td class="actions-cell">
+
+      
+       <button class="action-btn pay" 
+  title="${g.pago ? "Marcar como Pendente" : "Marcar como Pago"}"
+  onclick="togglePago(${g.id}, ${g.pago})">
+  <i data-lucide="${g.pago ? "rotate-ccw" : "check-square"}" style="width: 16px;"></i>
+</button>
+       <button class="btn-icon btn-info" title="Ver Observação" onclick="showObservation('${g.observacaoGasto || "Sem observações"}')">
+  <i data-lucide="info" style="width: 18px;"></i>
+</button>
+      <button class="action-btn" onclick='openModal(true, ${JSON.stringify(g)})'>
+        <i data-lucide="edit"></i>
+      </button>
+      <button class="action-btn delete" onclick="deletarGasto(${g.id})">
+        <i data-lucide="trash-2"></i>
+      </button>
+    </td>
+  `;
+          tbody.appendChild(tr);
+        });
+
+        lucide.createIcons();
+      }
+
+      function filterGastos(query) {
+        const filtered = gastos.filter(
+          (g) =>
+            g.descricaoGastom?.toLowerCase().includes(query.toLowerCase()) ||
+            (g.categoriaGastoDescricao || "")
+              .toLowerCase()
+              .includes(query.toLowerCase()),
+        );
         renderGastos(filtered);
       }
 
-      function showToast(msg) {
-        const t = document.getElementById("toast");
-        document.getElementById("toastMsg").innerText = msg;
-        t.classList.add("show");
-        setTimeout(() => t.classList.remove("show"), 3000);
+      function applyFilters() {
+        const status = document.getElementById("statusFilter").value;
+        const categoria = document.getElementById("categoryFilter").value;
+
+        let filtered = [...gastos];
+        if (status !== "all") {
+          filtered = filtered.filter((g) =>
+            status === "Pago" ? g.pago : !g.pago,
+          );
+        }
+        if (categoria !== "all") {
+          filtered = filtered.filter((g) => g.descricaoGastom === categoria);
+        }
+        renderGastos(filtered);
       }
 
-      // Inicialização
-      renderGastos();
+      async function togglePago(id, pagoAtual) {
+        const acao = pagoAtual ? "pendente" : "pago";
+        const mensagem = pagoAtual
+          ? "Deseja marcar como pendente?"
+          : "Deseja marcar como pago?";
+
+        if (!confirm(mensagem)) return;
+
+        try {
+          const response = await fetch(`${API_URL}/${acao}/${id}`, {
+            method: "PATCH",
+            headers: {
+              "Content-Type": "application/json",
+            },
+          });
+
+          if (!response.ok) {
+            throw new Error("Erro ao atualizar status");
+          }
+
+          showToast(`Gasto atualizado para ${acao}!`);
+          carregarGastos(); // recarrega tabela
+        } catch (error) {
+          console.error(error);
+          showToast("Erro ao atualizar status!", true);
+        }
+      }
+
+      /** =======================
+       *  Estatísticas
+       * ======================= */
+      async function atualizarEstatisticasMes(ano, mes) {
+        try {
+          const responses = await Promise.all([
+            fetch(`${API_URL}/calcular-total-mes?ano=${ano}&mes=${mes}`),
+            fetch(`${API_URL}/calcular-pago-mes?ano=${ano}&mes=${mes}`),
+            fetch(`${API_URL}/calcular-pendente-mes?ano=${ano}&mes=${mes}`),
+            fetch(`${API_URL}/vencimento-proximo-mes?ano=${ano}&mes=${mes}`),
+          ]);
+
+          // Função auxiliar para extrair o JSON com segurança
+          const safeJson = async (response) => {
+            if (!response.ok) return 0; // Se a requisição falhou (404, 500)
+            const text = await response.text();
+            return text ? JSON.parse(text) : 0; // Se texto for vazio, retorna 0
+          };
+
+          const total = await safeJson(responses[0]);
+          const pagos = await safeJson(responses[1]);
+          const pendentes = await safeJson(responses[2]);
+
+          // Para o vencimento, que é um objeto ou string, tratamos diferente do 0
+          const proximoResText = await responses[3].text();
+          const proximo = proximoResText ? JSON.parse(proximoResText) : null;
+
+          // Atualiza o HTML garantindo que são números antes do toFixed
+          document.getElementById("stat-total").textContent =
+            `R$ ${(Number(total) || 0).toFixed(2)}`;
+          document.getElementById("stat-pagos").textContent =
+            `R$ ${(Number(pagos) || 0).toFixed(2)}`;
+          document.getElementById("stat-pendentes").textContent =
+            `R$ ${(Number(pendentes) || 0).toFixed(2)}`;
+
+          document.getElementById("stat-proximo").textContent =
+            proximo && proximo.dataVencimento ? proximo.dataVencimento : "-";
+        } catch (err) {
+          console.error("Erro detalhado:", err);
+          showToast("Erro ao atualizar estatísticas!", true);
+        }
+      }
+
+      /** =======================
+       *  Deletar
+       * ======================= */
+      async function deletarGasto(id) {
+        if (!confirm("Deseja realmente excluir este gasto?")) return;
+        try {
+          const res = await fetch(`${API_URL}/${id}`, { method: "DELETE" });
+          if (!res.ok) throw new Error("Erro ao deletar gasto");
+          showToast("Gasto excluído!");
+          carregarGastos();
+        } catch (err) {
+          console.error(err);
+          showToast("Erro ao excluir gasto!", true);
+        }
+      }
+
+      /** =======================
+       *  Eventos
+       * ======================= */
+      document
+        .getElementById("gastoForm")
+        .addEventListener("submit", salvarGasto);
+
+      /** =======================
+       *  Inicializações
+       * ======================= */
+      atualizarEstatisticasMes();
+      carregarCategorias();
+      carregarGastos();
     </script>
   </body>
 </html>
