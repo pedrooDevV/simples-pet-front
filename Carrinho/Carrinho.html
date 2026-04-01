@@ -891,6 +891,7 @@
 
       function openCustomerModal() {
         document.getElementById("customer-modal").style.display = "flex";
+        carregarClientes();
         renderCustomerList(allCustomers);
       }
 
@@ -926,12 +927,7 @@
 
       filterButtons.forEach((btn) => {
         btn.addEventListener("click", async () => {
-          // troca botão ativo
-          filterButtons.forEach((b) => b.classList.remove("active"));
-          btn.classList.add("active");
-      filterButtons.forEach((btn) => {
-        btn.addEventListener("click", async () => {
-          // troca botão ativo
+          // 1. Troca o botão ativo visualmente
           filterButtons.forEach((b) => b.classList.remove("active"));
           btn.classList.add("active");
 
@@ -947,12 +943,13 @@
               items = servicos;
               renderCard(servicos);
             } else {
-              // ALL
+              // Filtro "ALL"
+              // Certifique-se que carregarItens() já faz o renderCard internamente,
+              // ou atualize a variável global 'items' dentro dela.
               await carregarItens();
             }
           } catch (err) {
-            console.error(err);
-            alert("Erro ao aplicar filtro");
+            console.error("Erro ao filtrar:", err);
           }
         });
       });
@@ -964,9 +961,9 @@
 
         if (!lista || lista.length === 0) {
           catalog.innerHTML = `
-        <p style="text-align:center; color: var(--text-secondary); margin-top: 40px;">
-          Nenhum item encontrado
-        </p>`;
+              <p style="text-align:center; color: var(--text-secondary); margin-top: 40px;">
+                Nenhum item encontrado
+              </p>`;
           return;
         }
 
@@ -979,13 +976,13 @@
           const tagLabel = item.type === "product" ? "Produto" : "Serviço";
 
           card.innerHTML = `
-        <span class="item-tag ${tagClass}">${tagLabel}</span>
-        <div class="item-name">${item.nome}</div>
-        <div class="item-price">R$ ${item.preco.toFixed(2).replace(".", ",")}</div>
-        <button class="btn-add">
-          <i data-lucide="plus"></i> Adicionar
-        </button>
-      `;
+              <span class="item-tag ${tagClass}">${tagLabel}</span>
+              <div class="item-name">${item.nome}</div>
+              <div class="item-price">R$ ${item.preco.toFixed(2).replace(".", ",")}</div>
+              <button class="btn-add">
+                <i data-lucide="plus"></i> Adicionar
+              </button>
+            `;
 
           card.querySelector(".btn-add").addEventListener("click", () => {
             addToCart(item.id, item.nome, item.preco, item.type);
@@ -1063,47 +1060,48 @@
         fetch("http://localhost:8080/clientes/listar")
           .then((response) => {
             if (!response.ok) throw new Error("Erro ao buscar clientes");
-            return response.json();
-          })
+            return response.json(); 
+          }) 
           .then((data) => {
             clients = data;
             renderCustomerList(clients);
           })
-          .catch((error) => console.error("Erro:", error));
+          .catch((error) => {
+            console.error("Erro na requisição:", error);
+          });
       }
 
       function renderCustomerList(list) {
         const container = document.getElementById("customer-list-container");
         container.innerHTML = "";
 
-        if (list.length === 0) {
+        if (!list || list.length === 0) {
           container.innerHTML =
-            "<p style='text-align:center; color:gray;'>Nenhum cliente encontrado.</p>";
+            "<p style='text-align:center; color:gray; padding: 20px;'>Nenhum cliente encontrado.</p>";
           return;
         }
 
         list.forEach((c) => {
           const div = document.createElement("div");
           div.className = "customer-list-item";
+          div.style.cursor = "pointer"; // Feedback visual de clique
+
           div.innerHTML = `
             <div class="avatar" style="margin-right: 15px;"><i data-lucide="user"></i></div>
             <div style="flex:1">
                 <strong style="display:block">${c.nome}</strong>
-                 <small style="color: var(--text-secondary)">id#: ${c.id || "Não informado"}</small>
-                 <small style="color: var(--text-secondary)">CPF: ${c.cpf || "Não informado"}</small>
+                <small style="color: var(--text-secondary)">ID: ${c.id || "---"}</small>
+                <small style="color: var(--text-secondary)"> | CPF: ${c.cpf || "Não informado"}</small>
             </div>
             <i data-lucide="chevron-right" style="color: var(--primary)"></i>
           `;
+
           div.onclick = () => selectCustomer(c);
           container.appendChild(div);
         });
 
-        localStorage.setItem("idCliente", customer.id);
-
         lucide.createIcons();
       }
-        lucide.createIcons();
-      })},
 
       // Finaliza venda
       function finishSale() {
@@ -1141,7 +1139,7 @@
             console.error("Erro:", err);
             alert("Erro ao finalizar venda");
           });
-      });
+      }
 
       // Atualiza a interface do carrinho
       let timeoutDesconto;
@@ -1239,11 +1237,11 @@
 
         if (cart.length === 0) {
           container.innerHTML = `
-      <div style="text-align:center; color: var(--text-secondary); margin-top:40px;">
-        <i data-lucide="package-open" style="width:48px;height:48px;opacity:0.3;display:block;margin:0 auto;"></i>
-        <p style="font-weight:600;">Carrinho vazio</p>
-      </div>
-    `;
+            <div style="text-align:center; color: var(--text-secondary); margin-top:40px;">
+              <i data-lucide="package-open" style="width:48px;height:48px;opacity:0.3;display:block;margin:0 auto;"></i>
+              <p style="font-weight:600;">Carrinho vazio</p>
+            </div>
+          `;
 
           document.getElementById("subtotal").innerText = "R$ 0,00";
           document.getElementById("discount-value").innerText = "- R$ 0,00";
@@ -1261,22 +1259,22 @@
           const div = document.createElement("div");
           div.className = "cart-item";
           div.innerHTML = `
-      <div class="cart-item-info">
-        <h4>${item.name}</h4>
-        <span>${item.type}</span>
+            <div class="cart-item-info">
+              <h4>${item.name}</h4>
+              <span>${item.type}</span>
+            </div>
+      <div class="cart-item-qty">
+        <button class="qty-btn" onclick="updateQty(${item.id}, '${item.type}', -1)">-</button>
+        <span class="qty-val">${item.qty}</span>
+        <button class="qty-btn" onclick="updateQty(${item.id}, '${item.type}', 1)">+</button>
       </div>
-<div class="cart-item-qty">
-  <button class="qty-btn" onclick="updateQty(${item.id}, '${item.type}', -1)">-</button>
-  <span class="qty-val">${item.qty}</span>
-  <button class="qty-btn" onclick="updateQty(${item.id}, '${item.type}', 1)">+</button>
-</div>
-      <div class="cart-item-price">
-        R$ ${(item.price * item.qty).toFixed(2).replace(".", ",")}
+            <div class="cart-item-price">
+              R$ ${(item.price * item.qty).toFixed(2).replace(".", ",")}
+            </div>
+      <div class="btn-remove" onclick="removeItem(${item.id}, '${item.type}')">
+        <i data-lucide="trash-2"></i>
       </div>
-<div class="btn-remove" onclick="removeItem(${item.id}, '${item.type}')">
-  <i data-lucide="trash-2"></i>
-</div>
-    `;
+          `;
           container.appendChild(div);
         });
 
