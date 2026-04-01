@@ -209,6 +209,8 @@
       .current-month {
         font-weight: 800;
         font-size: 1.1rem;
+        min-width: 250px;
+        text-align: center;
       }
 
       .nav-btn {
@@ -322,7 +324,7 @@
         position: relative;
         background-image: linear-gradient(var(--border) 1px, transparent 1px);
         background-size: 100% 100px;
-        min-height: 600px;
+        min-height: 1000px;
       }
 
       .day-column:hover {
@@ -593,11 +595,12 @@
 
       <div class="calendar-controls">
         <div class="date-navigation">
-          <button class="nav-btn"><i data-lucide="chevron-left"></i></button>
-          <div class="current-month">23 - 29 de Março, 2026</div>
-          <button class="nav-btn"><i data-lucide="chevron-right"></i></button>
+          <button class="nav-btn" onclick="changeWeek(-7)"><i data-lucide="chevron-left"></i></button>
+          <div class="current-month" id="date-range-display">23 - 29 de Março, 2026</div>
+          <button class="nav-btn" onclick="changeWeek(7)"><i data-lucide="chevron-right"></i></button>
           <button
             class="nav-btn"
+            onclick="goToday()"
             style="
               width: auto;
               padding: 0 16px;
@@ -709,19 +712,35 @@
     <script>
       lucide.createIcons();
 
-      // Configuração da API
       const API_BASE_URL = "http://localhost:8080/agenda";
-      // Endpoints específicos passados
       const ENDPOINTS_LISTAR = {
         clientes: "http://localhost:8080/clientes/listar",
         animais: "http://localhost:8080/animais/listar",
         servicos: "http://localhost:8080/servico/listar",
       };
 
-      let currentStatus = "AGENDADO";
       let loadedAgendas = [];
+      let currentAnchorDate = new Date();
 
-      // Função para buscar e popular os selects
+      function getMonday(d) {
+        d = new Date(d);
+        let day = d.getDay(),
+          diff = d.getDate() - day + (day === 0 ? -6 : 1);
+        let monday = new Date(d.setDate(diff));
+        monday.setHours(0, 0, 0, 0);
+        return monday;
+      }
+
+      function changeWeek(days) {
+        currentAnchorDate.setDate(currentAnchorDate.getDate() + days);
+        renderCalendar();
+      }
+
+      function goToday() {
+        currentAnchorDate = new Date();
+        renderCalendar();
+      }
+
       async function carregarListasParaModal() {
         try {
           const [resClie, resAnim, resServ] = await Promise.all([
@@ -737,28 +756,17 @@
           const animais = await resAnim.json();
           const servicos = await resServ.json();
 
-          // Popular Clientes
           const selectCliente = document.getElementById("select-cliente");
-          selectCliente.innerHTML =
-            '<option value="">Selecione o Cliente</option>';
-          clientes.forEach((c) => {
-            selectCliente.innerHTML += `<option value="${c.id}">${c.nome}</option>`;
-          });
+          selectCliente.innerHTML = '<option value="">Selecione o Cliente</option>';
+          clientes.forEach((c) => { selectCliente.innerHTML += `<option value="${c.id}">${c.nome}</option>`; });
 
-          // Popular Animais
           const selectPet = document.getElementById("select-pet");
           selectPet.innerHTML = '<option value="">Selecione o Animal</option>';
-          animais.forEach((a) => {
-            selectPet.innerHTML += `<option value="${a.id}">${a.nome} (${a.especie})</option>`;
-          });
+          animais.forEach((a) => { selectPet.innerHTML += `<option value="${a.id}">${a.nome} (${a.especie})</option>`; });
 
-          // Popular Serviços
           const selectServico = document.getElementById("select-servico");
-          selectServico.innerHTML =
-            '<option value="">Selecione o Serviço</option>';
-          servicos.forEach((s) => {
-            selectServico.innerHTML += `<option value="${s.id}">${s.nomeServico}</option>`;
-          });
+          selectServico.innerHTML = '<option value="">Selecione o Serviço</option>';
+          servicos.forEach((s) => { selectServico.innerHTML += `<option value="${s.id}">${s.nomeServico}</option>`; });
         } catch (error) {
           console.error("Erro ao carregar dados dos selects:", error);
         }
@@ -767,11 +775,17 @@
       async function renderCalendar() {
         const agendaNumero = document.getElementById("agenda-switch").value;
         const container = document.getElementById("calendar-grid");
+        
+        const monday = getMonday(currentAnchorDate);
+        const sunday = new Date(monday);
+        sunday.setDate(monday.getDate() + 6);
+
+        const options = { day: '2-digit', month: 'long' };
+        document.getElementById("date-range-display").innerText = 
+          `${monday.toLocaleDateString('pt-BR', options)} - ${sunday.toLocaleDateString('pt-BR', options)}, ${monday.getFullYear()}`;
 
         try {
-          const response = await fetch(
-            `${API_BASE_URL}/agenda/${agendaNumero}`,
-          );
+          const response = await fetch(`${API_BASE_URL}/agenda/${agendaNumero}`);
           if (!response.ok) throw new Error("Erro ao buscar dados");
           loadedAgendas = await response.json();
         } catch (error) {
@@ -781,39 +795,33 @@
 
         let html = `
           <div class="grid-header" style="border-left: none">Horário</div>
-          <div class="grid-header">Seg <span>23</span></div>
-          <div class="grid-header">Ter <span>24</span></div>
-          <div class="grid-header">Qua <span>25</span></div>
-          <div class="grid-header">Qui <span>26</span></div>
-          <div class="grid-header">Sex <span>27</span></div>
-          <div class="grid-header">Sáb <span>28</span></div>
-          <div class="grid-header">Dom <span>29</span></div>
-          
-          <div class="time-slots">
-            <div class="time-label">08:00</div>
-            <div class="time-label">09:00</div>
-            <div class="time-label">10:00</div>
-            <div class="time-label">11:00</div>
-            <div class="time-label">12:00</div>
-            <div class="time-label">13:00</div>
-          </div>
         `;
 
+        const daysNames = ['Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb', 'Dom'];
         for (let i = 0; i < 7; i++) {
+          const d = new Date(monday);
+          d.setDate(monday.getDate() + i);
+          html += `<div class="grid-header">${daysNames[i]} <span>${d.getDate()}</span></div>`;
+        }
+
+        html += `<div class="time-slots">`;
+        for (let h = 8; h <= 18; h++) {
+          html += `<div class="time-label">${h.toString().padStart(2, '0')}:00</div>`;
+        }
+        html += `</div>`;
+
+        for (let i = 0; i < 7; i++) {
+          const currentDay = new Date(monday);
+          currentDay.setDate(monday.getDate() + i);
+          const dStr = currentDay.toISOString().split('T')[0];
+          
           let eventHtml = "";
-          const dayEvents = loadedAgendas.filter((e) => {
-            const dateObj = new Date(e.data);
-            return dateObj.getUTCDay() === i;
-          });
+          const dayEvents = loadedAgendas.filter((e) => e.data === dStr);
 
           dayEvents.forEach((e) => {
             const hour = parseInt(e.horaInicio.split(":")[0]);
             const minutes = parseInt(e.horaInicio.split(":")[1]);
-
-            // Cálculo de posição: 100px por hora + (minutos/60 * 100)
             const topPosition = (hour - 8) * 100 + (minutes / 60) * 100;
-
-            // Formatação do preço para Real
             const precoFormatado = new Intl.NumberFormat("pt-BR", {
               style: "currency",
               currency: "BRL",
@@ -823,7 +831,6 @@
       <div class="event-card ${e.statusAgenda}" 
            style="top: ${topPosition}px; height: 90px; display: flex; flex-direction: column; justify-content: space-between;" 
            onclick="openEditModal(${e.id})">
-        
         <div>
             <div style="font-weight: 800; font-size: 0.8rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
                 ${e.nomeCliente} • ${e.nomeAnimal}
@@ -833,7 +840,6 @@
                 ${e.nomeServico}
             </div>
         </div>
-
         <div style="font-weight: 700; color: var(--primary); background: rgba(255,255,255,0.5); padding: 2px 4px; border-radius: 4px; align-self: flex-start; font-size: 0.7rem; margin-top: 4px;">
             ${precoFormatado}
         </div>
@@ -844,35 +850,30 @@
         }
 
         container.innerHTML = html;
-        document.getElementById("current-user-name").innerText =
-          agendaNumero == "1" ? "Felipe" : "Maria";
+        document.getElementById("current-user-name").innerText = agendaNumero == "1" ? "Felipe" : "Maria";
+        lucide.createIcons();
       }
 
       function openEditModal(id) {
         const item = loadedAgendas.find((a) => a.id === id);
         if (!item) return;
 
-        // Primeiro carregamos as listas, depois setamos os valores
         carregarListasParaModal().then(() => {
           document.getElementById("edit-id").value = item.id;
           document.getElementById("select-cliente").value = item.idCliente;
           document.getElementById("select-pet").value = item.idAnimal;
           document.getElementById("select-servico").value = item.idServico;
           document.getElementById("input-data").value = item.data;
-          document.getElementById("input-horario").value =
-            item.horaInicio.substring(0, 5);
+          document.getElementById("input-horario").value = item.horaInicio.substring(0, 5);
 
           setStatus(item.statusAgenda);
-          document.getElementById("status-selection-container").style.display =
-            "block";
-          document.getElementById("modal-title").innerText =
-            "Editar Agendamento";
+          document.getElementById("status-selection-container").style.display = "block";
+          document.getElementById("modal-title").innerText = "Editar Agendamento";
           document.getElementById("modalNovo").style.display = "flex";
         });
       }
 
       function setStatus(status) {
-        currentStatus = status;
         document.getElementById("input-status").value = status;
         document.querySelectorAll(".status-btn").forEach((btn) => {
           btn.classList.remove("active");
@@ -883,25 +884,14 @@
       async function updateStatusViaPatch(path) {
         const id = document.getElementById("edit-id").value;
         if (!id) return;
-
         try {
-          const response = await fetch(`${API_BASE_URL}/${path}/${id}`, {
-            method: "PATCH",
-          });
-          if (response.ok) {
-            closeModal();
-            renderCalendar();
-          }
-        } catch (error) {
-          console.error("Erro ao atualizar status", error);
-        }
+          const response = await fetch(`${API_BASE_URL}/${path}/${id}`, { method: "PATCH" });
+          if (response.ok) { closeModal(); renderCalendar(); }
+        } catch (error) { console.error("Erro ao atualizar status", error); }
       }
 
       async function saveChanges() {
         const btn = document.querySelector(".btn-submit");
-        btn.disabled = true; // Trava o botão
-
-        // 1. Captura os elementos do DOM
         const elId = document.getElementById("edit-id");
         const elCliente = document.getElementById("select-cliente");
         const elPet = document.getElementById("select-pet");
@@ -910,27 +900,16 @@
         const elHorario = document.getElementById("input-horario");
         const elAgenda = document.getElementById("agenda-switch");
 
-        // 2. Validação visual rápida
-        if (
-          !elCliente.value ||
-          !elPet.value ||
-          !elServico.value ||
-          !elHorario.value
-        ) {
-          alert(
-            "Erro: Certifique-se de que Cliente, Pet, Serviço e Horário foram selecionados.",
-          );
+        if (!elCliente.value || !elPet.value || !elServico.value || !elHorario.value) {
+          alert("Erro: Certifique-se de que Cliente, Pet, Serviço e Horário foram selecionados.");
           return;
         }
 
-        // 3. Cálculo da horaFim (Soma 1 hora)
         const [horas, minutos] = elHorario.value.split(":").map(Number);
         const d = new Date();
         d.setHours(horas + 1, minutos, 0);
-        const horaFimStr =
-          d.toTimeString().split(" ")[0].substring(0, 5) + ":00";
+        const horaFimStr = d.toTimeString().split(" ")[0].substring(0, 5) + ":00";
 
-        // 4. Montagem do DTO (Garantindo que são números com Number())
         const agendaDTO = {
           id: elId.value ? parseInt(elId.value) : null,
           idCliente: Number(elCliente.value),
@@ -942,55 +921,27 @@
           numeroAgenda: parseInt(elAgenda.value),
         };
 
-        // LOG PARA VOCÊ VERIFICAR NO F12 ANTES DE DAR ERRO
-        console.log("Enviando para o Java:", agendaDTO);
-        btn.disabled = false; // Destrava no final
-
         try {
           const response = await fetch(API_BASE_URL, {
             method: agendaDTO.id ? "PUT" : "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify(agendaDTO),
           });
-
-          if (!response.ok) {
-            const errorData = await response.json();
-            alert("Erro no Servidor: " + errorData.message);
-            return;
-          }
-
-          closeModal();
-          renderCalendar();
-        } catch (error) {
-          console.error("Erro na conexão:", error);
-        }
+          if (response.ok) { closeModal(); renderCalendar(); }
+        } catch (error) { console.error("Erro na conexão:", error); }
       }
 
-      function changeAgenda() {
-        renderCalendar();
-      }
-
+      function changeAgenda() { renderCalendar(); }
       function openModal() {
         document.getElementById("edit-id").value = "";
-        carregarListasParaModal(); // Carrega clientes/pets/serviços ao abrir novo
-        document.getElementById("select-cliente").value = "";
-        document.getElementById("select-pet").value = "";
-        document.getElementById("select-servico").value = "";
-        document.getElementById("status-selection-container").style.display =
-          "none";
+        carregarListasParaModal();
+        document.getElementById("status-selection-container").style.display = "none";
         document.getElementById("modal-title").innerText = "Novo Agendamento";
-        setStatus("AGENDADA");
+        setStatus("AGENDADO");
         document.getElementById("modalNovo").style.display = "flex";
       }
-
-      function closeModal() {
-        document.getElementById("modalNovo").style.display = "none";
-      }
-
-      window.onclick = function (event) {
-        const modal = document.getElementById("modalNovo");
-        if (event.target == modal) closeModal();
-      };
+      function closeModal() { document.getElementById("modalNovo").style.display = "none"; }
+      window.onclick = function (event) { if (event.target == document.getElementById("modalNovo")) closeModal(); };
 
       renderCalendar();
     </script>
