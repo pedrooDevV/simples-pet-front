@@ -159,12 +159,10 @@
         transform: translateY(-2px);
       }
 
-      
       .content-container {
         padding: 32px 40px;
       }
 
-      
       .table-controls {
         display: flex;
         justify-content: space-between;
@@ -323,7 +321,7 @@
         background: var(--success-light);
         color: var(--success);
       }
-      
+
       .status-inactive {
         background: var(--danger-light);
         color: var(--danger);
@@ -354,7 +352,6 @@
         background: var(--primary-bg-light);
         border-color: var(--primary);
       }
-
 
       .btn-toggle {
         color: var(--text-secondary);
@@ -770,9 +767,13 @@
         const term = document.getElementById("searchBar").value.toLowerCase();
 
         // Lógica de filtragem combinada (Busca + Status)
-         const filteredData = services.filter((s) => {
+        const filteredData = services.filter((s) => {
           const matchesSearch = s.nomeServico.toLowerCase().includes(term);
-  
+
+          const isActive =
+            s.ativo === true ||
+            s.ativo === 1 ||
+            String(s.ativo).toLowerCase() === "true";
 
           let matchesStatus = true;
           if (currentStatusFilter === "active") matchesStatus = isActive;
@@ -814,7 +815,7 @@
                       data-id="${s.id}"
                       data-active="${isActive}"
                       title="${isActive ? "Desativar" : "Ativar"}">
-                      <i data-lucide="${isActive ? "eye-off" : "eye"}"></i>
+                      <i data-lucide="${isActive ? "eye" : "eye-off"}"></i>
                   </button>
 
                   <button class="btn-icon btn-edit" onclick="openModal('edit', ${s.id})">
@@ -875,6 +876,8 @@
           ativo: true,
         };
 
+        console.log("Payload enviado:", payload);
+
         const url = id
           ? "http://localhost:8080/servico/atualizar"
           : "http://localhost:8080/servico/cadastrar";
@@ -905,7 +908,7 @@
           closeModal();
           showToast(id ? "Serviço atualizado!" : "Serviço criado com sucesso!");
         } catch (err) {
-          alert("Erro: " + err.message);
+          showToast("Erro: " + err.message);
         }
       });
 
@@ -928,7 +931,7 @@
           showToast(`Serviço ${data.ativo ? "Ativado" : "Inativado"}!`);
         } catch (err) {
           console.error(err);
-          alert("Falha na comunicação com o servidor.");
+          showToast("Falha na comunicação com o servidor.");
         }
       }
 

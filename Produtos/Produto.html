@@ -1060,7 +1060,7 @@
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(productData),
               });
-              if (!res.ok) throw new Error("Erro ao cadastrar produto");
+              if (!res.ok) throw new Error("Erro ao cadastrar produto, verifique se ele já não existe!");
               showToast("Produto cadastrado com sucesso!");
             }
             closeModal();

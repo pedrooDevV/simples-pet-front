@@ -384,7 +384,7 @@
             <div class="card-icon icon-purple"><i data-lucide="users"></i></div>
           </div>
           <div class="card-info">
-            <div class="card-value">1.248</div>
+            <div class="card-value"></div>
             <span class="card-label">Clientes Cadastrados</span>
           </div>
         </div>
@@ -395,7 +395,7 @@
             </div>
           </div>
           <div class="card-info">
-            <div class="card-value">18</div>
+            <div class="card-value"></div>
             <span class="card-label">Agendamentos Hoje</span>
           </div>
         </div>
@@ -406,7 +406,7 @@
             </div>
           </div>
           <div class="card-info">
-            <div class="card-value">R$ 2.450</div>
+            <div class="card-value"></div>
             <span class="card-label">Receita Hoje</span>
           </div>
         </div>
@@ -417,7 +417,7 @@
             </div>
           </div>
           <div class="card-info">
-            <div class="card-value">12 / 18</div>
+            <div class="card-value"></div>
             <span class="card-label">Concluídos do Dia</span>
           </div>
         </div>
@@ -426,9 +426,10 @@
       <!-- Agenda Full Width -->
       <div class="panel">
         <div class="panel-header">
-          <h2 class="panel-title">Minha Agenda - Terça-feira, 24 de Março</h2>
+          <h2 class="panel-title" id="agenda-day-title">Minha Agenda</h2>
           <div style="display: flex; gap: 8px">
             <button
+              id="btn-prev-day"
               style="
                 background: #fff;
                 border: 1px solid var(--border);
@@ -445,7 +446,9 @@
                 style="width: 18px; height: 18px"
               ></i>
             </button>
+
             <button
+              id="btn-next-day"
               style="
                 background: #fff;
                 border: 1px solid var(--border);
@@ -465,115 +468,224 @@
           </div>
         </div>
         <div class="teams-agenda">
-          <div class="agenda-row">
-            <div class="time-col">08:00</div>
-            <div class="event-col">
-              <div class="event-card confirmed">
-                <span class="event-title"
-                  >Luna (Poodle) - Banho Completo + Tosa Higiênica</span
-                >
-                <div class="event-subtitle">
-                  <i data-lucide="user" style="width: 14px; height: 14px"></i>
-                  Mariana Silva
-                  <span style="margin-left: 10px; color: var(--secondary)"
-                    >• Pago: R$ 85,00</span
-                  >
-                </div>
-              </div>
-            </div>
-          </div>
 
-          <div class="agenda-row">
-            <div class="time-col">09:00</div>
-            <div class="event-col">
-              <div class="event-card pending">
-                <span class="event-title"
-                  >Thor (Golden) - Banho G + Desembolo</span
-                >
-                <div class="event-subtitle">
-                  <i data-lucide="user" style="width: 14px; height: 14px"></i>
-                  Ricardo Oliveira
-                  <span style="margin-left: 10px; color: var(--accent)"
-                    >• Pendente: R$ 130,00</span
-                  >
-                </div>
-              </div>
-            </div>
-          </div>
 
-          <div class="agenda-row">
-            <div class="time-col">10:00</div>
-            <div class="event-col">
-              <!-- Slot livre -->
-            </div>
-          </div>
-
-          <div class="agenda-row">
-            <div class="time-col">11:00</div>
-            <div class="event-col">
-              <div class="event-card confirmed">
-                <span class="event-title"
-                  >Mel (SRD) - Corte de Unhas + Hidratação</span
-                >
-                <div class="event-subtitle">
-                  <i data-lucide="user" style="width: 14px; height: 14px"></i>
-                  Dra. Ana Costa
-                  <span style="margin-left: 10px; color: var(--secondary)"
-                    >• Pago: R$ 60,00</span
-                  >
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div class="agenda-row">
-            <div class="time-col">12:00</div>
-            <div
-              class="time-col"
-              style="
-                color: var(--danger);
-                text-transform: uppercase;
-                font-size: 0.7rem;
-                padding-top: 20px;
-              "
-            >
-              Intervalo
-            </div>
-            <div class="event-col"></div>
-          </div>
-
-          <div class="agenda-row">
-            <div class="time-col">13:30</div>
-            <div class="event-col">
-              <div class="event-card pending">
-                <span class="event-title">Bidu (Schnauzer) - Tosa da Raça</span>
-                <div class="event-subtitle">
-                  <i data-lucide="user" style="width: 14px; height: 14px"></i>
-                  Carlos Ferreira
-                  <span style="margin-left: 10px; color: var(--accent)"
-                    >• Aguardando Pet</span
-                  >
-                </div>
-              </div>
-            </div>
-          </div>
         </div>
       </div>
     </main>
 
     <script>
-      // Inicializa os ícones do Lucide
       lucide.createIcons();
 
-      // Efeito simples de clique nos itens da navegação
-      const navItems = document.querySelectorAll(".nav-item");
-      navItems.forEach((item) => {
-        item.addEventListener("click", function (e) {
-          // Remove active de todos
-          navItems.forEach((i) => i.classList.remove("active"));
-          // Adiciona no clicado
-          this.classList.add("active");
+      const API_AGENDA = "http://localhost:8080/agenda";
+      const API_CLIENTES = "http://localhost:8080/clientes/listar";
+
+      const agendaNumero = 1;
+     let currentDate = new Date(Date.now());
+      let agendas = [];
+
+      function pad(n) {
+        return String(n).padStart(2, "0");
+      }
+
+      function toLocalDateString(date) {
+        const y = date.getFullYear();
+        const m = pad(date.getMonth() + 1);
+        const d = pad(date.getDate());
+        return `${y}-${m}-${d}`;
+      }
+
+      function sameLocalDay(dateStr, dateObj) {
+        if (!dateStr) return false;
+        const item = new Date(dateStr + "T00:00:00");
+        return (
+          item.getFullYear() === dateObj.getFullYear() &&
+          item.getMonth() === dateObj.getMonth() &&
+          item.getDate() === dateObj.getDate()
+        );
+      }
+
+      function formatAgendaTitle(dateObj) {
+        const text = new Intl.DateTimeFormat("pt-BR", {
+          weekday: "long",
+          day: "2-digit",
+          month: "long",
+        }).format(dateObj);
+
+        return text.charAt(0).toUpperCase() + text.slice(1);
+      }
+
+      function formatMoney(value) {
+        return new Intl.NumberFormat("pt-BR", {
+          style: "currency",
+          currency: "BRL",
+        }).format(value || 0);
+      }
+
+      function timeToMinutes(timeStr) {
+        if (!timeStr) return 0;
+        const [h, m] = timeStr.substring(0, 5).split(":").map(Number);
+        return h * 60 + m;
+      }
+
+      function minutesToLabel(minutes) {
+        const h = Math.floor(minutes / 60);
+        const m = minutes % 60;
+        return `${pad(h)}:${pad(m)}`;
+      }
+
+      function getSlots() {
+        const slots = [];
+        for (let min = 8 * 60; min <= 22 * 60; min += 60) {
+          slots.push(min);
+        }
+        return slots;
+      }
+
+      async function loadStats() {
+        try {
+          const [clientesRes, hojeRes, finalizadosRes, receitaRes] =
+            await Promise.all([
+              fetch(API_CLIENTES),
+              fetch(`${API_AGENDA}/quantidade-hoje/${agendaNumero}`),
+              fetch(`${API_AGENDA}/quantidade-finalizado/${agendaNumero}`),
+              fetch(`${API_AGENDA}/receita-dia/${agendaNumero}`),
+            ]);
+
+          const clientes = clientesRes.ok ? await clientesRes.json() : [];
+          const qtdHoje = hojeRes.ok ? await hojeRes.json() : 0;
+          const qtdFinalizados = finalizadosRes.ok
+            ? await finalizadosRes.json()
+            : 0;
+          const receita = receitaRes.ok ? await receitaRes.json() : 0;
+
+          const cards = document.querySelectorAll(".summary-grid .card-value");
+          if (cards[0])
+            cards[0].textContent = clientes.length.toLocaleString("pt-BR");
+          if (cards[1]) cards[1].textContent = qtdHoje;
+          if (cards[2]) cards[2].textContent = formatMoney(receita);
+          if (cards[3]) cards[3].textContent = `${qtdFinalizados} / ${qtdHoje}`;
+        } catch (error) {
+          console.error("Erro ao carregar os cards:", error);
+        }
+      }
+
+      async function loadAgenda() {
+        try {
+          const res = await fetch(`${API_AGENDA}/agenda/${agendaNumero}`);
+          if (!res.ok) throw new Error("Erro ao buscar agenda");
+
+          agendas = await res.json();
+        } catch (error) {
+          console.error("Erro ao carregar agenda:", error);
+          agendas = [];
+        }
+      }
+
+      function renderAgenda() {
+        const panelTitle = document.getElementById("agenda-day-title");
+        const teamsAgenda = document.querySelector(".teams-agenda");
+
+        panelTitle.textContent = `Minha Agenda - ${formatAgendaTitle(currentDate)}`;
+
+        const dayAgendas = agendas
+          .filter((a) => sameLocalDay(a.data, currentDate))
+          .sort(
+            (a, b) => timeToMinutes(a.horaInicio) - timeToMinutes(b.horaInicio),
+          );
+
+        const slots = getSlots();
+
+        let html = "";
+
+        slots.forEach((slotMinutes) => {
+          const slotLabel = minutesToLabel(slotMinutes);
+          const items = dayAgendas.filter(
+            (a) => timeToMinutes(a.horaInicio) === slotMinutes,
+          );
+
+          html += `
+        <div class="agenda-row">
+          <div class="time-col">${slotLabel}</div>
+          <div class="event-col">
+            ${
+              items.length
+                ? items
+                    .map((e) => {
+                      const isFinalizada =
+                        e.statusAgenda === "FINALIZADA" || e.pago === true;
+                      const isCancelada = e.statusAgenda === "CANCELADA";
+
+                      const cssClass = isCancelada
+                        ? "pending"
+                        : isFinalizada
+                          ? "confirmed"
+                          : "pending";
+
+                      const pagamentoTexto = isCancelada
+                        ? "Cancelada"
+                        : isFinalizada || e.pago
+                          ? `Pago: ${formatMoney(e.valorDaAgenda)}`
+                          : `Pendente: ${formatMoney(e.valorDaAgenda)}`;
+
+                      return `
+                        <div class="event-card ${cssClass}">
+                          <span class="event-title">
+                            ${e.nomeAnimal || "Pet"} ${e.nomeServico ? `- ${e.nomeServico}` : ""}
+                          </span>
+                          <div class="event-subtitle">
+                            <i data-lucide="user" style="width: 14px; height: 14px"></i>
+                            ${e.nomeCliente || "Cliente"}
+                            <span style="margin-left: 10px; color: ${
+                              isCancelada
+                                ? "var(--danger)"
+                                : isFinalizada || e.pago
+                                  ? "var(--secondary)"
+                                  : "var(--accent)"
+                            }">
+                              • ${pagamentoTexto}
+                            </span>
+                          </div>
+                        </div>
+                      `;
+                    })
+                    .join("")
+                : ""
+            }
+          </div>
+        </div>
+      `;
         });
+
+        teamsAgenda.innerHTML =
+          html ||
+          "<div style='padding: 32px'>Nenhum agendamento encontrado.</div>";
+        lucide.createIcons();
+      }
+
+      async function refreshAll() {
+        await Promise.all([loadStats(), loadAgenda()]);
+        renderAgenda();
+      }
+
+      function previousDay() {
+        currentDate.setDate(currentDate.getDate() - 1);
+        renderAgenda();
+      }
+
+      function nextDay() {
+        currentDate.setDate(currentDate.getDate() + 1);
+        renderAgenda();
+      }
+
+      document.addEventListener("DOMContentLoaded", async () => {
+        const prevBtn = document.getElementById("btn-prev-day");
+        const nextBtn = document.getElementById("btn-next-day");
+
+        prevBtn.addEventListener("click", previousDay);
+        nextBtn.addEventListener("click", nextDay);
+
+        await refreshAll();
       });
     </script>
   </body>

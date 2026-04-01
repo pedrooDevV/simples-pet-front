@@ -158,6 +158,27 @@
         text-transform: uppercase;
       }
 
+      .event-card.AGENDADO {
+        background-color: #3b82f6; /* azul */
+        color: white;
+      }
+
+      .event-card.FINALIZADA {
+        background-color: #22c55e; /* verde */
+        color: white;
+      }
+
+      .event-card.CANCELADA {
+        background-color: #ef4444; /* vermelho */
+        color: white;
+      }
+
+      /* opcional: hover para efeito */
+      .event-card:hover {
+        transform: scale(1.02);
+        transition: 0.2s;
+        cursor: pointer;
+      }
       .agenda-select {
         border: none;
         background: var(--bg-general);
@@ -595,9 +616,15 @@
 
       <div class="calendar-controls">
         <div class="date-navigation">
-          <button class="nav-btn" onclick="changeWeek(-7)"><i data-lucide="chevron-left"></i></button>
-          <div class="current-month" id="date-range-display">23 - 29 de Março, 2026</div>
-          <button class="nav-btn" onclick="changeWeek(7)"><i data-lucide="chevron-right"></i></button>
+          <button class="nav-btn" onclick="changeWeek(-7)">
+            <i data-lucide="chevron-left"></i>
+          </button>
+          <div class="current-month" id="date-range-display">
+            23 - 29 de Março, 2026
+          </div>
+          <button class="nav-btn" onclick="changeWeek(7)">
+            <i data-lucide="chevron-right"></i>
+          </button>
           <button
             class="nav-btn"
             onclick="goToday()"
@@ -610,11 +637,6 @@
           >
             Hoje
           </button>
-        </div>
-        <div class="view-switcher">
-          <button class="view-btn">Dia</button>
-          <button class="view-btn active">Semana</button>
-          <button class="view-btn">Mês</button>
         </div>
       </div>
 
@@ -678,21 +700,21 @@
             <button
               class="status-btn"
               data-status="AGENDADO"
-              onclick="updateStatusViaPatch('agendado')"
+              onclick="updateStatusViaPatch(this)"
             >
               Agendada
             </button>
             <button
               class="status-btn"
               data-status="FINALIZADA"
-              onclick="updateStatusViaPatch('finalizada')"
+              onclick="updateStatusViaPatch(this)"
             >
               Finalizada
             </button>
             <button
               class="status-btn"
               data-status="CANCELADA"
-              onclick="updateStatusViaPatch('cancelado')"
+              onclick="updateStatusViaPatch(this)"
             >
               Cancelada
             </button>
@@ -741,6 +763,8 @@
         renderCalendar();
       }
 
+      let animaisCarregados = []; // Guarda todos os pets para filtrar depois
+
       async function carregarListasParaModal() {
         try {
           const [resClie, resAnim, resServ] = await Promise.all([
@@ -756,17 +780,42 @@
           const animais = await resAnim.json();
           const servicos = await resServ.json();
 
+          // ===== Select de Clientes =====
           const selectCliente = document.getElementById("select-cliente");
-          selectCliente.innerHTML = '<option value="">Selecione o Cliente</option>';
-          clientes.forEach((c) => { selectCliente.innerHTML += `<option value="${c.id}">${c.nome}</option>`; });
+          selectCliente.innerHTML =
+            '<option value="">Selecione o Cliente</option>';
+          clientes.forEach((c) => {
+            selectCliente.innerHTML += `<option value="${c.id}">${c.nome}</option>`;
+          });
 
+          // ===== Select de Animais =====
           const selectPet = document.getElementById("select-pet");
           selectPet.innerHTML = '<option value="">Selecione o Animal</option>';
-          animais.forEach((a) => { selectPet.innerHTML += `<option value="${a.id}">${a.nome} (${a.especie})</option>`; });
 
+          // Função para filtrar animais do cliente selecionado
+          function atualizarSelectPets(clienteId) {
+            selectPet.innerHTML =
+              '<option value="">Selecione o Animal</option>';
+            const petsFiltrados = clienteId
+              ? animais.filter((a) => a.clienteId === Number(clienteId))
+              : [];
+            petsFiltrados.forEach((a) => {
+              selectPet.innerHTML += `<option value="${a.id}">${a.nome} (${a.especie})</option>`;
+            });
+          }
+
+          // Atualiza os pets quando mudar o cliente
+          selectCliente.addEventListener("change", (e) => {
+            atualizarSelectPets(e.target.value);
+          });
+
+          // ===== Select de Serviços =====
           const selectServico = document.getElementById("select-servico");
-          selectServico.innerHTML = '<option value="">Selecione o Serviço</option>';
-          servicos.forEach((s) => { selectServico.innerHTML += `<option value="${s.id}">${s.nomeServico}</option>`; });
+          selectServico.innerHTML =
+            '<option value="">Selecione o Serviço</option>';
+          servicos.forEach((s) => {
+            selectServico.innerHTML += `<option value="${s.id}">${s.nomeServico}</option>`;
+          });
         } catch (error) {
           console.error("Erro ao carregar dados dos selects:", error);
         }
@@ -775,17 +824,19 @@
       async function renderCalendar() {
         const agendaNumero = document.getElementById("agenda-switch").value;
         const container = document.getElementById("calendar-grid");
-        
+
         const monday = getMonday(currentAnchorDate);
         const sunday = new Date(monday);
         sunday.setDate(monday.getDate() + 6);
 
-        const options = { day: '2-digit', month: 'long' };
-        document.getElementById("date-range-display").innerText = 
-          `${monday.toLocaleDateString('pt-BR', options)} - ${sunday.toLocaleDateString('pt-BR', options)}, ${monday.getFullYear()}`;
+        const options = { day: "2-digit", month: "long" };
+        document.getElementById("date-range-display").innerText =
+          `${monday.toLocaleDateString("pt-BR", options)} - ${sunday.toLocaleDateString("pt-BR", options)}, ${monday.getFullYear()}`;
 
         try {
-          const response = await fetch(`${API_BASE_URL}/agenda/${agendaNumero}`);
+          const response = await fetch(
+            `${API_BASE_URL}/agenda/${agendaNumero}`,
+          );
           if (!response.ok) throw new Error("Erro ao buscar dados");
           loadedAgendas = await response.json();
         } catch (error) {
@@ -797,7 +848,7 @@
           <div class="grid-header" style="border-left: none">Horário</div>
         `;
 
-        const daysNames = ['Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb', 'Dom'];
+        const daysNames = ["Seg", "Ter", "Qua", "Qui", "Sex", "Sáb", "Dom"];
         for (let i = 0; i < 7; i++) {
           const d = new Date(monday);
           d.setDate(monday.getDate() + i);
@@ -805,16 +856,16 @@
         }
 
         html += `<div class="time-slots">`;
-        for (let h = 8; h <= 18; h++) {
-          html += `<div class="time-label">${h.toString().padStart(2, '0')}:00</div>`;
+        for (let h = 8; h <= 22; h++) {
+          html += `<div class="time-label">${h.toString().padStart(2, "0")}:00</div>`;
         }
         html += `</div>`;
 
         for (let i = 0; i < 7; i++) {
           const currentDay = new Date(monday);
           currentDay.setDate(monday.getDate() + i);
-          const dStr = currentDay.toISOString().split('T')[0];
-          
+          const dStr = currentDay.toISOString().split("T")[0];
+
           let eventHtml = "";
           const dayEvents = loadedAgendas.filter((e) => e.data === dStr);
 
@@ -850,7 +901,8 @@
         }
 
         container.innerHTML = html;
-        document.getElementById("current-user-name").innerText = agendaNumero == "1" ? "Felipe" : "Maria";
+        document.getElementById("current-user-name").innerText =
+          agendaNumero == "1" ? "Felipe" : "Maria";
         lucide.createIcons();
       }
 
@@ -864,11 +916,14 @@
           document.getElementById("select-pet").value = item.idAnimal;
           document.getElementById("select-servico").value = item.idServico;
           document.getElementById("input-data").value = item.data;
-          document.getElementById("input-horario").value = item.horaInicio.substring(0, 5);
+          document.getElementById("input-horario").value =
+            item.horaInicio.substring(0, 5);
 
           setStatus(item.statusAgenda);
-          document.getElementById("status-selection-container").style.display = "block";
-          document.getElementById("modal-title").innerText = "Editar Agendamento";
+          document.getElementById("status-selection-container").style.display =
+            "block";
+          document.getElementById("modal-title").innerText =
+            "Editar Agendamento";
           document.getElementById("modalNovo").style.display = "flex";
         });
       }
@@ -881,13 +936,26 @@
         });
       }
 
-      async function updateStatusViaPatch(path) {
+      async function updateStatusViaPatch(button) {
         const id = document.getElementById("edit-id").value;
         if (!id) return;
+
+        const status = button.dataset.status; // "AGENDADO", "FINALIZADA", "CANCELADA"
+        const path = status.toLowerCase(); // transforma em "agendado", "finalizada", "cancelado"
+
         try {
-          const response = await fetch(`${API_BASE_URL}/${path}/${id}`, { method: "PATCH" });
-          if (response.ok) { closeModal(); renderCalendar(); }
-        } catch (error) { console.error("Erro ao atualizar status", error); }
+          const response = await fetch(`${API_BASE_URL}/${path}/${id}`, {
+            method: "PATCH",
+          });
+          if (response.ok) {
+            closeModal();
+            renderCalendar();
+          } else {
+            console.error("Erro no fetch:", await response.text());
+          }
+        } catch (error) {
+          console.error("Erro ao atualizar status", error);
+        }
       }
 
       async function saveChanges() {
@@ -900,15 +968,23 @@
         const elHorario = document.getElementById("input-horario");
         const elAgenda = document.getElementById("agenda-switch");
 
-        if (!elCliente.value || !elPet.value || !elServico.value || !elHorario.value) {
-          alert("Erro: Certifique-se de que Cliente, Pet, Serviço e Horário foram selecionados.");
+        if (
+          !elCliente.value ||
+          !elPet.value ||
+          !elServico.value ||
+          !elHorario.value
+        ) {
+          alert(
+            "Erro: Certifique-se de que Cliente, Pet, Serviço e Horário foram selecionados.",
+          );
           return;
         }
 
         const [horas, minutos] = elHorario.value.split(":").map(Number);
         const d = new Date();
         d.setHours(horas + 1, minutos, 0);
-        const horaFimStr = d.toTimeString().split(" ")[0].substring(0, 5) + ":00";
+        const horaFimStr =
+          d.toTimeString().split(" ")[0].substring(0, 5) + ":00";
 
         const agendaDTO = {
           id: elId.value ? parseInt(elId.value) : null,
@@ -927,21 +1003,33 @@
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify(agendaDTO),
           });
-          if (response.ok) { closeModal(); renderCalendar(); }
-        } catch (error) { console.error("Erro na conexão:", error); }
+          if (response.ok) {
+            closeModal();
+            renderCalendar();
+          }
+        } catch (error) {
+          console.error("Erro na conexão:", error);
+        }
       }
 
-      function changeAgenda() { renderCalendar(); }
+      function changeAgenda() {
+        renderCalendar();
+      }
       function openModal() {
         document.getElementById("edit-id").value = "";
         carregarListasParaModal();
-        document.getElementById("status-selection-container").style.display = "none";
+        document.getElementById("status-selection-container").style.display =
+          "none";
         document.getElementById("modal-title").innerText = "Novo Agendamento";
         setStatus("AGENDADO");
         document.getElementById("modalNovo").style.display = "flex";
       }
-      function closeModal() { document.getElementById("modalNovo").style.display = "none"; }
-      window.onclick = function (event) { if (event.target == document.getElementById("modalNovo")) closeModal(); };
+      function closeModal() {
+        document.getElementById("modalNovo").style.display = "none";
+      }
+      window.onclick = function (event) {
+        if (event.target == document.getElementById("modalNovo")) closeModal();
+      };
 
       renderCalendar();
     </script>
