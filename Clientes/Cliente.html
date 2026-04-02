@@ -300,12 +300,6 @@
         gap: 4px;
       }
 
-      .actions {
-        display: flex;
-        gap: 8px;
-        justify-content: flex-end;
-      }
-
       .btn-icon {
         width: 36px;
         height: 36px;
@@ -456,6 +450,18 @@
         background: var(--primary-hover);
       }
 
+      /* Estilo da área de observação (Visualização) */
+      .obs-display {
+        background: #f8fafc;
+        padding: 16px;
+        border-radius: 12px;
+        border: 1px solid var(--border);
+        min-height: 80px;
+        font-size: 0.9rem;
+        color: var(--text-main);
+        white-space: pre-wrap;
+      }
+
       /* Toast */
       .toast {
         position: fixed;
@@ -582,7 +588,7 @@
       </div>
     </main>
 
-    <!-- Modal Cliente -->
+    <!-- Modal Cliente (Cadastro e Edição) -->
     <div class="modal-overlay" id="modalOverlay">
       <div class="modal">
         <div class="modal-header">
@@ -632,7 +638,6 @@
                 class="form-control"
                 placeholder="000.000.000-00"
                 maxlength="14"
-                required
               />
             </div>
             <div class="form-group">
@@ -663,13 +668,33 @@
             >
               Cancelar
             </button>
-            <button type="submit" class="btn-block btn-success">
+            <button type="submit" id="submitBtn" class="btn-block btn-success">
               Confirmar Cadastro
             </button>
           </div>
         </form>
       </div>
     </div>
+
+    <!-- Modal Visualizar Observação (WDlg) -->
+    <div class="modal-overlay" id="wdlgOverlay">
+        <div class="modal">
+          <div class="modal-header">
+            <div>
+              <h2 id="wdlg-client-name">Informações do Cliente</h2>
+              <p id="wdlg-client-id" style="color: var(--text-secondary); font-size: 0.8rem;"></p>
+            </div>
+            <i data-lucide="x" class="modal-close" onclick="closeWdlg()"></i>
+          </div>
+          <div class="form-group full">
+            <label>Observações:</label>
+            <div id="wdlg-text-content" class="obs-display"></div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn-block btn-ghost" onclick="closeWdlg()">Fechar</button>
+          </div>
+        </div>
+      </div>
 
     <!-- Toast -->
     <div class="toast" id="toast">
@@ -686,14 +711,16 @@
       let clients = []; // dados do backend
       const listElement = document.getElementById("clients-list");
       const modalOverlay = document.getElementById("modalOverlay");
+      const wdlgOverlay = document.getElementById("wdlgOverlay");
       const clientForm = document.getElementById("clientForm");
+      const submitBtn = document.getElementById("submitBtn");
 
       // =========================
       // Função para gerar iniciais
       // =========================
-      function getInitials(cliente) {
-        if (!cliente || !cliente.nome) return "";
-        return cliente.nome
+      function getInitials(nome) {
+        if (!nome) return "--";
+        return nome
           .split(" ")
           .map((n) => n[0])
           .join("")
@@ -704,16 +731,21 @@
       // =========================
       // Fetch dos clientes
       // =========================
-      fetch("http://localhost:8080/clientes/listar")
-        .then((response) => {
-          if (!response.ok) throw new Error("Erro ao buscar clientes");
-          return response.json();
-        })
-        .then((data) => {
-          clients = data;
-          renderClients(clients);
-        })
-        .catch((error) => console.error("Erro:", error));
+      function loadClients() {
+        fetch("http://localhost:8080/clientes/listar")
+          .then((response) => {
+            if (!response.ok) throw new Error("Erro ao buscar clientes");
+            return response.json();
+          })
+          .then((data) => {
+            clients = data;
+            renderClients(clients);
+          })
+          .catch((error) => console.error("Erro:", error));
+      }
+
+      // Iniciar carregamento
+      loadClients();
 
       // =========================
       // Função de renderização
@@ -724,15 +756,10 @@
         data.forEach((c) => {
           const tr = document.createElement("tr");
 
-          // Tratamos a observação para evitar erros caso seja nula
-          const obs = c.observacao
-            ? c.observacao.replace(/'/g, "\\'")
-            : "Nenhuma observação cadastrada.";
-
           tr.innerHTML = `
         <td>
           <div class="client-info">
-            <div class="client-avatar">${getInitials(c)}</div>
+            <div class="client-avatar">${getInitials(c.nome)}</div>
             <div>
               <div class="client-name">${c.nome || "---"}</div>
               <div class="client-sub">ID #${c.id}</div>
@@ -752,8 +779,7 @@
         </td>
         <td style="text-align: right;">
           <div class="actions">
-            <!-- NOVO BOTÃO DE INFO -->
-            <button class="btn-icon btn-info" title="Ver Observação" onclick="showObservation('${c.observacoes}')">
+            <button class="btn-icon btn-info" title="Ver Observação" onclick="showObservation(${c.id})">
               <i data-lucide="info" style="width: 18px;"></i>
             </button>
 
@@ -774,8 +800,20 @@
         lucide.createIcons();
       }
 
-      function showObservation(text) {
-        alert("Observação do Cliente:\n\n" + text);
+      // Visualização de Observação
+      function showObservation(id) {
+        const client = clients.find(c => c.id === id);
+        if (!client) return;
+
+        document.getElementById('wdlg-client-name').innerText = client.nome;
+        document.getElementById('wdlg-client-id').innerText = `ID #${client.id}`;
+        document.getElementById('wdlg-text-content').innerText = client.observacoes || "Nenhuma observação cadastrada.";
+        
+        wdlgOverlay.style.display = 'flex';
+      }
+
+      function closeWdlg() {
+        wdlgOverlay.style.display = 'none';
       }
 
       // =========================
@@ -793,6 +831,7 @@
 
         renderClients(filtered);
       });
+
       // =========================
       // Abrir Modal
       // =========================
@@ -801,6 +840,7 @@
 
         if (mode === "add") {
           document.getElementById("modalTitle").innerText = "Novo Cliente";
+          submitBtn.innerText = "Confirmar Cadastro"; // Texto Dinâmico
           clientForm.reset();
           document.getElementById("clientId").value = "";
         } else {
@@ -808,19 +848,57 @@
           if (!c) return;
 
           document.getElementById("modalTitle").innerText = "Editar Cliente";
-          document.getElementById("clientId").value = c.id; // ID usado para PUT
+          submitBtn.innerText = "Salvar Alterações"; // Texto Dinâmico
+          
+          document.getElementById("clientId").value = c.id;
           document.getElementById("name").value = c.nome || "";
           document.getElementById("email").value = c.email || "";
           document.getElementById("phone").value = c.telefone || "";
           document.getElementById("cpf").value = c.cpf || "";
           document.getElementById("pets").value = c.quantidadeDePets ?? 0;
-          document.getElementById("notes").value = c.notes || "";
+          document.getElementById("notes").value = c.observacoes || "";
         }
       }
 
       function closeModal() {
         modalOverlay.style.display = "none";
       }
+
+      // =========================
+      // CRUD: Salvar (Create/Update)
+      // =========================
+      clientForm.addEventListener("submit", (e) => {
+        e.preventDefault();
+        
+        const id = document.getElementById("clientId").value;
+        const clientData = {
+          nome: document.getElementById("name").value,
+          email: document.getElementById("email").value,
+          telefone: document.getElementById("phone").value,
+          cpf: document.getElementById("cpf").value,
+          quantidadeDePets: parseInt(document.getElementById("pets").value),
+          observacoes: document.getElementById("notes").value
+        };
+
+        const url = id 
+            ? `http://localhost:8080/clientes/atualizar/${id}` 
+            : "http://localhost:8080/clientes/cadastrar";
+        
+        const method = id ? "PUT" : "POST";
+
+        fetch(url, {
+          method: method,
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(clientData)
+        })
+        .then(response => {
+          if(!response.ok) throw new Error("Erro ao salvar cliente");
+          showToast(id ? "Dados atualizados!" : "Cliente cadastrado!");
+          closeModal();
+          loadClients(); // Recarrega lista
+        })
+        .catch(error => console.error("Erro:", error));
+      });
 
       // =========================
       // CRUD: Excluir
@@ -836,10 +914,8 @@
           })
             .then((response) => {
               if (!response.ok) throw new Error("Erro ao deletar cliente");
-
-              clients = clients.filter((c) => c.id !== id);
-              renderClients(clients);
-              showToast("Cliente removido com sucesso!", true);
+              showToast("Cliente removido com sucesso!");
+              loadClients();
             })
             .catch((error) => console.error("Erro:", error));
         }
@@ -856,6 +932,7 @@
       }
     </script>
 
+    <!-- Scripts Externos (Preservados conforme solicitado) -->
     <script src="/Clientes/clienteApi.js"></script>
     <script type="module" src="/Clientes/main.js"></script>
   </body>
