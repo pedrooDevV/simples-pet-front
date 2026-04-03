@@ -528,16 +528,15 @@
       }
 
       .modal-content-obs {
-        background-color: #fff;
-        margin: 20% auto; /* centraliza */
-        padding: 25px;
-        border-radius: 14px;
-        width: 700px; /* maior */
-        max-width: 90%;
-        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.35);
-        font-family: "Inter", sans-serif;
-        position: relative;
-        font-size: 1rem;
+        background-color: var(--white);
+        border-radius: 20px;
+        width: 550px; /* Largura fixa sugerida */
+        max-width: 90%; /* Responsividade para telas menores */
+        display: flex;
+        flex-direction: column; /* Mantém Header, Body e Footer empilhados */
+        box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+        overflow: hidden; /* Garante que o conteúdo não vaze as bordas arredondadas */
+        animation: modalSlideUp 0.3s ease;
       }
 
       /* Toast de Feedback */
@@ -560,6 +559,107 @@
       .toast.show {
         transform: translateY(0);
       }
+      /* Estilização Refinada para o Modal de Observações */
+      .modal_obs {
+        display: none;
+        position: fixed;
+        z-index: 1000;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(15, 23, 42, 0.6);
+        backdrop-filter: blur(4px);
+        align-items: center;
+        justify-content: center;
+      }
+
+      .modal-content-obs {
+        background-color: var(--white);
+        border-radius: 20px;
+        width: 500px;
+        max-width: 90%;
+        box-shadow:
+          0 20px 25px -5px rgba(0, 0, 0, 0.1),
+          0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        overflow: hidden;
+        animation: modalSlideUp 0.3s ease;
+        position: relative;
+      }
+
+      .obs-header {
+        padding: 20px 24px;
+        background: var(--primary-bg-light);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        border-bottom: 1px solid var(--border);
+      }
+
+      .obs-header h3 {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        color: var(--primary);
+        font-size: 1.1rem;
+        font-weight: 700;
+      }
+
+      .obs-body {
+        padding: 24px;
+        color: var(--text-main);
+        line-height: 1.6;
+        font-size: 0.95rem;
+
+        /* Ajustes para quebra de linha e rolagem */
+        max-height: 400px; /* Limita a altura do conteúdo */
+        overflow-y: auto; /* Adiciona barra de rolagem se o texto crescer */
+        word-wrap: break-word; /* Força a quebra de palavras muito longas */
+        white-space: pre-wrap; /* Mantém as quebras de linha enviadas pelo banco/input */
+      }
+
+      .obs-footer {
+        padding: 16px 24px;
+        background: #f8fafc;
+        display: flex;
+        justify-content: flex-end;
+        border-top: 1px solid var(--border);
+      }
+
+      /* Personalização da barra de rolagem (Opcional, para ficar mais bonito) */
+      .obs-body::-webkit-scrollbar {
+        width: 6px;
+      }
+
+      .obs-body::-webkit-scrollbar-track {
+        background: #f1f1f1;
+        border-radius: 10px;
+      }
+
+      .obs-body::-webkit-scrollbar-thumb {
+        background: #cbd5e1;
+        border-radius: 10px;
+      }
+
+      .obs-body::-webkit-scrollbar-thumb:hover {
+        background: var(--primary);
+      }
+
+      .close-obs-btn {
+        background: var(--white);
+        border: 1px solid var(--border);
+        padding: 8px 16px;
+        border-radius: 8px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: 0.2s;
+        color: var(--text-secondary);
+      }
+
+      .close-obs-btn:hover {
+        background: var(--bg-general);
+        color: var(--text-main);
+      }
     </style>
   </head>
   <body>
@@ -570,41 +670,41 @@
         <span>PetShop Pro</span>
       </div>
 
-      <p class="menu-label">Painel</p>
       <nav>
-        <a href="/TelaInicial/TelaInicia.html" class="nav-item">
-          <i data-lucide="layout-dashboard"></i> Dashboard
-        </a>
-        <a href="/Agenda/Agenda.html" class="nav-item">
-          <i data-lucide="calendar"></i> Agenda Teams
-        </a>
+        <p class="menu-label">Painel</p>
+        <a href="/TelaInicial/TelaInicia.html" class="nav-item"
+          ><i data-lucide="layout-dashboard"></i> Dashboard</a
+        >
+        <a href="/Agenda/Agenda.html" class="nav-item"
+          ><i data-lucide="calendar"></i> Agenda Teams</a
+        >
 
         <p class="menu-label" style="margin-top: 24px">Vendas e Serviços</p>
-        <a href="/Carrinho/Carrinho.html" class="nav-item">
-          <i data-lucide="shopping-cart"></i> Carrinho / PDV
-        </a>
-        <a href="/CatalogoServico/CatalogoServico.html" class="nav-item">
-          <i data-lucide="scissors"></i> Catálogo de Serviços
-        </a>
+        <a href="/Carrinho/Carrinho.html" class="nav-item"
+          ><i data-lucide="shopping-cart"></i> Carrinho / PDV</a
+        >
+        <a href="/CatalogoServico/CatalogoServico.html" class="nav-item"
+          ><i data-lucide="scissors"></i> Catálogo de Serviços</a
+        >
 
         <p class="menu-label" style="margin-top: 24px">Cadastros</p>
-        <a href="/Clientes/Cliente.html" class="nav-item">
-          <i data-lucide="users"></i> Clientes
-        </a>
-        <a href="../Pet/Pet.html" class="nav-item">
-          <i data-lucide="paw-print"></i> Animais
-        </a>
-        <a href="../Produtos/Produto.html" class="nav-item active">
-          <i data-lucide="package"></i> Itens / Produtos
-        </a>
+        <a href="/Clientes/Cliente.html" class="nav-item"
+          ><i data-lucide="users"></i> Clientes</a
+        >
+        <a href="../Pet/Pet.html" class="nav-item"
+          ><i data-lucide="paw-print"></i> Animais</a
+        >
+        <a href="../Produtos/Produto.html" class="nav-item active"
+          ><i data-lucide="package"></i> Itens / Produtos</a
+        >
 
         <p class="menu-label" style="margin-top: 24px">Gestão</p>
-        <a href="../Estoque/Estoque.html" class="nav-item">
-          <i data-lucide="boxes"></i> Controle de Estoque
-        </a>
-        <a href="../GastosPrevistos/GastosPrevistos.html" class="nav-item">
-          <i data-lucide="trending-down"></i> Gastos Previstos
-        </a>
+        <a href="../Estoque/Estoque.html" class="nav-item"
+          ><i data-lucide="boxes"></i> Controle de Estoque</a
+        >
+        <a href="../GastosPrevistos/GastosPrevistos.html" class="nav-item"
+          ><i data-lucide="trending-down"></i> Gastos Previstos</a
+        >
       </nav>
     </aside>
 
@@ -649,23 +749,22 @@
                 <th>Categoria</th>
                 <th>Preço Unitário</th>
                 <th>Estoque</th>
-                <th>status</th>
+                <th>Status</th>
                 <th style="text-align: right">Ações</th>
               </tr>
             </thead>
-            <tbody id="products-list">
-              <!-- Conteúdo via JS -->
-            </tbody>
+            <tbody id="products-list"></tbody>
           </table>
         </div>
       </div>
     </main>
 
+    <!-- Modais -->
     <div class="modal-overlay" id="modalOverlay">
       <div class="modal">
         <div class="modal-header">
           <h2 id="modalTitle">Novo Produto</h2>
-          <i data-lucide="x" style="cursor: pointer" onclick="closeModal()"></i>
+          <i data-lucide="x" class="cursor-pointer" onclick="closeModal()"></i>
         </div>
         <form id="productForm">
           <input type="hidden" id="productId" />
@@ -687,7 +786,7 @@
                 <button
                   type="button"
                   class="btn-add-inline"
-                  onclick="openCategoryModal()"
+                  onclick="toggleModal('categoryModalOverlay', true)"
                   title="Nova Categoria"
                 >
                   <i data-lucide="plus" style="width: 18px"></i>
@@ -734,11 +833,10 @@
               ></textarea>
             </div>
           </div>
-          <div style="display: flex; gap: 12px; margin-top: 10px">
+          <div class="flex gap-12 mt-10">
             <button
               type="button"
-              class="btn-block"
-              style="background: #f1f5f9"
+              class="btn-block bg-slate"
               onclick="closeModal()"
             >
               Cancelar
@@ -751,14 +849,15 @@
       </div>
     </div>
 
+    <!-- Modal Categoria -->
     <div class="modal-overlay" id="categoryModalOverlay" style="z-index: 210">
       <div class="modal small">
         <div class="modal-header">
           <h2>Nova Categoria</h2>
           <i
             data-lucide="x"
-            style="cursor: pointer"
-            onclick="closeCategoryModal()"
+            class="cursor-pointer"
+            onclick="toggleModal('categoryModalOverlay', false)"
           ></i>
         </div>
         <form id="categoryForm">
@@ -772,12 +871,11 @@
               placeholder="Ex: Roupas, Petiscos..."
             />
           </div>
-          <div style="display: flex; gap: 12px; margin-top: 10px">
+          <div class="flex gap-12 mt-10">
             <button
               type="button"
-              class="btn-block"
-              style="background: #f1f5f9"
-              onclick="closeCategoryModal()"
+              class="btn-block bg-slate"
+              onclick="toggleModal('categoryModalOverlay', false)"
             >
               Cancelar
             </button>
@@ -789,117 +887,76 @@
       </div>
     </div>
 
-    <!-- Toast -->
+    <!-- Toast & Obs -->
     <div class="toast" id="toast">
       <i data-lucide="check-circle"></i>
-      <span id="toastMsg">Produto salvo!</span>
+      <span id="toastMsg"></span>
     </div>
 
-    <div id="obsModal" class="modal_obs">
+    <!-- Modal de Observações Refatorado -->
+    <div id="obsModal" class="modal_obs" style="display: none">
       <div class="modal-content-obs">
-        <span class="close-btn">&times;</span>
-        <p id="obsText"></p>
+        <div class="obs-header">
+          <h3>
+            <i data-lucide="info" style="width: 20px"></i> Observações do
+            Produto
+          </h3>
+          <i
+            data-lucide="x"
+            style="cursor: pointer; width: 20px; color: var(--text-secondary)"
+            onclick="closeObs()"
+          ></i>
+        </div>
+        <div class="obs-body">
+          <p id="obsText"></p>
+        </div>
+        <div class="obs-footer">
+          <button class="close-obs-btn" onclick="closeObs()">Fechar</button>
+        </div>
       </div>
     </div>
 
     <script>
-      lucide.createIcons();
-
-      function openCategoryModal() {
-        document.getElementById("categoryModalOverlay").style.display = "flex";
-        document.getElementById("newCategoryName").focus();
-      }
-
-      function closeCategoryModal() {
-        document.getElementById("categoryModalOverlay").style.display = "none";
-        document.getElementById("categoryForm").reset();
-      }
-
-      function showObservation(texto) {
-        const mensagem =
-          texto && texto !== "undefined"
-            ? texto
-            : "Nenhuma observação disponível para este pet.";
-
-        const modal_obs = document.getElementById("obsModal");
-        const obsText = document.getElementById("obsText");
-        const closeBtn = document.querySelector(".close-btn");
-
-        obsText.textContent = mensagem;
-        modal_obs.style.display = "block";
-
-        // Fecha ao clicar no X
-        closeBtn.onclick = () => (modal_obs.style.display = "none");
-
-        // Fecha ao clicar fora do modal
-        window.onclick = (event) => {
-          if (event.target === modal_obs) modal_obs.style.display = "none";
-        };
-      }
-
-      document
-        .getElementById("categoryForm")
-        .addEventListener("submit", async (e) => {
-          e.preventDefault();
-
-          const name = document.getElementById("newCategoryName").value.trim();
-
-          if (!name) {
-            showToast("Digite um nome válido!");
-            return;
-          }
-
-          const select = document.getElementById("category");
-
-          const exists = Array.from(select.options).some(
-            (opt) => opt.text.toLowerCase() === name.toLowerCase(),
-          );
-
-          if (exists) {
-            showToast("Esta categoria já existe!");
-            return;
-          }
-
-          try {
-            const res = await fetch("http://localhost:8080/categoria", {
-              method: "POST",
-              headers: {
-                "Content-Type": "application/json",
-              },
-              body: JSON.stringify({
-                descricaoCategoria: name,
-              }),
-            });
-
-            if (!res.ok) {
-              throw new Error("Erro ao salvar categoria");
-            }
-
-            const categoria = await res.json();
-
-            const newOption = new Option(
-              categoria.descricaoCategoria,
-              categoria.id,
-            );
-            select.add(newOption);
-            select.value = categoria.id;
-
-            showToast(`Categoria "${categoria.descricaoCategoria}" criada!`);
-            carregarCategorias();
-            closeCategoryModal();
-          } catch (error) {
-            console.error(error);
-            showToast("Erro ao cadastrar categoria!");
-          }
-        });
-
-      const API_URL = "http://localhost:8080/produto";
       let products = [];
+      const API_URL = "http://localhost:8080/produto";
+      const el = (id) => document.getElementById(id);
+
+      // Helpers de UI
+      function toggleModal(id, show) {
+        el(id).style.display = show ? "flex" : "none";
+        if (id === "categoryModalOverlay" && !show) el("categoryForm").reset();
+      }
+
+      function showToast(msg) {
+        el("toastMsg").innerText = msg;
+        el("toast").classList.add("show");
+        setTimeout(() => el("toast").classList.remove("show"), 3000);
+      }
+
+      // Inicialização
+      lucide.createIcons();
+      carregarCategorias();
+      fetchProducts();
+
+      async function carregarCategorias() {
+        try {
+          const res = await fetch("http://localhost:8080/categoria");
+          const categorias = await res.json();
+          const select = el("category");
+          select.innerHTML = categorias
+            .map(
+              (c) => `<option value="${c.id}">${c.descricaoCategoria}</option>`,
+            )
+            .join("");
+        } catch (err) {
+          console.error(err);
+          showToast("Erro ao carregar categorias!");
+        }
+      }
 
       async function fetchProducts() {
         try {
           const res = await fetch(`${API_URL}/listar`);
-          if (!res.ok) throw new Error("Erro ao buscar produtos");
           products = await res.json();
           renderProducts(products);
         } catch (err) {
@@ -908,240 +965,189 @@
         }
       }
 
-      async function carregarCategorias() {
-        try {
-          const res = await fetch("http://localhost:8080/categoria", {
-            method: "GET",
-          });
-
-          if (!res.ok) throw new Error("Erro ao buscar categorias");
-
-          const categorias = await res.json();
-
-          const select = document.getElementById("category");
-          select.innerHTML = "";
-
-          categorias.forEach((c) => {
-            const option = new Option(c.descricaoCategoria, c.id);
-            select.add(option);
-          });
-        } catch (error) {
-          console.error(error);
-          showToast("Erro ao carregar categorias!");
-        }
-      }
-
       function renderProducts(data = products) {
-        const list = document.getElementById("products-list");
-        list.innerHTML = "";
-
-        data.forEach((p) => {
-          const stockClass = !p.quantidadeProduto
-            ? "stock-out"
-            : p.quantidadeProduto <= (p.quantidadeMinimoProduto || 0)
-              ? "stock-low"
-              : "stock-normal";
-          const stockStatus =
-            stockClass === "stock-out"
+        const list = el("products-list");
+        list.innerHTML = data
+          .map((p) => {
+            const isLow =
+              p.quantidadeProduto <= (p.quantidadeMinimoProduto || 0);
+            const stockClass = !p.quantidadeProduto
+              ? "stock-out"
+              : isLow
+                ? "stock-low"
+                : "stock-normal";
+            const stockStatus = !p.quantidadeProduto
               ? "Esgotado"
-              : stockClass === "stock-low"
+              : isLow
                 ? "Estoque Baixo"
                 : "Estoque OK";
+            const isActive =
+              String(p.ativo).toLowerCase() === "true" || p.ativo === 1;
 
-          const isActive =
-            p.ativo === true ||
-            p.ativo === 1 ||
-            String(p.ativo).toLowerCase() === "true";
-
-          const tr = document.createElement("tr");
-          tr.innerHTML = `
-                <td>
-                    <div class="product-info">
-                        <div class="product-icon"><i data-lucide="package" style="width: 20px;"></i></div>
-                        <div>
-                            <div class="product-name">${p.nomeProduto}</div>
-                            <div style="font-size: 0.75rem; color: var(--text-secondary)">ID: #${p.id}</div>
-                        </div>
-                    </div>
-                </td>
-                <td><span style="font-weight: 500; color: var(--text-secondary);">${p.descricaoCategoria}</span></td>
-                <td><div class="price-badge">R$ ${p.precoProduto.toFixed(2)}</div></td>
-                <td><div class="stock-badge ${stockClass}">${p.quantidadeProduto} un. • ${stockStatus}</div></td>
-                    <td>
-              <span class="badge-status ${isActive ? "status-active" : "status-inactive"}">
-                  ${isActive ? "Ativo" : "Inativo"}
-              </span>
-          </td>
-                <td style="text-align: right;">
-                    <div class="actions">
-                                <button class="btn-icon btn-info" title="Ver Observação" onclick="showObservation('${p.descricaoProduto || "Sem observações"}')">
-  <i data-lucide="info" style="width: 18px;"></i>
-</button>
-                        <button class="btn-icon btn-edit" onclick="openModal('edit', ${p.id})" title="Editar"><i data-lucide="edit-3" style="width: 18px;"></i></button>
-                       <button
-                      class="btn-icon btn-toggle"
-                      data-id="${p.id}"
-                      data-active="${isActive}"
-                      title="${isActive ? "Desativar" : "Ativar"}">
-                      <i data-lucide="${isActive ? "eye" : "eye-off"}"></i>
-                  </button>
-                    </div>
-                </td>
-            `;
-          list.appendChild(tr);
-        });
-
-        document.getElementById("count-items").innerText = data.length;
+            return `
+          <tr>
+            <td>
+              <div class="product-info">
+                <div class="product-icon"><i data-lucide="package"></i></div>
+                <div>
+                  <div class="product-name">${p.nomeProduto}</div>
+                  <div style="font-size: 0.75rem; color: var(--text-secondary)">ID: #${p.id}</div>
+                </div>
+              </div>
+            </td>
+            <td><span style="font-weight: 500; color: var(--text-secondary);">${p.descricaoCategoria}</span></td>
+            <td><div class="price-badge">R$ ${p.precoProduto.toFixed(2)}</div></td>
+            <td><div class="stock-badge ${stockClass}">${p.quantidadeProduto} un. • ${stockStatus}</div></td>
+            <td><span class="badge-status ${isActive ? "status-active" : "status-inactive"}">${isActive ? "Ativo" : "Inativo"}</span></td>
+            <td style="text-align: right;">
+              <div class="actions">
+                <button class="btn-icon btn-info" onclick="showObservation('${p.descricaoProduto || "Sem observações"}')"><i data-lucide="info"></i></button>
+                <button class="btn-icon btn-edit" onclick="openModal('edit', ${p.id})"><i data-lucide="edit-3"></i></button>
+                <button class="btn-icon btn-toggle" data-id="${p.id}" data-active="${isActive}"><i data-lucide="${isActive ? "eye" : "eye-off"}"></i></button>
+              </div>
+            </td>
+          </tr>`;
+          })
+          .join("");
+        el("count-items").innerText = data.length;
         lucide.createIcons();
       }
 
+      // Ações de Produto
       function openModal(mode, id = null) {
-        document.getElementById("modalOverlay").style.display = "flex";
-        if (mode === "add") {
-          document.getElementById("modalTitle").innerText = "Novo Produto";
-          document.getElementById("productForm").reset();
-          document.getElementById("productId").value = "";
-        } else {
-          const p = products.find((item) => item.id === id);
-          document.getElementById("modalTitle").innerText = "Editar Produto";
-          document.getElementById("productId").value = p.id;
-          document.getElementById("prodName").value = p.nomeProduto;
-          document.getElementById("category").value = p.categoriaProdutoId;
-          document.getElementById("newCategoryName").value =
-            p.descricaoCategoria;
-          document.getElementById("price").value = p.precoProduto;
-          document.getElementById("stock").value = p.quantidadeProduto;
-          document.getElementById("minStock").value =
-            p.quantidadeMinimoProduto || 0;
-          document.getElementById("description").value =
-            p.descricaoProduto || "";
-        }
+        toggleModal("modalOverlay", true);
+        const isEdit = mode === "edit";
+        el("modalTitle").innerText = isEdit ? "Editar Produto" : "Novo Produto";
+        if (!isEdit) return el("productForm").reset();
+
+        const p = products.find((item) => item.id === id);
+        el("productId").value = p.id;
+        el("prodName").value = p.nomeProduto;
+        el("category").value = p.categoriaProdutoId;
+        el("price").value = p.precoProduto;
+        el("stock").value = p.quantidadeProduto;
+        el("minStock").value = p.quantidadeMinimoProduto || 0;
+        el("description").value = p.descricaoProduto || "";
       }
 
       function closeModal() {
-        document.getElementById("modalOverlay").style.display = "none";
+        toggleModal("modalOverlay", false);
       }
 
-      document
-        .getElementById("productForm")
-        .addEventListener("submit", async (e) => {
-          e.preventDefault();
-          const id = document.getElementById("productId").value;
-
-          const productData = {
-            id: id ? parseInt(id) : null,
-            nomeProduto: document.getElementById("prodName").value,
-            categoriaProdutoId: parseInt(
-              document.getElementById("category").value,
-            ),
-            precoProduto: parseFloat(document.getElementById("price").value),
-            quantidadeProduto: parseInt(document.getElementById("stock").value),
-            quantidadeMinimoProduto: parseInt(
-              document.getElementById("minStock").value || 0,
-            ),
-            descricaoProduto:
-              document.getElementById("description").value || "",
-          };
-
-          try {
-            let res;
-            if (id) {
-              res = await fetch(`${API_URL}/atualizar`, {
-                method: "PUT",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(productData),
-              });
-
-              if (!res.ok) throw new Error("Erro ao atualizar produto");
-              showToast("Produto atualizado com sucesso!");
-            } else {
-              res = await fetch(`${API_URL}/cadastrar`, {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(productData),
-              });
-              if (!res.ok) throw new Error("Erro ao cadastrar produto, verifique se ele já não existe!");
-              showToast("Produto cadastrado com sucesso!");
-            }
-            closeModal();
-            fetchProducts();
-          } catch (err) {
-            console.error(err);
-            showToast("Erro ao salvar produto!");
-          }
-        });
-
-      async function deleteProduct(id) {
-        if (
-          confirm("Tem certeza que deseja excluir este produto do estoque?")
-        ) {
-          products = products.filter((p) => p.id !== id);
-          renderProducts();
-          showToast("Produto removido!");
-        }
-      }
-
-      async function toggleStatus(id, isCurrentlyActive) {
-        const endpoint = isCurrentlyActive ? "inativar" : "ativar";
-
-        const url = `http://localhost:8080/produto/${endpoint}/${id}`;
+      el("productForm").onsubmit = async (e) => {
+        e.preventDefault();
+        const id = el("productId").value;
+        const productData = {
+          id: id ? parseInt(id) : null,
+          nomeProduto: el("prodName").value,
+          categoriaProdutoId: parseInt(el("category").value),
+          precoProduto: parseFloat(el("price").value),
+          quantidadeProduto: parseInt(el("stock").value),
+          quantidadeMinimoProduto: parseInt(el("minStock").value || 0),
+          descricaoProduto: el("description").value || "",
+        };
 
         try {
-          const res = await fetch(url, { method: "PATCH" });
-          if (!res.ok) throw new Error("Erro ao mudar status");
-
-          const data = await res.json();
-          console.log(data);
-          const index = products.findIndex((p) => p.id == id);
-          if (index !== -1) {
-            products[index] = data;
-          }
-
-          renderProducts();
-          showToast(`Serviço ${data.ativo ? "Ativado" : "Inativado"}!`);
+          const res = await fetch(
+            `${API_URL}/${id ? "atualizar" : "cadastrar"}`,
+            {
+              method: id ? "PUT" : "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify(productData),
+            },
+          );
+          if (!res.ok) throw new Error();
+          showToast(`Produto ${id ? "atualizado" : "cadastrado"} com sucesso!`);
+          closeModal();
+          fetchProducts();
         } catch (err) {
-          console.error(err);
+          showToast("Erro ao salvar produto!");
+        }
+      };
+
+      // Gestão de Status e Observação
+      el("products-list").onclick = (e) => {
+        const btn = e.target.closest(".btn-toggle");
+        if (!btn) return;
+        const id = parseInt(btn.dataset.id);
+        const p = products.find((prod) => prod.id === id);
+        if (p) toggleStatus(id, p.ativo);
+      };
+
+      async function toggleStatus(id, active) {
+        try {
+          const res = await fetch(
+            `http://localhost:8080/produto/${active ? "inativar" : "ativar"}/${id}`,
+            { method: "PATCH" },
+          );
+          const updated = await res.json();
+          const idx = products.findIndex((p) => p.id == id);
+          if (idx !== -1) products[idx] = updated;
+          renderProducts();
+          showToast(`Produto ${updated.ativo ? "Ativado" : "Inativado"}!`);
+        } catch (err) {
           alert("Falha na comunicação com o servidor.");
         }
       }
 
-      document
-        .getElementById("products-list")
-        .addEventListener("click", (e) => {
-          const btn = e.target.closest(".btn-toggle");
-          if (!btn) return;
+      function showObservation(texto) {
+        const modal = el("obsModal");
+        el("obsText").textContent =
+          texto && texto !== "undefined" && texto !== ""
+            ? texto
+            : "Este produto não possui observações cadastradas.";
 
-          const id = parseInt(btn.dataset.id);
-          const produtos = products.find((p) => p.id === id);
-
-          if (produtos) {
-            toggleStatus(id, produtos.ativo);
-          }
-        });
-
-      function showToast(msg) {
-        const t = document.getElementById("toast");
-        document.getElementById("toastMsg").innerText = msg;
-        t.classList.add("show");
-        setTimeout(() => t.classList.remove("show"), 3000);
+        modal.style.display = "flex"; // Usando flex para centralizar
+        lucide.createIcons(); // Garante que o ícone info dentro do modal apareça
       }
 
-      document.getElementById("searchBar").addEventListener("input", (e) => {
+      function closeObs() {
+        el("obsModal").style.display = "none";
+      }
+
+      // Atualize também o window.onclick para suportar o fechar clicando fora
+      window.onclick = (e) => {
+        if (e.target === el("obsModal")) closeObs();
+        if (e.target === el("modalOverlay")) closeModal();
+        if (e.target === el("categoryModalOverlay"))
+          toggleModal("categoryModalOverlay", false);
+      };
+
+      // Filtro e Categorias
+      el("searchBar").oninput = (e) => {
         const term = e.target.value.toLowerCase();
-
-        const filtered = products.filter(
-          (p) =>
-            p.nomeProduto.toLowerCase().includes(term) || // nome
-            (p.descricaoCategoria &&
-              p.descricaoCategoria.toLowerCase().includes(term)) || // descrição da categoria
-            p.precoProduto.toString().toLowerCase().includes(term), // preço
+        renderProducts(
+          products.filter(
+            (p) =>
+              p.nomeProduto.toLowerCase().includes(term) ||
+              (p.descricaoCategoria &&
+                p.descricaoCategoria.toLowerCase().includes(term)),
+          ),
         );
+      };
 
-        renderProducts(filtered);
-      });
+      el("categoryForm").onsubmit = async (e) => {
+        e.preventDefault();
+        const name = el("newCategoryName").value.trim();
+        try {
+          const res = await fetch("http://localhost:8080/categoria", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ descricaoCategoria: name }),
+          });
+          const cat = await res.json();
+          el("category").add(new Option(cat.descricaoCategoria, cat.id));
+          el("category").value = cat.id;
+          showToast("Categoria criada!");
+          toggleModal("categoryModalOverlay", false);
+        } catch (err) {
+          showToast("Erro ao criar categoria!");
+        }
+      };
 
-      carregarCategorias();
-      fetchProducts();
+      window.onclick = (e) => {
+        if (e.target === el("obsModal")) el("obsModal").style.display = "none";
+      };
     </script>
   </body>
 </html>
