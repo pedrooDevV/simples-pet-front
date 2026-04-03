@@ -32,10 +32,7 @@
         margin: 0;
         padding: 0;
         box-sizing: border-box;
-        font-family:
-          "Inter",
-          -apple-system,
-          sans-serif;
+        font-family: "Inter", -apple-system, sans-serif;
       }
 
       body {
@@ -137,13 +134,12 @@
         color: var(--text-secondary);
         font-size: 0.85rem;
       }
-
-      /* Ajuste para manter os botões alinhados */
       .actions {
         display: flex;
         gap: 8px;
         justify-content: flex-end;
       }
+
       .btn-primary {
         background: var(--primary);
         color: white;
@@ -164,12 +160,10 @@
         transform: translateY(-2px);
       }
 
-      /* Content Container */
       .content-container {
         padding: 32px 40px;
       }
 
-      /* Table Controls */
       .table-controls {
         display: flex;
         justify-content: space-between;
@@ -208,7 +202,6 @@
         box-shadow: 0 0 0 4px var(--primary-bg-light);
       }
 
-      /* Table Design */
       .card-table {
         background: var(--white);
         border-radius: 16px;
@@ -303,7 +296,6 @@
         background: var(--white);
       }
 
-      /* Modal */
       .modal-overlay {
         position: fixed;
         top: 0;
@@ -406,6 +398,10 @@
         cursor: pointer;
         border: none;
         transition: 0.2s;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
       }
 
       .action-btn {
@@ -487,12 +483,14 @@
         color: white;
         box-shadow: 0 4px 12px rgba(58, 134, 255, 0.2);
       }
-      .btn-success:hover {
-        transform: translateY(-2px);
-        background: var(--primary-hover);
+      .btn-danger {
+        background: var(--danger);
+        color: white;
+      }
+      .btn-danger:hover {
+        background: #dc2626;
       }
 
-      /* Estilo da área de observação (o) */
       .obs-display {
         background: #f8fafc;
         padding: 16px;
@@ -504,7 +502,6 @@
         white-space: pre-wrap;
       }
 
-      /* Toast */
       .toast {
         position: fixed;
         bottom: 30px;
@@ -718,7 +715,7 @@
       </div>
     </div>
 
-    <!-- Modal Visualizar Observação (WDlg) -->
+    <!-- Modal Visualizar Observação (WDlg Info) -->
     <div class="modal-overlay" id="wdlgOverlay">
       <div class="modal">
         <div class="modal-header">
@@ -739,6 +736,38 @@
           <button type="button" class="action-btn ghost" onclick="closeWdlg()">
             Fechar
           </button>
+
+            <p id="wdlg-client-id" style="color: var(--text-secondary); font-size: 0.8rem;"></p>
+          </div>
+          <i data-lucide="x" class="modal-close" onclick="closeWdlg()"></i>
+        </div>
+        <div class="form-group full">
+          <label>Observações:</label>
+          <div id="wdlg-text-content" class="obs-display"></div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn-block btn-ghost" onclick="closeWdlg()">Fechar</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modal de Confirmação de Exclusão (WDlg Delete) -->
+    <div class="modal-overlay" id="deleteModalOverlay">
+      <div class="modal" style="width: 450px; text-align: center;">
+        <div style="margin-bottom: 20px;">
+          <div style="background: var(--danger-light); color: var(--danger); width: 60px; height: 60px; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 16px;">
+            <i data-lucide="alert-triangle" style="width: 32px; height: 32px;"></i>
+          </div>
+          <h2 style="font-size: 1.4rem; font-weight: 800; margin-bottom: 8px;">Excluir Cliente?</h2>
+          <p style="color: var(--text-secondary); font-size: 0.95rem; line-height: 1.5;">
+            Tem certeza que deseja remover <strong><span id="deleteClientName"></span></strong>? <br>
+            Esta ação não poderá ser desfeita.
+          </p>
+        </div>
+        <input type="hidden" id="deleteClientId" />
+        <div class="modal-footer">
+          <button type="button" class="btn-block btn-ghost" onclick="closeDeleteModal()">Não, Cancelar</button>
+          <button type="button" class="btn-block btn-danger" onclick="confirmDeleteClient()">Sim, Excluir</button>
         </div>
       </div>
     </div>
@@ -752,19 +781,14 @@
     <script>
       lucide.createIcons();
 
-      // =========================
-      // Variáveis Globais
-      // =========================
-      let clients = []; // dados do backend
+      let clients = [];
       const listElement = document.getElementById("clients-list");
       const modalOverlay = document.getElementById("modalOverlay");
       const wdlgOverlay = document.getElementById("wdlgOverlay");
+      const deleteModalOverlay = document.getElementById("deleteModalOverlay");
       const clientForm = document.getElementById("clientForm");
       const submitBtn = document.getElementById("submitBtn");
 
-      // =========================
-      // Função para gerar iniciais
-      // =========================
       function getInitials(nome) {
         if (!nome) return "--";
         return nome
@@ -775,9 +799,6 @@
           .substring(0, 2);
       }
 
-      // =========================
-      // Fetch dos clientes
-      // =========================
       function loadClients() {
         fetch("http://localhost:8080/clientes/listar")
           .then((response) => {
@@ -791,18 +812,13 @@
           .catch((error) => console.error("Erro:", error));
       }
 
-      // Iniciar carregamento
       loadClients();
 
-      // =========================
-      // Função de renderização
-      // =========================
       function renderClients(data) {
         listElement.innerHTML = "";
 
         data.forEach((c) => {
           const tr = document.createElement("tr");
-
           tr.innerHTML = `
         <td>
           <div class="client-info">
@@ -866,36 +882,60 @@
       }
 
       // =========================
-      // Busca em tempo real
+      // Lógica de Exclusão com WDLG
       // =========================
+      function openDeleteModal(id) {
+        const client = clients.find(c => c.id === id);
+        if (!client) return;
+
+        document.getElementById('deleteClientId').value = id;
+        document.getElementById('deleteClientName').innerText = client.nome;
+        deleteModalOverlay.style.display = 'flex';
+      }
+
+      function closeDeleteModal() {
+        deleteModalOverlay.style.display = 'none';
+      }
+
+      function confirmDeleteClient() {
+        const id = document.getElementById('deleteClientId').value;
+        
+        fetch(`http://localhost:8080/clientes/deletar/${id}`, {
+          method: "DELETE",
+        })
+        .then((response) => {
+          if (!response.ok) throw new Error("Erro ao deletar cliente");
+          showToast("Cliente removido com sucesso!");
+          closeDeleteModal();
+          loadClients();
+        })
+        .catch((error) => {
+          console.error("Erro:", error);
+          closeDeleteModal();
+        });
+      }
+
       document.getElementById("searchBar").addEventListener("input", (e) => {
         const term = e.target.value.toLowerCase();
-
         const filtered = clients.filter(
           (c) =>
             (c.nome || "").toLowerCase().includes(term) ||
             (c.cpf || "").includes(term) ||
             (c.email || "").toLowerCase().includes(term),
         );
-
         renderClients(filtered);
       });
 
-      // =========================
-      // Abrir Modal
-      // =========================
       function openModal(mode, id = null) {
         modalOverlay.style.display = "flex";
-
         if (mode === "add") {
           document.getElementById("modalTitle").innerText = "Novo Cliente";
-          submitBtn.innerText = "Confirmar Cadastro"; // Texto Dinâmico
+          submitBtn.innerText = "Confirmar Cadastro";
           clientForm.reset();
           document.getElementById("clientId").value = "";
         } else {
           const c = clients.find((item) => item.id === id);
           if (!c) return;
-
           document.getElementById("modalTitle").innerText = "Editar Cliente";
           submitBtn.innerText = "Salvar Alterações"; // Texto Dinâmico
 
@@ -909,13 +949,8 @@
         }
       }
 
-      function closeModal() {
-        modalOverlay.style.display = "none";
-      }
+      function closeModal() { modalOverlay.style.display = "none"; }
 
-      // =========================
-      // CRUD: Salvar (Create/Update)
-      // =========================
       clientForm.addEventListener("submit", (e) => {
         e.preventDefault();
 
@@ -949,30 +984,6 @@
           .catch((error) => console.error("Erro:", error));
       });
 
-      // =========================
-      // CRUD: Excluir
-      // =========================
-      function deleteClient(id) {
-        if (
-          confirm(
-            "Tem certeza que deseja excluir este cliente? Todos os dados vinculados serão perdidos.",
-          )
-        ) {
-          fetch(`http://localhost:8080/clientes/deletar/${id}`, {
-            method: "DELETE",
-          })
-            .then((response) => {
-              if (!response.ok) throw new Error("Erro ao deletar cliente");
-              showToast("Cliente removido com sucesso!");
-              loadClients();
-            })
-            .catch((error) => console.error("Erro:", error));
-        }
-      }
-
-      // =========================
-      // Toast de feedback
-      // =========================
       function showToast(msg) {
         const toast = document.getElementById("toast");
         document.getElementById("toastMsg").innerText = msg;
@@ -981,7 +992,7 @@
       }
     </script>
 
-    <!-- Scripts Externos (Preservados conforme solicitado) -->
+    <!-- Scripts Externos (Preservados) -->
     <script src="/Clientes/clienteApi.js"></script>
     <script type="module" src="/Clientes/main.js"></script>
   </body>

@@ -68,25 +68,6 @@
         color: var(--primary);
       }
 
-      .header-info h1 {
-        font-size: 1.5rem;
-        font-weight: 800;
-      }
-      .header-info p {
-        color: var(--text-secondary);
-        font-size: 0.85rem;
-      }
-
-      .btn-info {
-        color: #3b82f6; /* Azul */
-        background: #eff6ff;
-        border: 1px solid #dbeafe;
-      }
-
-      .btn-info:hover {
-        background: #dbeafe;
-      }
-
       .menu-label {
         padding: 0 24px 8px;
         font-size: 0.7rem;
@@ -283,10 +264,6 @@
         font-weight: 700;
         color: var(--text-main);
       }
-      .pet-breed {
-        color: var(--text-secondary);
-        font-size: 0.8rem;
-      }
 
       .owner-badge {
         display: inline-flex;
@@ -308,18 +285,9 @@
         text-transform: uppercase;
       }
 
-      .tag-dog {
-        background: #dbeafe;
-        color: #1e40af;
-      }
-      .tag-cat {
-        background: #f3e8ff;
-        color: #6b21a8;
-      }
-      .tag-other {
-        background: #f1f5f9;
-        color: #475569;
-      }
+      .tag-dog { background: #dbeafe; color: #1e40af; }
+      .tag-cat { background: #f3e8ff; color: #6b21a8; }
+      .tag-other { background: #f1f5f9; color: #475569; }
 
       .actions {
         display: flex;
@@ -343,10 +311,8 @@
       /* Modal */
       .modal-overlay {
         position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
+        top: 0; left: 0;
+        width: 100%; height: 100%;
         background: rgba(15, 23, 42, 0.6);
         backdrop-filter: blur(4px);
         display: none;
@@ -361,17 +327,12 @@
         border-radius: 20px;
         padding: 32px;
         animation: modalSlideUp 0.3s ease;
+        max-width: 95%;
       }
 
       @keyframes modalSlideUp {
-        from {
-          opacity: 0;
-          transform: translateY(30px);
-        }
-        to {
-          opacity: 1;
-          transform: translateY(0);
-        }
+        from { opacity: 0; transform: translateY(30px); }
+        to { opacity: 1; transform: translateY(0); }
       }
 
       .action-btn {
@@ -454,106 +415,21 @@
         margin-bottom: 24px;
       }
 
-      .form-grid {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 16px;
-      }
-      .form-group {
-        margin-bottom: 20px;
-      }
-      .form-group.full {
-        grid-column: span 2;
-      }
-      .form-group label {
-        display: block;
-        font-size: 0.85rem;
-        font-weight: 700;
-        margin-bottom: 8px;
-      }
+      .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+      .form-group { margin-bottom: 20px; }
+      .form-group.full { grid-column: span 2; }
+      .form-group label { display: block; font-size: 0.85rem; font-weight: 700; margin-bottom: 8px; }
+      .form-control { width: 100%; padding: 12px 16px; border-radius: 10px; border: 1px solid var(--border); outline: none; transition: 0.2s; }
+      .form-control:focus { border-color: var(--primary); box-shadow: 0 0 0 4px var(--primary-bg-light); }
 
-      .form-control {
-        width: 100%;
-        padding: 12px 16px;
-        border-radius: 10px;
-        border: 1px solid var(--border);
-        outline: none;
-        transition: 0.2s;
-      }
-
-      .form-control:focus {
-        border-color: var(--primary);
-        box-shadow: 0 0 0 4px var(--primary-bg-light);
-      }
-
-      .btn-block {
-        width: 100%;
-        padding: 14px;
-        border-radius: 12px;
-        font-weight: 700;
-        cursor: pointer;
-        border: none;
-        transition: 0.2s;
-      }
-      .btn-success {
-        background: var(--primary);
-        color: white;
-      }
-      .btn-success:hover {
-        background: var(--primary-hover);
-        transform: translateY(-1px);
-      }
-
-      /* Container do modal */
-      .obs-modal-container {
-        display: none; /* oculto por padrão */
-        position: fixed;
-        z-index: 1000;
-        left: 0;
-        top: 0;
-        width: 100%;
-        height: 100%;
-        overflow: auto;
-        background-color: rgba(0, 0, 0, 0.5); /* fundo semi-transparente */
-        backdrop-filter: blur(3px); /* leve blur */
-      }
-
-      /* Caixa do modal */
-      .obs-modal-box {
-        background-color: #fff;
-        margin: 10% auto;
-        padding: 25px;
-        border-radius: 14px;
-        width: 600px; /* largura */
-        max-width: 95%;
-        height: 400px; /* altura fixa maior */
-        max-height: 80vh; /* nunca ultrapassa 80% da altura da tela */
-        overflow-y: auto; /* adiciona scroll vertical se precisar */
-        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.35);
-        position: relative;
-        font-family: "Inter", sans-serif;
-      }
-
-      /* Botão de fechar */
-      .obs-modal-close {
-        position: absolute;
-        top: 12px;
-        right: 18px;
-        font-size: 26px;
-        cursor: pointer;
-        color: #333;
-        font-weight: bold;
-      }
-
-      .obs-modal-close:hover {
-        color: #e74c3c;
-      }
+      .btn-block { width: 100%; padding: 14px; border-radius: 12px; font-weight: 700; cursor: pointer; border: none; transition: 0.2s; }
+      .btn-success { background: var(--primary); color: white; }
+      .btn-success:hover { background: var(--primary-hover); transform: translateY(-1px); }
 
       /* Toast */
       .toast {
         position: fixed;
-        bottom: 30px;
-        right: 30px;
+        bottom: 30px; right: 30px;
         background: var(--text-main);
         color: white;
         padding: 16px 24px;
@@ -566,13 +442,41 @@
         z-index: 300;
         box-shadow: var(--shadow);
       }
-      .toast.show {
-        transform: translateY(0);
+      .toast.show { transform: translateY(0); }
+
+      /* WDGL - Modal de Exclusão */
+      .wdgl-delete-box {
+        text-align: center;
+      }
+      .wdgl-icon-danger {
+        width: 64px;
+        height: 64px;
+        background: var(--danger-light);
+        color: var(--danger);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 20px;
+      }
+
+      /* WDGL - Modal de Info */
+      .wdgl-info-content {
+        background: #f8fafc;
+        padding: 20px;
+        border-radius: 12px;
+        border-left: 4px solid var(--primary);
+        font-size: 0.95rem;
+        line-height: 1.6;
+        color: var(--text-main);
+        margin-top: 10px;
+        max-height: 300px;
+        overflow-y: auto;
       }
     </style>
   </head>
   <body>
-    <!-- Sidebar Padronizada -->
+    <!-- Sidebar -->
     <aside>
       <div class="logo-container">
         <i data-lucide="dog" style="width: 32px; height: 32px"></i>
@@ -632,22 +536,10 @@
         <div class="table-controls">
           <div class="search-input">
             <i data-lucide="search"></i>
-            <input
-              type="text"
-              placeholder="Buscar por nome do pet ou dono..."
-              id="searchBar"
-            />
+            <input type="text" placeholder="Buscar por nome do pet ou dono..." id="searchBar" />
           </div>
-          <div
-            style="
-              font-weight: 600;
-              color: var(--text-secondary);
-              font-size: 0.85rem;
-            "
-          >
-            Total:
-            <span id="count-pets" style="color: var(--primary)">0</span>
-            cadastrados
+          <div style="font-weight: 600; color: var(--text-secondary); font-size: 0.85rem;">
+            Total: <span id="count-pets" style="color: var(--primary)">0</span> cadastrados
           </div>
         </div>
 
@@ -662,15 +554,13 @@
                 <th style="text-align: right">Ações</th>
               </tr>
             </thead>
-            <tbody id="pets-list">
-              <!-- Render via JS -->
-            </tbody>
+            <tbody id="pets-list"></tbody>
           </table>
         </div>
       </div>
     </main>
 
-    <!-- Modal Pet -->
+    <!-- Modal Form Pet -->
     <div class="modal-overlay" id="modalOverlay">
       <div class="modal">
         <div class="modal-header">
@@ -682,22 +572,11 @@
           <div class="form-grid">
             <div class="form-group full">
               <label for="petName">Nome do Pet *</label>
-              <input
-                type="text"
-                id="petName"
-                class="form-control"
-                required
-                placeholder="Ex: Thor"
-              />
+              <input type="text" id="petName" class="form-control" required placeholder="Ex: Thor" />
             </div>
             <div class="form-group full">
               <label for="ownerId">Dono (Cliente) *</label>
-              <select
-                id="ownerId"
-                class="form-control"
-                placeholder="Selecione o dono"
-                required
-              ></select>
+              <select id="ownerId" class="form-control" required></select>
             </div>
             <div class="form-group">
               <label for="species">Espécie</label>
@@ -708,30 +587,11 @@
             </div>
             <div class="form-group">
               <label for="breed">Raça</label>
-              <input
-                type="text"
-                id="breed"
-                class="form-control"
-                placeholder="Ex: Golden Retriever"
-              />
+              <input type="text" id="breed" class="form-control" placeholder="Ex: Golden Retriever" />
             </div>
             <div class="form-group">
               <label for="age">Idade</label>
-              <input
-                min="0"
-                max="30"
-                type="number"
-                id="age"
-                class="form-control"
-                placeholder="Ex: 3"
-                onkeypress="
-                  return event.charCode >= 48 && event.charCode <= 57;
-                "
-                oninput="
-                  if (this.value < 0) this.value = 0;
-                  if (this.value > 30) this.value = 30;
-                "
-              />
+              <input type="number" id="age" class="form-control" min="0" max="30", placeholder="Idade" />
             </div>
             <div class="form-group">
               <label for="gender">Sexo</label>
@@ -742,28 +602,48 @@
             </div>
             <div class="form-group full">
               <label for="notes">Observações</label>
-              <textarea
-                id="notes"
-                class="form-control"
-                rows="3"
-                placeholder="Alergias, temperamento, etc..."
-              ></textarea>
+              <textarea id="notes" class="form-control" rows="3" placeholder="Alergias, temperamento, etc..."></textarea>
             </div>
           </div>
           <div style="display: flex; gap: 12px; margin-top: 10px">
-            <button
-              type="button"
-              class="btn-block"
-              style="background: #f1f5f9"
-              onclick="closeModal()"
-            >
-              Cancelar
-            </button>
-            <button type="submit" class="btn-block btn-success">
-              Salvar Pet
-            </button>
+            <button type="button" class="btn-block" style="background: #f1f5f9" onclick="closeModal()">Cancelar</button>
+            <button type="submit" class="btn-block btn-success">Salvar Pet</button>
           </div>
         </form>
+      </div>
+    </div>
+
+    <!-- WDGL - Modal de Exclusão -->
+    <div class="modal-overlay" id="wdglDelete">
+      <div class="modal" style="width: 400px;">
+        <div class="wdgl-delete-box">
+          <div class="wdgl-icon-danger">
+            <i data-lucide="alert-triangle" style="width: 32px; height: 32px;"></i>
+          </div>
+          <h2 style="margin-bottom: 8px;">Excluir Pet?</h2>
+          <p style="color: var(--text-secondary); font-size: 0.9rem; margin-bottom: 24px;">
+            Esta ação não pode ser desfeita. O registro do animal será removido permanentemente.
+          </p>
+          <div style="display: flex; gap: 12px;">
+            <button class="btn-block" style="background: #f1f5f9" onclick="closeWdgl('wdglDelete')">Voltar</button>
+            <button id="confirmDeleteBtn" class="btn-block" style="background: var(--danger); color: white;">Sim, Excluir</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- WDGL - Modal de Observações (Info) -->
+    <div class="modal-overlay" id="wdglInfo">
+      <div class="modal">
+        <div class="modal-header" style="margin-bottom: 12px;">
+          <div style="display: flex; align-items: center; gap: 10px;">
+            <div style="color: var(--primary);"><i data-lucide="info" style="width: 24px;"></i></div>
+            <h2 id="infoTitle">Observações</h2>
+          </div>
+          <i data-lucide="x" style="cursor: pointer" onclick="closeWdgl('wdglInfo')"></i>
+        </div>
+        <div id="infoContent" class="wdgl-info-content"></div>
+        <button class="btn-block" style="margin-top: 24px; background: var(--primary); color: white;" onclick="closeWdgl('wdglInfo')">Entendido</button>
       </div>
     </div>
 
@@ -772,57 +652,37 @@
       <span id="toastMsg">Ação concluída!</span>
     </div>
 
-    <div id="obsModalContainer" class="obs-modal-container">
-      <div class="obs-modal-box">
-        <span class="obs-modal-close">&times;</span>
-        <p id="obsModalText"></p>
-      </div>
-    </div>
-
     <script>
       lucide.createIcons();
 
       let pets = [];
       let clientes = [];
-      let clienteMap = new Map(); // HashMap: nome -> id
+      let petToDeleteId = null;
 
-      // 1️⃣ Carrega clientes e cria o HashMap
+      // 1️⃣ Carrega clientes
       async function carregarClientes() {
         try {
           const response = await fetch("http://localhost:8080/clientes/listar");
           clientes = await response.json();
-
           const ownerSelect = document.getElementById("ownerId");
-
-          // Limpa o select e adiciona a opção padrão
           ownerSelect.innerHTML = '<option value="">Selecione o dono</option>';
-
-          // Adiciona cada cliente vindo do banco como uma <option>
           clientes.forEach((cliente) => {
             const option = document.createElement("option");
-            option.value = cliente.id; // O valor enviado ao banco será o ID
-            option.textContent = cliente.nome; // O que o usuário vê é o Nome
+            option.value = cliente.id;
+            option.textContent = cliente.nome;
             ownerSelect.appendChild(option);
           });
-
-          console.log("Clientes carregados e Select preenchido!");
-
           if (pets.length > 0) renderPets(pets);
         } catch (error) {
           console.error("Erro ao carregar clientes:", error);
-          document.getElementById("ownerId").innerHTML =
-            '<option value="">Erro ao carregar</option>';
         }
       }
 
-      carregarClientes(); // chama ao carregar a página
+      carregarClientes();
 
-      // 2️⃣ Carrega pets do backend
+      // 2️⃣ Carrega pets
       fetch("http://localhost:8080/animais/listar")
-        .then((response) => {
-          if (!response.ok) throw new Error("Erro ao buscar pets");
-          return response.json();
-        })
+        .then((response) => response.json())
         .then((data) => {
           pets = data;
           renderPets(pets);
@@ -835,23 +695,17 @@
         const list = document.getElementById("pets-list");
         list.innerHTML = "";
 
-        for (const p of petsList) {
+        petsList.forEach(p => {
           let ownerName = p.nomeCliente;
-
           if (!ownerName || ownerName === "Sem dono") {
             const donoEncontrado = clientes.find((c) => c.id === p.clienteId);
             ownerName = donoEncontrado ? donoEncontrado.nome : "Sem dono";
-          } // só aqui
+          }
 
-          const tr = document.createElement("tr");
-          const tagClass =
-            p.especie === "Cachorro"
-              ? "tag-dog"
-              : p.especie === "Gato"
-                ? "tag-cat"
-                : "tag-other";
+          const tagClass = p.especie === "Cachorro" ? "tag-dog" : p.especie === "Gato" ? "tag-cat" : "tag-other";
           const icon = p.especie === "Cachorro" ? "dog" : "cat";
 
+          const tr = document.createElement("tr");
           tr.innerHTML = `
       <td>
         <div class="pet-info">
@@ -884,35 +738,56 @@
       </td>
     `;
           list.appendChild(tr);
-        }
+        });
 
         document.getElementById("count-pets").innerText = petsList.length;
         lucide.createIcons();
       }
 
-      function showObservation(texto) {
-        const mensagem =
-          texto && texto !== "undefined"
-            ? texto
-            : "Nenhuma observação disponível para este pet.";
+      // --- NOVAS FUNÇÕES WDLG ---
 
-        const modal = document.getElementById("obsModalContainer");
-        const obsText = document.getElementById("obsModalText");
-        const closeBtn = document.querySelector(".obs-modal-close");
-
-        obsText.textContent = mensagem;
-        modal.style.display = "block";
-
-        // Fecha ao clicar no X
-        closeBtn.onclick = () => (modal.style.display = "none");
-
-        // Fecha ao clicar fora da caixa
-        window.onclick = (event) => {
-          if (event.target === modal) modal.style.display = "none";
-        };
+      function showObservationWdgl(id) {
+        const p = pets.find(item => item.id === id);
+        const obs = p.observacoes && p.observacoes.trim() !== "" 
+                    ? p.observacoes 
+                    : "Nenhuma observação cadastrada para este pet.";
+        
+        document.getElementById("infoTitle").innerText = `Observações: ${p.nome}`;
+        document.getElementById("infoContent").innerText = obs;
+        document.getElementById("wdglInfo").style.display = "flex";
       }
 
-      // 4️⃣ Modal Logic
+      function openDeleteWdgl(id) {
+        petToDeleteId = id;
+        document.getElementById("wdglDelete").style.display = "flex";
+      }
+
+      function closeWdgl(id) {
+        document.getElementById(id).style.display = "none";
+        if(id === 'wdglDelete') petToDeleteId = null;
+      }
+
+      document.getElementById("confirmDeleteBtn").addEventListener("click", () => {
+        if (petToDeleteId) {
+          fetch(`http://localhost:8080/animais/deletar/${petToDeleteId}`, {
+            method: "DELETE",
+          })
+          .then((response) => {
+            if (!response.ok) throw new Error("Erro ao deletar animal");
+            pets = pets.filter((c) => c.id !== petToDeleteId);
+            renderPets(pets);
+            showToast("Pet removido com sucesso!");
+            closeWdgl('wdglDelete');
+          })
+          .catch((error) => {
+              console.error("Erro:", error);
+              showToast("Erro ao remover pet.");
+          });
+        }
+      });
+
+      // --- LOGICA MODAL CADASTRO (MANTIDA) ---
+
       function openModal(mode, id = null) {
         document.getElementById("modalOverlay").style.display = "flex";
         const ownerSelect = document.getElementById("ownerId");
@@ -931,26 +806,45 @@
           document.getElementById("breed").value = p.raca;
           document.getElementById("age").value = p.idade;
           document.getElementById("gender").value = p.sexo;
-
-          // Seleciona o dono pelo id
+          document.getElementById("notes").value = p.observacoes || "";
           ownerSelect.value = p.clienteId || "";
         }
       }
 
-      document
-        .getElementById("petForm")
-        .addEventListener("submit", async (e) => {
-          e.preventDefault();
+      function closeModal() {
+        document.getElementById("modalOverlay").style.display = "none";
+      }
 
-          const id = document.getElementById("petId").value;
-          const selectDono = document.getElementById("ownerId");
+      document.getElementById("petForm").addEventListener("submit", async (e) => {
+        e.preventDefault();
+        const id = document.getElementById("petId").value;
+        const selectDono = document.getElementById("ownerId");
+        const clienteId = parseInt(selectDono.value);
+        const nomeCliente = selectDono.options[selectDono.selectedIndex].text;
 
-          // Pegamos o ID (valor) e o Nome (texto visível) do Select
-          const clienteId = parseInt(selectDono.value);
-          const nomeCliente = selectDono.options[selectDono.selectedIndex].text;
+        const payload = {
+          nome: document.getElementById("petName").value,
+          especie: document.getElementById("species").value,
+          raca: document.getElementById("breed").value,
+          idade: parseInt(document.getElementById("age").value),
+          sexo: document.getElementById("gender").value,
+          observacoes: document.getElementById("notes").value || "",
+          clienteId: clienteId,
+          nomeCliente: nomeCliente,
+        };
 
-          if (!clienteId) {
-            alert("Por favor, selecione um dono!");
+        const url = id ? `http://localhost:8080/animais/${id}` : "http://localhost:8080/animais/criar";
+        const method = id ? "PUT" : "POST";
+
+        try {
+          const res = await fetch(url, {
+            method: method,
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(payload),
+          });
+
+          if (!res.ok) {
+            showToast("Erro ao salvar pet.");
             return;
           }
 
@@ -1014,26 +908,14 @@
             console.error(err);
             showToast("Erro de conexão com o servidor, verifique os dados");
           }
-        });
 
-      function closeModal() {
-        document.getElementById("modalOverlay").style.display = "none";
-      }
-
-      function deletePet(id) {
-        if (confirm("Tem certeza que deseja excluir este pet?")) {
-          fetch(`http://localhost:8080/animais/deletar/${id}`, {
-            method: "DELETE",
-          })
-            .then((response) => {
-              if (!response.ok) throw new Error("Erro ao deletar animal");
-              pets = pets.filter((c) => c.id !== id);
-              renderPets(pets);
-              showToast("Pet removido com sucesso!");
-            })
-            .catch((error) => console.error("Erro:", error));
+          renderPets(pets);
+          closeModal();
+          showToast("Pet salvo com sucesso!");
+        } catch (err) {
+          showToast("Erro de conexão");
         }
-      }
+      });
 
       function showToast(msg) {
         const t = document.getElementById("toast");
@@ -1042,19 +924,23 @@
         setTimeout(() => t.classList.remove("show"), 3000);
       }
 
-      // 5️⃣ Form submit para criar/editar pet
-
       document.getElementById("searchBar").addEventListener("input", (e) => {
         const term = e.target.value.toLowerCase();
-        const filtered = pets.filter(
-          (p) =>
-            p.nome.toLowerCase().includes(term) ||
-            (p.nomeCliente || "").toLowerCase().includes(term),
+        const filtered = pets.filter(p => 
+          p.nome.toLowerCase().includes(term) || 
+          (p.nomeCliente || "").toLowerCase().includes(term)
         );
         renderPets(filtered);
       });
-    </script>
 
-    <script src="main.js" defer></script>
+      // Fechar modais ao clicar fora
+      window.onclick = (event) => {
+        const overlays = ['modalOverlay', 'wdglDelete', 'wdglInfo'];
+        overlays.forEach(id => {
+            const el = document.getElementById(id);
+            if (event.target === el) closeWdgl(id);
+        });
+      };
+    </script>
   </body>
 </html>
