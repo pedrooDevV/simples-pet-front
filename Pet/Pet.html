@@ -96,13 +96,6 @@
         letter-spacing: 1px;
       }
 
-      .btn-delete {
-        color: #ef4444;
-      }
-
-      .btn-edit {
-        color: var(--primary);
-      }
       nav {
         flex: 1;
         padding: 0 16px;
@@ -347,17 +340,6 @@
         background: var(--white);
       }
 
-      .btn-edit:hover {
-        background: var(--primary-bg-light);
-        color: var(--primary);
-        border-color: var(--primary);
-      }
-      .btn-delete:hover {
-        background: var(--danger-light);
-        color: var(--danger);
-        border-color: var(--danger);
-      }
-
       /* Modal */
       .modal-overlay {
         position: fixed;
@@ -390,6 +372,79 @@
           opacity: 1;
           transform: translateY(0);
         }
+      }
+
+      .action-btn {
+        border-radius: 8px;
+        font-weight: 500;
+        padding: 6px 12px;
+        border: 1px solid transparent;
+        cursor: pointer;
+        transition: all 0.25s ease;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+      }
+
+      .action-btn:active {
+        transform: scale(0.96);
+      }
+      .action-btn.edit {
+        background: linear-gradient(135deg, #3b82f6, #2563eb);
+        color: #ffffff;
+        border: none;
+        position: relative;
+        overflow: hidden;
+      }
+
+      .action-btn.edit::after {
+        content: "";
+        position: absolute;
+        width: 120%;
+        height: 120%;
+        background: rgba(255, 255, 255, 0.2);
+        top: -100%;
+        left: -100%;
+        transform: rotate(25deg);
+        transition: all 0.5s ease;
+      }
+
+      .action-btn.edit:hover::after {
+        top: 100%;
+        left: 100%;
+      }
+
+      .action-btn.edit:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
+      }
+
+      .action-btn.delete {
+        background: #ef4444;
+        color: #ffffff;
+        border-color: #ef4444;
+      }
+
+      .action-btn.delete:hover {
+        background: #fee2e2;
+        color: #7f1d1d;
+        border-color: #ef4444;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 10px rgba(239, 68, 68, 0.25);
+      }
+
+      .action-btn.info {
+        background: #eff6ff;
+        color: #2563eb;
+        border: 1px solid #bfdbfe;
+      }
+
+      .action-btn.info:hover {
+        background: #dbeafe;
+        color: #1e3a8a;
+        border-color: #93c5fd;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 10px rgba(37, 99, 235, 0.15);
       }
 
       .modal-header {
@@ -774,7 +829,7 @@
         })
         .catch((error) => console.error("Erro:", error));
 
-      // 3️⃣ Renderiza a tabela de pets
+      // Renderiza a tabela de pets
       function renderPets(petsList) {
         petsList = petsList || [];
         const list = document.getElementById("pets-list");
@@ -820,11 +875,11 @@
       <td style="font-weight: 500;">${p.idade}</td>
       <td style="text-align: right;">
         <div class="actions">
-          <button class="btn-icon btn-info" title="Ver Observação" onclick="showObservation('${p.observacoes || "Sem observações"}')">
+          <button class="action-btn info" title="Ver Observação" onclick="showObservation('${p.observacoes || "Sem observações"}')">
   <i data-lucide="info" style="width: 18px;"></i>
 </button>
-          <button class="btn-icon btn-edit" onclick="openModal('edit', ${p.id})"><i data-lucide="edit-3" style="width: 18px;"></i></button>
-          <button class="btn-icon btn-delete" onclick="deletePet(${p.id})"><i data-lucide="trash-2" style="width: 18px;"></i></button>
+          <button class="action-btn edit" onclick="openModal('edit', ${p.id})"><i data-lucide="edit-3" style="width: 18px;"></i></button>
+          <button class="action-btn delete" onclick="deletePet(${p.id})"><i data-lucide="trash-2" style="width: 18px;"></i></button>
         </div>
       </td>
     `;
@@ -957,7 +1012,7 @@
             showToast("Pet salvo com sucesso!");
           } catch (err) {
             console.error(err);
-            showToast("Erro de conexão com o servidor");
+            showToast("Erro de conexão com o servidor, verifique os dados");
           }
         });
 
