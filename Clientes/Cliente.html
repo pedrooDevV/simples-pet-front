@@ -134,17 +134,6 @@
         color: var(--text-secondary);
         font-size: 0.85rem;
       }
-
-      .btn-info {
-        color: #3b82f6;
-        background: #eff6ff;
-        border: 1px solid #dbeafe;
-      }
-
-      .btn-info:hover {
-        background: #dbeafe;
-      }
-
       .actions {
         display: flex;
         gap: 8px;
@@ -307,23 +296,6 @@
         background: var(--white);
       }
 
-      .btn-edit {
-        color: var(--primary);
-      }
-      .btn-edit:hover {
-        background: var(--primary-bg-light);
-        border-color: var(--primary);
-      }
-
-      .btn-delete {
-        color: var(--danger);
-      }
-      .btn-delete:hover {
-        background: var(--danger-light);
-        border-color: var(--danger);
-      }
-
-      /* Modais */
       .modal-overlay {
         position: fixed;
         top: 0;
@@ -431,13 +403,81 @@
         justify-content: center;
         gap: 8px;
       }
-      .btn-ghost {
-        background: var(--bg-general);
-        color: var(--text-secondary);
+
+      .action-btn {
+        border-radius: 8px;
+        font-weight: 500;
+        padding: 6px 12px;
+        border: 1px solid transparent;
+        cursor: pointer;
+        transition: all 0.25s ease;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
       }
-      .btn-ghost:hover {
-        background: var(--border);
+
+      .action-btn:active {
+        transform: scale(0.96);
       }
+
+      .action-btn.edit {
+        background: linear-gradient(135deg, #3b82f6, #2563eb);
+        color: #ffffff;
+        border: none;
+        position: relative;
+        overflow: hidden;
+      }
+
+      .action-btn.edit::after {
+        content: "";
+        position: absolute;
+        width: 120%;
+        height: 120%;
+        background: rgba(255, 255, 255, 0.2);
+        top: -100%;
+        left: -100%;
+        transform: rotate(25deg);
+        transition: all 0.5s ease;
+      }
+
+      .action-btn.edit:hover::after {
+        top: 100%;
+        left: 100%;
+      }
+
+      .action-btn.edit:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
+      }
+
+      .action-btn.info {
+        background: #eff6ff;
+        color: #2563eb;
+        border: 1px solid #bfdbfe;
+      }
+
+      .action-btn.info:hover {
+        background: #dbeafe;
+        color: #1e3a8a;
+        border-color: #93c5fd;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 10px rgba(37, 99, 235, 0.15);
+      }
+
+      .action-btn.delete {
+        background: #ef4444;
+        color: #ffffff;
+        border-color: #ef4444;
+      }
+
+      .action-btn.delete:hover {
+        background: #fee2e2;
+        color: #7f1d1d;
+        border-color: #ef4444;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 10px rgba(239, 68, 68, 0.25);
+      }
+
       .btn-success {
         background: var(--primary);
         color: white;
@@ -681,6 +721,22 @@
         <div class="modal-header">
           <div>
             <h2 id="wdlg-client-name">Informações do Cliente</h2>
+            <p
+              id="wdlg-client-id"
+              style="color: var(--text-secondary); font-size: 0.8rem"
+            ></p>
+          </div>
+          <i data-lucide="x" class="modal-close" onclick="closeWdlg()"></i>
+        </div>
+        <div class="form-group full">
+          <label>Observações:</label>
+          <div id="wdlg-text-content" class="obs-display"></div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="action-btn ghost" onclick="closeWdlg()">
+            Fechar
+          </button>
+
             <p id="wdlg-client-id" style="color: var(--text-secondary); font-size: 0.8rem;"></p>
           </div>
           <i data-lucide="x" class="modal-close" onclick="closeWdlg()"></i>
@@ -764,40 +820,42 @@
         data.forEach((c) => {
           const tr = document.createElement("tr");
           tr.innerHTML = `
-            <td>
-              <div class="client-info">
-                <div class="client-avatar">${getInitials(c.nome)}</div>
-                <div>
-                  <div class="client-name">${c.nome || "---"}</div>
-                  <div class="client-sub">ID #${c.id}</div>
-                </div>
-              </div>
-            </td>
-            <td>
-              <div class="client-name" style="font-size: 0.85rem;">${c.telefone || "---"}</div>
-              <div class="client-sub">${c.email || "---"}</div>
-            </td>
-            <td><span style="font-size: 0.85rem; font-weight: 500;">${c.cpf || "---"}</span></td>
-            <td>
-              <span class="badge-pets">
-                <i data-lucide="paw-print" style="width: 12px;"></i> 
-                ${c.quantidadeDePets ?? 0} ${(c.quantidadeDePets ?? 0) === 1 ? "Pet" : "Pets"}
-              </span>
-            </td>
-            <td style="text-align: right;">
-              <div class="actions">
-                <button class="btn-icon btn-info" title="Ver Observação" onclick="showObservation(${c.id})">
-                  <i data-lucide="info" style="width: 18px;"></i>
-                </button>
-                <button class="btn-icon btn-edit" title="Editar" onclick="openModal('edit', ${c.id})">
-                  <i data-lucide="edit-3" style="width: 18px;"></i>
-                </button>
-                <button class="btn-icon btn-delete" title="Excluir" onclick="openDeleteModal(${c.id})">
-                  <i data-lucide="trash-2" style="width: 18px;"></i>
-                </button>
-              </div>
-            </td>
-          `;
+        <td>
+          <div class="client-info">
+            <div class="client-avatar">${getInitials(c.nome)}</div>
+            <div>
+              <div class="client-name">${c.nome || "---"}</div>
+              <div class="client-sub">ID #${c.id}</div>
+            </div>
+          </div>
+        </td>
+        <td>
+          <div class="client-name" style="font-size: 0.85rem;">${c.telefone || "---"}</div>
+          <div class="client-sub">${c.email || "---"}</div>
+        </td>
+        <td><span style="font-size: 0.85rem; font-weight: 500;">${c.cpf || "---"}</span></td>
+        <td>
+          <span class="badge-pets">
+            <i data-lucide="paw-print" style="width: 12px;"></i> 
+            ${c.quantidadeDePets ?? 0} ${(c.quantidadeDePets ?? 0) === 1 ? "Pet" : "Pets"}
+          </span>
+        </td>
+        <td style="text-align: right;">
+          <div class="actions">
+            <button class="action-btn info" title="Ver Observação" onclick="showObservation(${c.id})">
+              <i data-lucide="info" style="width: 18px;"></i>
+            </button>
+
+            <button class="action-btn edit" title="Editar" onclick="openModal('edit', ${c.id})">
+              <i data-lucide="edit-3" style="width: 18px;"></i>
+            </button>
+            <button class="action-btn delete" title="Excluir" onclick="deleteClient(${c.id})">
+              <i data-lucide="trash-2" style="width: 18px;"></i>
+            </button>
+          </div>
+        </td>
+      `;
+
           listElement.appendChild(tr);
         });
 
@@ -805,16 +863,23 @@
         lucide.createIcons();
       }
 
+      // o de Observação
       function showObservation(id) {
-        const client = clients.find(c => c.id === id);
+        const client = clients.find((c) => c.id === id);
         if (!client) return;
-        document.getElementById('wdlg-client-name').innerText = client.nome;
-        document.getElementById('wdlg-client-id').innerText = `ID #${client.id}`;
-        document.getElementById('wdlg-text-content').innerText = client.observacoes || "Nenhuma observação cadastrada.";
-        wdlgOverlay.style.display = 'flex';
+
+        document.getElementById("wdlg-client-name").innerText = client.nome;
+        document.getElementById("wdlg-client-id").innerText =
+          `ID #${client.id}`;
+        document.getElementById("wdlg-text-content").innerText =
+          client.observacoes || "Nenhuma observação cadastrada.";
+
+        wdlgOverlay.style.display = "flex";
       }
 
-      function closeWdlg() { wdlgOverlay.style.display = 'none'; }
+      function closeWdlg() {
+        wdlgOverlay.style.display = "none";
+      }
 
       // =========================
       // Lógica de Exclusão com WDLG
@@ -872,7 +937,8 @@
           const c = clients.find((item) => item.id === id);
           if (!c) return;
           document.getElementById("modalTitle").innerText = "Editar Cliente";
-          submitBtn.innerText = "Salvar Alterações";
+          submitBtn.innerText = "Salvar Alterações"; // Texto Dinâmico
+
           document.getElementById("clientId").value = c.id;
           document.getElementById("name").value = c.nome || "";
           document.getElementById("email").value = c.email || "";
@@ -887,6 +953,7 @@
 
       clientForm.addEventListener("submit", (e) => {
         e.preventDefault();
+
         const id = document.getElementById("clientId").value;
         const clientData = {
           nome: document.getElementById("name").value,
@@ -894,27 +961,27 @@
           telefone: document.getElementById("phone").value,
           cpf: document.getElementById("cpf").value,
           quantidadeDePets: parseInt(document.getElementById("pets").value),
-          observacoes: document.getElementById("notes").value
+          observacoes: document.getElementById("notes").value,
         };
 
-        const url = id 
-          ? `http://localhost:8080/clientes/atualizar/${id}` 
+        const url = id
+          ? `http://localhost:8080/clientes/atualizar/${id}`
           : "http://localhost:8080/clientes/cadastrar";
-        
+
         const method = id ? "PUT" : "POST";
 
         fetch(url, {
           method: method,
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(clientData)
+          body: JSON.stringify(clientData),
         })
-        .then(response => {
-          if(!response.ok) throw new Error("Erro ao salvar cliente");
-          showToast(id ? "Dados atualizados!" : "Cliente cadastrado!");
-          closeModal();
-          loadClients();
-        })
-        .catch(error => console.error("Erro:", error));
+          .then((response) => {
+            if (!response.ok) throw new Error("Erro ao salvar cliente");
+            showToast(id ? "Dados atualizados!" : "Cliente cadastrado!");
+            closeModal();
+            loadClients(); // Recarrega lista
+          })
+          .catch((error) => console.error("Erro:", error));
       });
 
       function showToast(msg) {

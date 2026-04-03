@@ -46,7 +46,7 @@ clientForm.addEventListener("submit", async (e) => {
       const error = await res.json().catch(() => null);
       throw new Error(
         error?.message ||
-          "Não foi possível salvar o cliente. Verifique os dados."
+          "Não foi possível criar o cliente. Certifique que o telefone, CPF ou email já não existam ou estejam no formato correto."
       );
     }
 
