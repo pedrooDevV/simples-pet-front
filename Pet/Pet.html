@@ -308,14 +308,7 @@
         background: var(--white);
       }
 
-      .btn-info { color: #3b82f6; background: #eff6ff; border: 1px solid #dbeafe; }
-      .btn-info:hover { background: #dbeafe; }
-      .btn-edit { color: var(--primary); }
-      .btn-edit:hover { background: var(--primary-bg-light); border-color: var(--primary); }
-      .btn-delete { color: #ef4444; }
-      .btn-delete:hover { background: var(--danger-light); border-color: var(--danger); }
-
-      /* Modal Global / WDGL */
+      /* Modal */
       .modal-overlay {
         position: fixed;
         top: 0; left: 0;
@@ -340,6 +333,79 @@
       @keyframes modalSlideUp {
         from { opacity: 0; transform: translateY(30px); }
         to { opacity: 1; transform: translateY(0); }
+      }
+
+      .action-btn {
+        border-radius: 8px;
+        font-weight: 500;
+        padding: 6px 12px;
+        border: 1px solid transparent;
+        cursor: pointer;
+        transition: all 0.25s ease;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+      }
+
+      .action-btn:active {
+        transform: scale(0.96);
+      }
+      .action-btn.edit {
+        background: linear-gradient(135deg, #3b82f6, #2563eb);
+        color: #ffffff;
+        border: none;
+        position: relative;
+        overflow: hidden;
+      }
+
+      .action-btn.edit::after {
+        content: "";
+        position: absolute;
+        width: 120%;
+        height: 120%;
+        background: rgba(255, 255, 255, 0.2);
+        top: -100%;
+        left: -100%;
+        transform: rotate(25deg);
+        transition: all 0.5s ease;
+      }
+
+      .action-btn.edit:hover::after {
+        top: 100%;
+        left: 100%;
+      }
+
+      .action-btn.edit:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
+      }
+
+      .action-btn.delete {
+        background: #ef4444;
+        color: #ffffff;
+        border-color: #ef4444;
+      }
+
+      .action-btn.delete:hover {
+        background: #fee2e2;
+        color: #7f1d1d;
+        border-color: #ef4444;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 10px rgba(239, 68, 68, 0.25);
+      }
+
+      .action-btn.info {
+        background: #eff6ff;
+        color: #2563eb;
+        border: 1px solid #bfdbfe;
+      }
+
+      .action-btn.info:hover {
+        background: #dbeafe;
+        color: #1e3a8a;
+        border-color: #93c5fd;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 10px rgba(37, 99, 235, 0.15);
       }
 
       .modal-header {
@@ -623,7 +689,7 @@
         })
         .catch((error) => console.error("Erro:", error));
 
-      // 3️⃣ Renderiza tabela
+      // Renderiza a tabela de pets
       function renderPets(petsList) {
         petsList = petsList || [];
         const list = document.getElementById("pets-list");
@@ -641,40 +707,36 @@
 
           const tr = document.createElement("tr");
           tr.innerHTML = `
-            <td>
-              <div class="pet-info">
-                <div class="pet-avatar"><i data-lucide="${icon}" style="width: 20px;"></i></div>
-                <div>
-                  <div class="pet-name">${p.nome}</div>
-                  <div style="font-size: 0.75rem; color: var(--text-secondary)">${p.sexo}</div>
-                </div>
-              </div>
-            </td>
-            <td>
-              <span class="species-tag ${tagClass}">${p.especie}</span>
-              <div class="pet-breed" style="margin-top: 4px; color: var(--text-secondary); font-size: 0.8rem;">${p.raca}</div>
-            </td>
-            <td>
-              <div class="owner-badge">
-                <i data-lucide="user" style="width: 14px;"></i>
-                ${ownerName}
-              </div>
-            </td>
-            <td style="font-weight: 500;">${p.idade} anos</td>
-            <td style="text-align: right;">
-              <div class="actions">
-                <button class="btn-icon btn-info" title="Ver Observação" onclick="showObservationWdgl(${p.id})">
-                  <i data-lucide="info" style="width: 18px;"></i>
-                </button>
-                <button class="btn-icon btn-edit" onclick="openModal('edit', ${p.id})">
-                  <i data-lucide="edit-3" style="width: 18px;"></i>
-                </button>
-                <button class="btn-icon btn-delete" onclick="openDeleteWdgl(${p.id})">
-                  <i data-lucide="trash-2" style="width: 18px;"></i>
-                </button>
-              </div>
-            </td>
-          `;
+      <td>
+        <div class="pet-info">
+          <div class="pet-avatar"><i data-lucide="${icon}" style="width: 20px;"></i></div>
+          <div>
+            <div class="pet-name">${p.nome}</div>
+            <div style="font-size: 0.75rem; color: var(--text-secondary)">${p.sexo}</div>
+          </div>
+        </div>
+      </td>
+      <td>
+        <span class="species-tag ${tagClass}">${p.especie}</span>
+        <div class="pet-breed" style="margin-top: 4px;">${p.raca}</div>
+      </td>
+      <td>
+        <div class="owner-badge">
+          <i data-lucide="user" style="width: 14px;"></i>
+          ${ownerName}
+        </div>
+      </td>
+      <td style="font-weight: 500;">${p.idade}</td>
+      <td style="text-align: right;">
+        <div class="actions">
+          <button class="action-btn info" title="Ver Observação" onclick="showObservation('${p.observacoes || "Sem observações"}')">
+  <i data-lucide="info" style="width: 18px;"></i>
+</button>
+          <button class="action-btn edit" onclick="openModal('edit', ${p.id})"><i data-lucide="edit-3" style="width: 18px;"></i></button>
+          <button class="action-btn delete" onclick="deletePet(${p.id})"><i data-lucide="trash-2" style="width: 18px;"></i></button>
+        </div>
+      </td>
+    `;
           list.appendChild(tr);
         });
 
@@ -786,12 +848,65 @@
             return;
           }
 
-          const data = await res.json();
-          if (id) {
-            const index = pets.findIndex((p) => p.id === data.id);
-            pets[index] = data;
-          } else {
-            pets.push(data);
+          const payload = {
+            nome: document.getElementById("petName").value,
+            especie: document.getElementById("species").value,
+            raca: document.getElementById("breed").value,
+            idade: parseInt(document.getElementById("age").value),
+            sexo: document.getElementById("gender").value,
+            observacoes: document.getElementById("notes").value || "",
+            clienteId: clienteId, // O ID para o banco vincular
+            nomeCliente: nomeCliente, // O Nome para a nova coluna que você criou
+          };
+
+          const url = id
+            ? `http://localhost:8080/animais/${id}`
+            : "http://localhost:8080/animais/criar";
+          const method = id ? "PUT" : "POST";
+
+          try {
+            const res = await fetch(url, {
+              method: method,
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify(payload),
+            });
+
+            if (!res.ok) {
+              let msgErro = "Erro ao salvar";
+
+              // Tenta parsear JSON, mas se falhar, pega o texto cru
+              try {
+                const errorData = await res.json();
+                if (errorData.message) {
+                  msgErro = errorData.message;
+                }
+              } catch {
+                // Se não tiver JSON, pega o texto simples
+                const text = await res.text();
+                if (text) msgErro = text;
+              }
+
+              showToast(msgErro);
+              return; // não fecha modal
+            }
+            // --- FIM DA MUDANÇA ---
+
+            const data = await res.json();
+
+            // Atualiza a lista e fecha o modal (seu código atual)
+            if (id) {
+              const index = pets.findIndex((p) => p.id === data.id);
+              pets[index] = data;
+            } else {
+              pets.push(data);
+            }
+
+            renderPets(pets);
+            closeModal();
+            showToast("Pet salvo com sucesso!");
+          } catch (err) {
+            console.error(err);
+            showToast("Erro de conexão com o servidor, verifique os dados");
           }
 
           renderPets(pets);
