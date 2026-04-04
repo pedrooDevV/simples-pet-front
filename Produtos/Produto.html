@@ -163,63 +163,13 @@
         z-index: 50;
       }
 
-      .action-btn {
-        border-radius: 8px;
-        font-weight: 500;
-        padding: 6px 12px;
-        border: 1px solid transparent;
-        cursor: pointer;
-        transition: all 0.25s ease;
-        display: inline-flex;
-        align-items: center;
-        gap: 6px;
+      .header-info h1 {
+        font-size: 1.5rem;
+        font-weight: 800;
       }
-
-      .action-btn:active {
-        transform: scale(0.96);
-      }
-      .action-btn.edit {
-        background: linear-gradient(135deg, #3b82f6, #2563eb);
-        color: #ffffff;
-        border: none;
-        position: relative;
-        overflow: hidden;
-      }
-
-      .action-btn.edit::after {
-        content: "";
-        position: absolute;
-        width: 120%;
-        height: 120%;
-        background: rgba(255, 255, 255, 0.2);
-        top: -100%;
-        left: -100%;
-        transform: rotate(25deg);
-        transition: all 0.5s ease;
-      }
-
-      .action-btn.edit:hover::after {
-        top: 100%;
-        left: 100%;
-      }
-
-      .action-btn.edit:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
-      }
-
-      .action-btn.info {
-        background: #eff6ff;
-        color: #2563eb;
-        border: 1px solid #bfdbfe;
-      }
-
-      .action-btn.info:hover {
-        background: #dbeafe;
-        color: #1e3a8a;
-        border-color: #93c5fd;
-        transform: translateY(-2px);
-        box-shadow: 0 4px 10px rgba(37, 99, 235, 0.15);
+      .header-info p {
+        color: var(--text-secondary);
+        font-size: 0.85rem;
       }
 
       .btn-primary {
@@ -356,42 +306,21 @@
         text-transform: uppercase;
       }
 
-      .action-btn.toggle {
-        border: 1px solid var(--border);
-        background: var(--white);
+      .btn-info {
+        color: #3b82f6; /* Azul */
+        background: #eff6ff;
+        border: 1px solid #dbeafe;
+      }
+
+      .btn-info:hover {
+        background: #dbeafe;
+      }
+
+      .btn-toggle {
         color: var(--text-secondary);
-        transition: 0.25s ease;
       }
-
-      /* Hover suave */
-      .action-btn.toggle:hover {
+      .btn-toggle:hover {
         background: var(--bg-general);
-        color: var(--primary);
-        transform: translateY(-1px);
-        box-shadow: 0 4px 12px rgba(58, 134, 255, 0.15);
-      }
-
-      /* Estado ativo (ativo = ligado / inativado = desligado) */
-      .action-btn.toggle.active {
-        background: var(--primary);
-        color: var(--white);
-        border-color: var(--primary);
-        box-shadow: 0 6px 18px rgba(58, 134, 255, 0.25);
-      }
-
-      .action-btn.toggle.active:hover {
-        background: var(--primary-hover);
-        transform: translateY(-1px);
-      }
-
-      .action-btn.toggle i {
-        width: 16px;
-        height: 16px;
-      }
-
-      .action-btn.toggle,
-      .action-btn.toggle i {
-        transition: 0.25s ease;
       }
 
       .status-active {
@@ -441,15 +370,45 @@
         color: var(--secondary);
       }
 
-      /* Indicadores de Estoque */
       .stock-badge {
-        display: inline-flex;
-        align-items: center;
-        gap: 6px;
-        padding: 6px 12px;
-        border-radius: 20px;
-        font-size: 0.8rem;
+        padding: 4px 12px;
+        border-radius: 6px;
+        font-size: 0.85rem;
+        font-weight: 600;
+        display: inline-block;
+      }
+
+      .stock-normal {
+        background: #dcfce7;
+        color: #166534;
+      } /* Verde */
+      .stock-low {
+        background: #fef9c3;
+        color: #854d0e;
+      } /* Amarelo */
+      .stock-out {
+        background: #fee2e2;
+        color: #991b1b;
+      } /* Vermelho */
+
+      /* Badges de Ativo/Inativo */
+      .status-pill {
+        padding: 2px 10px;
+        border-radius: 99px;
+        font-size: 0.75rem;
         font-weight: 700;
+        text-transform: uppercase;
+      }
+
+      .status-on {
+        background: #ecfdf5;
+        color: #10b981;
+        border: 1px solid #d1fae5;
+      }
+      .status-off {
+        background: #fef2f2;
+        color: #ef4444;
+        border: 1px solid #fee2e2;
       }
 
       .stock-normal {
@@ -465,19 +424,67 @@
         color: var(--danger);
       }
 
+      /* Container das ações na tabela */
       .actions {
         display: flex;
         gap: 8px;
         justify-content: flex-end;
       }
 
-      .btn-success {
-        background: var(--secondary);
-        color: white;
+      /* Base do botão profissional */
+      .action-btn {
+        border-radius: 8px;
+        padding: 6px 12px;
+        border: 1px solid transparent;
+        cursor: pointer;
+        transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
       }
 
-      .btn-success:hover {
-        background: var(--secondary-hover);
+      /* Botão Editar com Gradiente e Efeito de Brilho (Glimmer) */
+      .action-btn.edit {
+        background: linear-gradient(135deg, #3b82f6, #2563eb);
+        color: #ffffff;
+        position: relative;
+        overflow: hidden;
+        box-shadow: 0 4px 6px -1px rgba(37, 99, 235, 0.2);
+      }
+
+      .action-btn.edit::after {
+        content: "";
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        background: rgba(255, 255, 255, 0.3);
+        top: -100%;
+        left: -100%;
+        transform: rotate(45deg);
+        transition: all 0.6s ease;
+      }
+
+      .action-btn.edit:hover::after {
+        top: 100%;
+        left: 100%;
+      }
+
+      .action-btn.edit:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 15px -3px rgba(37, 99, 235, 0.4);
+      }
+
+      /* Botão de Informação (Sutil) */
+      .action-btn.info {
+        background: #f8fafc;
+        color: #64748b;
+        border: 1px solid #e2e8f0;
+      }
+
+      .action-btn.info:hover {
+        background: #f1f5f9;
+        color: #1e293b;
+        transform: translateY(-2px);
       }
 
       /* Ajuste para inputs que ocupam a linha toda no modal pequeno */
@@ -1014,97 +1021,88 @@
       }
 
       function renderProducts(data = products) {
-        const list = el("products-list");
+        const list = document.getElementById("products-list");
+
         list.innerHTML = data
           .map((p) => {
-            const isLow =
-              p.quantidadeProduto <= (p.quantidadeMinimoProduto || 0);
-            const stockClass = !p.quantidadeProduto
-              ? "stock-out"
-              : isLow
-                ? "stock-low"
-                : "stock-normal";
-            const stockStatus = !p.quantidadeProduto
-              ? "Esgotado"
-              : isLow
-                ? "Estoque Baixo"
-                : "Estoque OK";
+            // 1. Lógica de Status (Ativo/Inativo)
             const isActive =
               String(p.ativo).toLowerCase() === "true" || p.ativo === 1;
 
-<<<<<<< HEAD
+            // 2. Lógica de Estoque Dinâmica (Cores e Texto)
+            let stockClass = "stock-normal";
+            let stockStatus = "Em dia";
+
+            if (p.quantidadeProduto <= 0) {
+              stockClass = "stock-out";
+              stockStatus = "Esgotado";
+            } else if (p.quantidadeProduto < 5) {
+              // Alerta se tiver menos de 5 itens
+              stockClass = "stock-low";
+              stockStatus = "Baixo";
+            }
+
+            // 3. Retorno do HTML formatado com as classes profissionais
             return `
-          <tr>
-            <td>
-              <div class="product-info">
-                <div class="product-icon"><i data-lucide="package"></i></div>
-                <div>
-                  <div class="product-name">${p.nomeProduto}</div>
-                  <div style="font-size: 0.75rem; color: var(--text-secondary)">ID: #${p.id}</div>
-                </div>
-              </div>
-            </td>
-            <td><span style="font-weight: 500; color: var(--text-secondary);">${p.descricaoCategoria}</span></td>
-            <td><div class="price-badge">R$ ${p.precoProduto.toFixed(2)}</div></td>
-            <td><div class="stock-badge ${stockClass}">${p.quantidadeProduto} un. • ${stockStatus}</div></td>
-            <td><span class="badge-status ${isActive ? "status-active" : "status-inactive"}">${isActive ? "Ativo" : "Inativo"}</span></td>
-            <td style="text-align: right;">
-              <div class="actions">
-                <button class="btn-icon btn-info" onclick="showObservation('${p.descricaoProduto || "Sem observações"}')"><i data-lucide="info"></i></button>
-                <button class="btn-icon btn-edit" onclick="openModal('edit', ${p.id})"><i data-lucide="edit-3"></i></button>
-                <button class="btn-icon btn-toggle" data-id="${p.id}" data-active="${isActive}"><i data-lucide="${isActive ? "eye" : "eye-off"}"></i></button>
-              </div>
-            </td>
-          </tr>`;
+      <tr>
+        <td>
+          <div class="product-info">
+            <div class="product-icon"><i data-lucide="package"></i></div>
+            <div>
+              <div class="product-name" style="font-weight: 700; color: var(--text-main);">${p.nomeProduto}</div>
+              <div style="font-size: 0.75rem; color: var(--text-secondary)">ID: #${p.id}</div>
+            </div>
+          </div>
+        </td>
+        
+        <td>
+          <span style="font-weight: 500; color: var(--text-secondary);">${p.descricaoCategoria || "Geral"}</span>
+        </td>
+        
+        <td>
+          <div class="price-badge" style="font-weight: 700; color: var(--secondary);">
+            R$ ${p.precoProduto.toFixed(2)}
+          </div>
+        </td>
+        
+        <td>
+          <div class="stock-badge ${stockClass}">
+            ${p.quantidadeProduto} un. • ${stockStatus}
+          </div>
+        </td>
+        
+        <td>
+          <span class="badge-status ${isActive ? "status-active" : "status-inactive"}">
+            ${isActive ? "Ativo" : "Inativo"}
+          </span>
+        </td>
+        
+        <td style="text-align: right;">
+          <div class="actions">
+            <!-- Botão Ver Observação -->
+            <button class="action-btn info" title="Ver Observação" 
+                    onclick="showObservation('${p.descricaoProduto || "Sem observações"}')">
+              <i data-lucide="info" style="width: 18px;"></i>
+            </button>
+
+            <!-- Botão Editar (Com efeito Glimmer no CSS) -->
+            <button class="action-btn edit" title="Editar" 
+                    onclick="openModal('edit', ${p.id})">
+              <i data-lucide="edit-3" style="width: 18px;"></i>
+            </button>
+
+            <!-- Botão Visibilidade (Toggle) -->
+            <button class="action-btn toggle" title="${isActive ? "Desativar" : "Ativar"}" 
+                    onclick="toggleStatus(${p.id}, ${isActive})">
+              <i data-lucide="${isActive ? "eye" : "eye-off"}" style="width: 18px;"></i>
+            </button>
+          </div>
+        </td>
+      </tr>`;
           })
           .join("");
-        el("count-items").innerText = data.length;
-=======
-          const isActive =
-            p.ativo === true ||
-            p.ativo === 1 ||
-            String(p.ativo).toLowerCase() === "true";
 
-          const tr = document.createElement("tr");
-          tr.innerHTML = `
-                <td>
-                    <div class="product-info">
-                        <div class="product-icon"><i data-lucide="package" style="width: 20px;"></i></div>
-                        <div>
-                            <div class="product-name">${p.nomeProduto}</div>
-                            <div style="font-size: 0.75rem; color: var(--text-secondary)">ID: #${p.id}</div>
-                        </div>
-                    </div>
-                </td>
-                <td><span style="font-weight: 500; color: var(--text-secondary);">${p.descricaoCategoria}</span></td>
-                <td><div class="price-badge">R$ ${p.precoProduto.toFixed(2)}</div></td>
-                <td><div class="stock-badge ${stockClass}">${p.quantidadeProduto} un. • ${stockStatus}</div></td>
-                    <td>
-              <span class="badge-status ${isActive ? "status-active" : "status-inactive"}">
-                  ${isActive ? "Ativo" : "Inativo"}
-              </span>
-          </td>
-                <td style="text-align: right;">
-                    <div class="actions">
-                                <button class="action-btn info" title="Ver Observação" onclick="showObservation('${p.descricaoProduto || "Sem observações"}')">
-  <i data-lucide="info" style="width: 18px;"></i>
-</button>
-                        <button class="action-btn edit" onclick="openModal('edit', ${p.id})" title="Editar"><i data-lucide="edit-3" style="width: 18px;"></i></button>
-                       <button
-                      class="action-btn toggle"
-                      data-id="${p.id}"
-                      data-active="${isActive}"
-                      title="${isActive ? "Desativar" : "Ativar"}">
-                      <i data-lucide="${isActive ? "eye" : "eye-off"}"></i>
-                  </button>
-                    </div>
-                </td>
-            `;
-          list.appendChild(tr);
-        });
-
-        document.getElementById("count-items").innerText = data.length;
->>>>>>> aae68c17d2ee5599d64d6e4caa97c4b4ce71db69
+        // Recarrega os ícones do Lucide para que apareçam na tabela
         lucide.createIcons();
       }
 
@@ -1129,7 +1127,6 @@
         toggleModal("modalOverlay", false);
       }
 
-<<<<<<< HEAD
       el("productForm").onsubmit = async (e) => {
         e.preventDefault();
         const id = el("productId").value;
@@ -1142,74 +1139,6 @@
           quantidadeMinimoProduto: parseInt(el("minStock").value || 0),
           descricaoProduto: el("description").value || "",
         };
-=======
-      document
-        .getElementById("productForm")
-        .addEventListener("submit", async (e) => {
-          e.preventDefault();
-          const id = document.getElementById("productId").value;
-
-          const productData = {
-            id: id ? parseInt(id) : null,
-            nomeProduto: document.getElementById("prodName").value,
-            categoriaProdutoId: parseInt(
-              document.getElementById("category").value,
-            ),
-            precoProduto: parseFloat(document.getElementById("price").value),
-            quantidadeProduto: parseInt(document.getElementById("stock").value),
-            quantidadeMinimoProduto: parseInt(
-              document.getElementById("minStock").value || 0,
-            ),
-            descricaoProduto:
-              document.getElementById("description").value || "",
-          };
-
-          try {
-            let res;
-            if (id) {
-              res = await fetch(`${API_URL}/atualizar`, {
-                method: "PUT",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(productData),
-              });
-
-              if (!res.ok) throw new Error("Erro ao atualizar produto");
-              showToast("Produto atualizado com sucesso!");
-            } else {
-              res = await fetch(`${API_URL}/cadastrar`, {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(productData),
-              });
-              if (!res.ok)
-                throw new Error(
-                  "Erro ao cadastrar produto, verifique se ele já não existe!",
-                );
-              showToast("Produto cadastrado com sucesso!");
-            }
-            closeModal();
-            fetchProducts();
-          } catch (err) {
-            console.error(err);
-            showToast("Erro ao salvar produto!");
-          }
-        });
-
-      async function deleteProduct(id) {
-        if (
-          confirm("Tem certeza que deseja excluir este produto do estoque?")
-        ) {
-          products = products.filter((p) => p.id !== id);
-          renderProducts();
-          showToast("Produto removido!");
-        }
-      }
-
-      async function toggleStatus(id, isCurrentlyActive) {
-        const endpoint = isCurrentlyActive ? "inativar" : "ativar";
-
-        const url = `http://localhost:8080/produto/${endpoint}/${id}`;
->>>>>>> aae68c17d2ee5599d64d6e4caa97c4b4ce71db69
 
         try {
           const res = await fetch(
@@ -1254,20 +1183,12 @@
         }
       }
 
-<<<<<<< HEAD
       function showObservation(texto) {
         const modal = el("obsModal");
         el("obsText").textContent =
           texto && texto !== "undefined" && texto !== ""
             ? texto
             : "Este produto não possui observações cadastradas.";
-=======
-      document
-        .getElementById("products-list")
-        .addEventListener("click", (e) => {
-          const btn = e.target.closest(".action-btn.toggle");
-          if (!btn) return;
->>>>>>> aae68c17d2ee5599d64d6e4caa97c4b4ce71db69
 
         modal.style.display = "flex"; // Usando flex para centralizar
         lucide.createIcons(); // Garante que o ícone info dentro do modal apareça
