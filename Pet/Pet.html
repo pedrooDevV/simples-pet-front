@@ -285,9 +285,18 @@
         text-transform: uppercase;
       }
 
-      .tag-dog { background: #dbeafe; color: #1e40af; }
-      .tag-cat { background: #f3e8ff; color: #6b21a8; }
-      .tag-other { background: #f1f5f9; color: #475569; }
+      .tag-dog {
+        background: #dbeafe;
+        color: #1e40af;
+      }
+      .tag-cat {
+        background: #f3e8ff;
+        color: #6b21a8;
+      }
+      .tag-other {
+        background: #f1f5f9;
+        color: #475569;
+      }
 
       .actions {
         display: flex;
@@ -311,8 +320,10 @@
       /* Modal */
       .modal-overlay {
         position: fixed;
-        top: 0; left: 0;
-        width: 100%; height: 100%;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
         background: rgba(15, 23, 42, 0.6);
         backdrop-filter: blur(4px);
         display: none;
@@ -331,8 +342,14 @@
       }
 
       @keyframes modalSlideUp {
-        from { opacity: 0; transform: translateY(30px); }
-        to { opacity: 1; transform: translateY(0); }
+        from {
+          opacity: 0;
+          transform: translateY(30px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
       }
 
       .action-btn {
@@ -415,21 +432,59 @@
         margin-bottom: 24px;
       }
 
-      .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
-      .form-group { margin-bottom: 20px; }
-      .form-group.full { grid-column: span 2; }
-      .form-group label { display: block; font-size: 0.85rem; font-weight: 700; margin-bottom: 8px; }
-      .form-control { width: 100%; padding: 12px 16px; border-radius: 10px; border: 1px solid var(--border); outline: none; transition: 0.2s; }
-      .form-control:focus { border-color: var(--primary); box-shadow: 0 0 0 4px var(--primary-bg-light); }
+      .form-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 16px;
+      }
+      .form-group {
+        margin-bottom: 20px;
+      }
+      .form-group.full {
+        grid-column: span 2;
+      }
+      .form-group label {
+        display: block;
+        font-size: 0.85rem;
+        font-weight: 700;
+        margin-bottom: 8px;
+      }
+      .form-control {
+        width: 100%;
+        padding: 12px 16px;
+        border-radius: 10px;
+        border: 1px solid var(--border);
+        outline: none;
+        transition: 0.2s;
+      }
+      .form-control:focus {
+        border-color: var(--primary);
+        box-shadow: 0 0 0 4px var(--primary-bg-light);
+      }
 
-      .btn-block { width: 100%; padding: 14px; border-radius: 12px; font-weight: 700; cursor: pointer; border: none; transition: 0.2s; }
-      .btn-success { background: var(--primary); color: white; }
-      .btn-success:hover { background: var(--primary-hover); transform: translateY(-1px); }
+      .btn-block {
+        width: 100%;
+        padding: 14px;
+        border-radius: 12px;
+        font-weight: 700;
+        cursor: pointer;
+        border: none;
+        transition: 0.2s;
+      }
+      .btn-success {
+        background: var(--primary);
+        color: white;
+      }
+      .btn-success:hover {
+        background: var(--primary-hover);
+        transform: translateY(-1px);
+      }
 
       /* Toast */
       .toast {
         position: fixed;
-        bottom: 30px; right: 30px;
+        bottom: 30px;
+        right: 30px;
         background: var(--text-main);
         color: white;
         padding: 16px 24px;
@@ -442,7 +497,9 @@
         z-index: 300;
         box-shadow: var(--shadow);
       }
-      .toast.show { transform: translateY(0); }
+      .toast.show {
+        transform: translateY(0);
+      }
 
       /* WDGL - Modal de Exclusão */
       .wdgl-delete-box {
@@ -536,10 +593,22 @@
         <div class="table-controls">
           <div class="search-input">
             <i data-lucide="search"></i>
-            <input type="text" placeholder="Buscar por nome do pet ou dono..." id="searchBar" />
+            <input
+              type="text"
+              placeholder="Buscar por nome do pet ou dono..."
+              id="searchBar"
+            />
           </div>
-          <div style="font-weight: 600; color: var(--text-secondary); font-size: 0.85rem;">
-            Total: <span id="count-pets" style="color: var(--primary)">0</span> cadastrados
+          <div
+            style="
+              font-weight: 600;
+              color: var(--text-secondary);
+              font-size: 0.85rem;
+            "
+          >
+            Total:
+            <span id="count-pets" style="color: var(--primary)">0</span>
+            cadastrados
           </div>
         </div>
 
@@ -572,7 +641,13 @@
           <div class="form-grid">
             <div class="form-group full">
               <label for="petName">Nome do Pet *</label>
-              <input type="text" id="petName" class="form-control" required placeholder="Ex: Thor" />
+              <input
+                type="text"
+                id="petName"
+                class="form-control"
+                required
+                placeholder="Ex: Thor"
+              />
             </div>
             <div class="form-group full">
               <label for="ownerId">Dono (Cliente) *</label>
@@ -587,11 +662,24 @@
             </div>
             <div class="form-group">
               <label for="breed">Raça</label>
-              <input type="text" id="breed" class="form-control" placeholder="Ex: Golden Retriever" />
+              <input
+                type="text"
+                id="breed"
+                class="form-control"
+                placeholder="Ex: Golden Retriever"
+              />
             </div>
             <div class="form-group">
               <label for="age">Idade</label>
-              <input type="number" id="age" class="form-control" min="0" max="30", placeholder="Idade" />
+              <input
+                type="number"
+                id="age"
+                class="form-control"
+                min="0"
+                max="30"
+                ,
+                placeholder="Idade"
+              />
             </div>
             <div class="form-group">
               <label for="gender">Sexo</label>
@@ -602,12 +690,26 @@
             </div>
             <div class="form-group full">
               <label for="notes">Observações</label>
-              <textarea id="notes" class="form-control" rows="3" placeholder="Alergias, temperamento, etc..."></textarea>
+              <textarea
+                id="notes"
+                class="form-control"
+                rows="3"
+                placeholder="Alergias, temperamento, etc..."
+              ></textarea>
             </div>
           </div>
           <div style="display: flex; gap: 12px; margin-top: 10px">
-            <button type="button" class="btn-block" style="background: #f1f5f9" onclick="closeModal()">Cancelar</button>
-            <button type="submit" class="btn-block btn-success">Salvar Pet</button>
+            <button
+              type="button"
+              class="btn-block"
+              style="background: #f1f5f9"
+              onclick="closeModal()"
+            >
+              Cancelar
+            </button>
+            <button type="submit" class="btn-block btn-success">
+              Salvar Pet
+            </button>
           </div>
         </form>
       </div>
@@ -615,18 +717,40 @@
 
     <!-- WDGL - Modal de Exclusão -->
     <div class="modal-overlay" id="wdglDelete">
-      <div class="modal" style="width: 400px;">
+      <div class="modal" style="width: 400px">
         <div class="wdgl-delete-box">
           <div class="wdgl-icon-danger">
-            <i data-lucide="alert-triangle" style="width: 32px; height: 32px;"></i>
+            <i
+              data-lucide="alert-triangle"
+              style="width: 32px; height: 32px"
+            ></i>
           </div>
-          <h2 style="margin-bottom: 8px;">Excluir Pet?</h2>
-          <p style="color: var(--text-secondary); font-size: 0.9rem; margin-bottom: 24px;">
-            Esta ação não pode ser desfeita. O registro do animal será removido permanentemente.
+          <h2 style="margin-bottom: 8px">Excluir Pet?</h2>
+          <p
+            style="
+              color: var(--text-secondary);
+              font-size: 0.9rem;
+              margin-bottom: 24px;
+            "
+          >
+            Esta ação não pode ser desfeita. O registro do animal será removido
+            permanentemente.
           </p>
-          <div style="display: flex; gap: 12px;">
-            <button class="btn-block" style="background: #f1f5f9" onclick="closeWdgl('wdglDelete')">Voltar</button>
-            <button id="confirmDeleteBtn" class="btn-block" style="background: var(--danger); color: white;">Sim, Excluir</button>
+          <div style="display: flex; gap: 12px">
+            <button
+              class="btn-block"
+              style="background: #f1f5f9"
+              onclick="closeWdgl('wdglDelete')"
+            >
+              Voltar
+            </button>
+            <button
+              id="confirmDeleteBtn"
+              class="btn-block"
+              style="background: var(--danger); color: white"
+            >
+              Sim, Excluir
+            </button>
           </div>
         </div>
       </div>
@@ -635,15 +759,27 @@
     <!-- WDGL - Modal de Observações (Info) -->
     <div class="modal-overlay" id="wdglInfo">
       <div class="modal">
-        <div class="modal-header" style="margin-bottom: 12px;">
-          <div style="display: flex; align-items: center; gap: 10px;">
-            <div style="color: var(--primary);"><i data-lucide="info" style="width: 24px;"></i></div>
+        <div class="modal-header" style="margin-bottom: 12px">
+          <div style="display: flex; align-items: center; gap: 10px">
+            <div style="color: var(--primary)">
+              <i data-lucide="info" style="width: 24px"></i>
+            </div>
             <h2 id="infoTitle">Observações</h2>
           </div>
-          <i data-lucide="x" style="cursor: pointer" onclick="closeWdgl('wdglInfo')"></i>
+          <i
+            data-lucide="x"
+            style="cursor: pointer"
+            onclick="closeWdgl('wdglInfo')"
+          ></i>
         </div>
         <div id="infoContent" class="wdgl-info-content"></div>
-        <button class="btn-block" style="margin-top: 24px; background: var(--primary); color: white;" onclick="closeWdgl('wdglInfo')">Entendido</button>
+        <button
+          class="btn-block"
+          style="margin-top: 24px; background: var(--primary); color: white"
+          onclick="closeWdgl('wdglInfo')"
+        >
+          Entendido
+        </button>
       </div>
     </div>
 
@@ -695,14 +831,19 @@
         const list = document.getElementById("pets-list");
         list.innerHTML = "";
 
-        petsList.forEach(p => {
+        petsList.forEach((p) => {
           let ownerName = p.nomeCliente;
           if (!ownerName || ownerName === "Sem dono") {
             const donoEncontrado = clientes.find((c) => c.id === p.clienteId);
             ownerName = donoEncontrado ? donoEncontrado.nome : "Sem dono";
           }
 
-          const tagClass = p.especie === "Cachorro" ? "tag-dog" : p.especie === "Gato" ? "tag-cat" : "tag-other";
+          const tagClass =
+            p.especie === "Cachorro"
+              ? "tag-dog"
+              : p.especie === "Gato"
+                ? "tag-cat"
+                : "tag-other";
           const icon = p.especie === "Cachorro" ? "dog" : "cat";
 
           const tr = document.createElement("tr");
@@ -729,7 +870,7 @@
       <td style="font-weight: 500;">${p.idade}</td>
       <td style="text-align: right;">
         <div class="actions">
-          <button class="action-btn info" title="Ver Observação" onclick="showObservation('${p.observacoes || "Sem observações"}')">
+          <button class="action-btn info" title="Ver Observação" onclick="showObservation('${p.id || "Sem observações"}')">
   <i data-lucide="info" style="width: 18px;"></i>
 </button>
           <button class="action-btn edit" onclick="openModal('edit', ${p.id})"><i data-lucide="edit-3" style="width: 18px;"></i></button>
@@ -746,15 +887,44 @@
 
       // --- NOVAS FUNÇÕES WDLG ---
 
-      function showObservationWdgl(id) {
-        const p = pets.find(item => item.id === id);
-        const obs = p.observacoes && p.observacoes.trim() !== "" 
-                    ? p.observacoes 
-                    : "Nenhuma observação cadastrada para este pet.";
-        
-        document.getElementById("infoTitle").innerText = `Observações: ${p.nome}`;
-        document.getElementById("infoContent").innerText = obs;
-        document.getElementById("wdglInfo").style.display = "flex";
+      function showObservation(id) {
+        // 1. Converter o ID para Number para evitar erro de String vs Number
+        const targetId = Number(id);
+
+        // 2. Tentar encontrar o pet
+        const p = pets.find((item) => Number(item.id) === targetId);
+
+        // 3. SEGURANÇA: Se não encontrar, avisa e para a execução antes de travar
+        if (!p) {
+          console.error(
+            "Pet não encontrado! ID pesquisado:",
+            id,
+            "Lista atual:",
+            pets,
+          );
+          return; // Sai da função sem dar erro de 'undefined'
+        }
+
+        // 4. Lógica das observações (limpa espaços e verifica nulidade)
+        const obs =
+          p.observacoes && p.observacoes.trim() !== ""
+            ? p.observacoes
+            : "Nenhuma observação cadastrada para este pet.";
+
+        // 5. Preenche o Modal (wdgl)
+        const titleElem = document.getElementById("infoTitle");
+        const contentElem = document.getElementById("infoContent");
+        const modalElem = document.getElementById("wdglInfo");
+
+        if (titleElem && contentElem && modalElem) {
+          titleElem.innerText = `Observações: ${p.nome}`;
+          contentElem.innerText = obs;
+          modalElem.style.display = "flex";
+        } else {
+          console.error(
+            "Elementos do modal não encontrados no HTML (infoTitle, infoContent ou wdglInfo)",
+          );
+        }
       }
 
       function openDeleteWdgl(id) {
@@ -764,27 +934,29 @@
 
       function closeWdgl(id) {
         document.getElementById(id).style.display = "none";
-        if(id === 'wdglDelete') petToDeleteId = null;
+        if (id === "wdglDelete") petToDeleteId = null;
       }
 
-      document.getElementById("confirmDeleteBtn").addEventListener("click", () => {
-        if (petToDeleteId) {
-          fetch(`http://localhost:8080/animais/deletar/${petToDeleteId}`, {
-            method: "DELETE",
-          })
-          .then((response) => {
-            if (!response.ok) throw new Error("Erro ao deletar animal");
-            pets = pets.filter((c) => c.id !== petToDeleteId);
-            renderPets(pets);
-            showToast("Pet removido com sucesso!");
-            closeWdgl('wdglDelete');
-          })
-          .catch((error) => {
-              console.error("Erro:", error);
-              showToast("Erro ao remover pet.");
-          });
-        }
-      });
+      document
+        .getElementById("confirmDeleteBtn")
+        .addEventListener("click", () => {
+          if (petToDeleteId) {
+            fetch(`http://localhost:8080/animais/deletar/${petToDeleteId}`, {
+              method: "DELETE",
+            })
+              .then((response) => {
+                if (!response.ok) throw new Error("Erro ao deletar animal");
+                pets = pets.filter((c) => c.id !== petToDeleteId);
+                renderPets(pets);
+                showToast("Pet removido com sucesso!");
+                closeWdgl("wdglDelete");
+              })
+              .catch((error) => {
+                console.error("Erro:", error);
+                showToast("Erro ao remover pet.");
+              });
+          }
+        });
 
       // --- LOGICA MODAL CADASTRO (MANTIDA) ---
 
@@ -815,38 +987,14 @@
         document.getElementById("modalOverlay").style.display = "none";
       }
 
-      document.getElementById("petForm").addEventListener("submit", async (e) => {
-        e.preventDefault();
-        const id = document.getElementById("petId").value;
-        const selectDono = document.getElementById("ownerId");
-        const clienteId = parseInt(selectDono.value);
-        const nomeCliente = selectDono.options[selectDono.selectedIndex].text;
-
-        const payload = {
-          nome: document.getElementById("petName").value,
-          especie: document.getElementById("species").value,
-          raca: document.getElementById("breed").value,
-          idade: parseInt(document.getElementById("age").value),
-          sexo: document.getElementById("gender").value,
-          observacoes: document.getElementById("notes").value || "",
-          clienteId: clienteId,
-          nomeCliente: nomeCliente,
-        };
-
-        const url = id ? `http://localhost:8080/animais/${id}` : "http://localhost:8080/animais/criar";
-        const method = id ? "PUT" : "POST";
-
-        try {
-          const res = await fetch(url, {
-            method: method,
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(payload),
-          });
-
-          if (!res.ok) {
-            showToast("Erro ao salvar pet.");
-            return;
-          }
+      document
+        .getElementById("petForm")
+        .addEventListener("submit", async (e) => {
+          e.preventDefault();
+          const id = document.getElementById("petId").value;
+          const selectDono = document.getElementById("ownerId");
+          const clienteId = parseInt(selectDono.value);
+          const nomeCliente = selectDono.options[selectDono.selectedIndex].text;
 
           const payload = {
             nome: document.getElementById("petName").value,
@@ -855,8 +1003,8 @@
             idade: parseInt(document.getElementById("age").value),
             sexo: document.getElementById("gender").value,
             observacoes: document.getElementById("notes").value || "",
-            clienteId: clienteId, // O ID para o banco vincular
-            nomeCliente: nomeCliente, // O Nome para a nova coluna que você criou
+            clienteId: clienteId,
+            nomeCliente: nomeCliente,
           };
 
           const url = id
@@ -872,50 +1020,78 @@
             });
 
             if (!res.ok) {
-              let msgErro = "Erro ao salvar";
+              showToast("Erro ao salvar pet.");
+              return;
+            }
 
-              // Tenta parsear JSON, mas se falhar, pega o texto cru
-              try {
-                const errorData = await res.json();
-                if (errorData.message) {
-                  msgErro = errorData.message;
+            const payload = {
+              nome: document.getElementById("petName").value,
+              especie: document.getElementById("species").value,
+              raca: document.getElementById("breed").value,
+              idade: parseInt(document.getElementById("age").value),
+              sexo: document.getElementById("gender").value,
+              observacoes: document.getElementById("notes").value || "",
+              clienteId: clienteId, // O ID para o banco vincular
+              nomeCliente: nomeCliente, // O Nome para a nova coluna que você criou
+            };
+
+            const url = id
+              ? `http://localhost:8080/animais/${id}`
+              : "http://localhost:8080/animais/criar";
+            const method = id ? "PUT" : "POST";
+
+            try {
+              const res = await fetch(url, {
+                method: method,
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(payload),
+              });
+
+              if (!res.ok) {
+                let msgErro = "Erro ao salvar";
+
+                // Tenta parsear JSON, mas se falhar, pega o texto cru
+                try {
+                  const errorData = await res.json();
+                  if (errorData.message) {
+                    msgErro = errorData.message;
+                  }
+                } catch {
+                  // Se não tiver JSON, pega o texto simples
+                  const text = await res.text();
+                  if (text) msgErro = text;
                 }
-              } catch {
-                // Se não tiver JSON, pega o texto simples
-                const text = await res.text();
-                if (text) msgErro = text;
+
+                showToast(msgErro);
+                return; // não fecha modal
+              }
+              // --- FIM DA MUDANÇA ---
+
+              const data = await res.json();
+
+              // Atualiza a lista e fecha o modal (seu código atual)
+              if (id) {
+                const index = pets.findIndex((p) => p.id === data.id);
+                pets[index] = data;
+              } else {
+                pets.push(data);
               }
 
-              showToast(msgErro);
-              return; // não fecha modal
-            }
-            // --- FIM DA MUDANÇA ---
-
-            const data = await res.json();
-
-            // Atualiza a lista e fecha o modal (seu código atual)
-            if (id) {
-              const index = pets.findIndex((p) => p.id === data.id);
-              pets[index] = data;
-            } else {
-              pets.push(data);
+              renderPets(pets);
+              closeModal();
+              showToast("Pet salvo com sucesso!");
+            } catch (err) {
+              console.error(err);
+              showToast("Erro de conexão com o servidor, verifique os dados");
             }
 
             renderPets(pets);
             closeModal();
             showToast("Pet salvo com sucesso!");
           } catch (err) {
-            console.error(err);
-            showToast("Erro de conexão com o servidor, verifique os dados");
+            showToast("Erro de conexão");
           }
-
-          renderPets(pets);
-          closeModal();
-          showToast("Pet salvo com sucesso!");
-        } catch (err) {
-          showToast("Erro de conexão");
-        }
-      });
+        });
 
       function showToast(msg) {
         const t = document.getElementById("toast");
@@ -926,19 +1102,20 @@
 
       document.getElementById("searchBar").addEventListener("input", (e) => {
         const term = e.target.value.toLowerCase();
-        const filtered = pets.filter(p => 
-          p.nome.toLowerCase().includes(term) || 
-          (p.nomeCliente || "").toLowerCase().includes(term)
+        const filtered = pets.filter(
+          (p) =>
+            p.nome.toLowerCase().includes(term) ||
+            (p.nomeCliente || "").toLowerCase().includes(term),
         );
         renderPets(filtered);
       });
 
       // Fechar modais ao clicar fora
       window.onclick = (event) => {
-        const overlays = ['modalOverlay', 'wdglDelete', 'wdglInfo'];
-        overlays.forEach(id => {
-            const el = document.getElementById(id);
-            if (event.target === el) closeWdgl(id);
+        const overlays = ["modalOverlay", "wdglDelete", "wdglInfo"];
+        overlays.forEach((id) => {
+          const el = document.getElementById(id);
+          if (event.target === el) closeWdgl(id);
         });
       };
     </script>
