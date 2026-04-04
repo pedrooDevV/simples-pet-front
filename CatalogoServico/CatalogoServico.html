@@ -208,6 +208,18 @@
         box-shadow: 0 0 0 4px var(--primary-bg-light);
       }
 
+      .action-btn.info {
+        border: 1px solid var(--border);
+        background: var(--white);
+        color: var(--primary);
+      }
+
+      .action-btn.info:hover {
+        background: var(--primary-bg-light);
+        border-color: var(--primary);
+        transform: translateY(-1px);
+      }
+
       .filter-segmented {
         display: inline-flex;
         margin: 0 auto;
@@ -435,7 +447,6 @@
         background: var(--primary-bg-light);
         border-color: var(--primary);
       }
-
 
       /* Modal */
       .modal-overlay {
@@ -772,37 +783,75 @@
     </div>
 
     <!-- Modal de Visualização (Info) -->
-<div class="modal-overlay" id="modalViewOverlay">
-  <div class="modal">
-    <div class="modal-header">
-      <h2 id="viewTitle">Detalhes do Serviço</h2>
-      <i data-lucide="x" class="modal-close" onclick="closeViewModal()"></i>
-    </div>
-    <div id="viewContent">
-      <div class="form-group">
-        <label>Nome do Serviço</label>
-        <p id="v-name" style="padding: 10px; background: var(--bg-general); border-radius: 8px; font-weight: 600;"></p>
-      </div>
-      <div class="form-group">
-        <label>Descrição</label>
-        <p id="v-description" style="padding: 10px; background: var(--bg-general); border-radius: 8px; min-height: 40px;"></p>
-      </div>
-      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px">
-        <div class="form-group">
-          <label>Duração</label>
-          <p id="v-duration" style="padding: 10px; background: var(--bg-general); border-radius: 8px;"></p>
+    <div class="modal-overlay" id="modalViewOverlay">
+      <div class="modal">
+        <div class="modal-header">
+          <h2 id="viewTitle">Detalhes do Serviço</h2>
+          <i data-lucide="x" class="modal-close" onclick="closeViewModal()"></i>
         </div>
-        <div class="form-group">
-          <label>Preço</label>
-          <p id="v-price" style="padding: 10px; background: var(--bg-general); border-radius: 8px; color: var(--primary); font-weight: 800;"></p>
+        <div id="viewContent">
+          <div class="form-group">
+            <label>Nome do Serviço</label>
+            <p
+              id="v-name"
+              style="
+                padding: 10px;
+                background: var(--bg-general);
+                border-radius: 8px;
+                font-weight: 600;
+              "
+            ></p>
+          </div>
+          <div class="form-group">
+            <label>Descrição</label>
+            <p
+              id="v-description"
+              style="
+                padding: 10px;
+                background: var(--bg-general);
+                border-radius: 8px;
+                min-height: 40px;
+              "
+            ></p>
+          </div>
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px">
+            <div class="form-group">
+              <label>Duração</label>
+              <p
+                id="v-duration"
+                style="
+                  padding: 10px;
+                  background: var(--bg-general);
+                  border-radius: 8px;
+                "
+              ></p>
+            </div>
+            <div class="form-group">
+              <label>Preço</label>
+              <p
+                id="v-price"
+                style="
+                  padding: 10px;
+                  background: var(--bg-general);
+                  border-radius: 8px;
+                  color: var(--primary);
+                  font-weight: 800;
+                "
+              ></p>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button
+            type="button"
+            class="btn-block btn-ghost"
+            onclick="closeViewModal()"
+          >
+            Fechar
+          </button>
         </div>
       </div>
     </div>
-    <div class="modal-footer">
-      <button type="button" class="btn-block btn-ghost" onclick="closeViewModal()">Fechar</button>
-    </div>
-  </div>
-</div>
 
     <!-- Toast Feedback -->
     <div class="toast" id="toast">
@@ -835,6 +884,25 @@
         document.getElementById("toastMsg").innerText = msg;
         toast.classList.add("show");
         setTimeout(() => toast.classList.remove("show"), 4000);
+      }
+
+      function openViewModal(id) {
+        const s = services.find((item) => item.id === id);
+        if (!s) return;
+
+        document.getElementById("v-name").innerText = s.nomeServico;
+        document.getElementById("v-description").innerText =
+          s.descricaoServico || "Sem descrição";
+        document.getElementById("v-duration").innerText =
+          s.duracaoServico + " minutos";
+        document.getElementById("v-price").innerText =
+          "R$ " + Number(s.precoServico).toFixed(2).replace(".", ",");
+
+        document.getElementById("modalViewOverlay").style.display = "flex";
+      }
+
+      function closeViewModal() {
+        document.getElementById("modalViewOverlay").style.display = "none";
       }
 
       function showToast(msg) {
@@ -919,6 +987,16 @@
               </span>
           </td>
           <td style="text-align: right;">
+
+                          <div class="actions" style="justify-content: flex-end;">
+<button class="action-btn info" onclick="openViewModal(${s.id})" title="Ver Detalhes">
+              <i data-lucide="info" style="width: 18px;"></i>
+          </button>
+
+                            <button class="action-btn edit" onclick="openModal('edit', ${s.id})">
+                      <i data-lucide="edit-3"></i>
+                  </button>
+
               <div class="actions" style="justify-content: flex-end;">
                   <button
                       class="action-btn toggle"
@@ -928,9 +1006,6 @@
                       <i data-lucide="${isActive ? "eye" : "eye-off"}"></i>
                   </button>
 
-                  <button class="action-btn edit" onclick="openModal('edit', ${s.id})">
-                      <i data-lucide="edit-3"></i>
-                  </button>
               </div>
           </td>
       `;
