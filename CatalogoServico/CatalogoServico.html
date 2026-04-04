@@ -436,6 +436,7 @@
         border-color: var(--primary);
       }
 
+
       /* Modal */
       .modal-overlay {
         position: fixed;
@@ -771,75 +772,37 @@
     </div>
 
     <!-- Modal de Visualização (Info) -->
-    <div class="modal-overlay" id="modalViewOverlay">
-      <div class="modal">
-        <div class="modal-header">
-          <h2 id="viewTitle">Detalhes do Serviço</h2>
-          <i data-lucide="x" class="modal-close" onclick="closeViewModal()"></i>
+<div class="modal-overlay" id="modalViewOverlay">
+  <div class="modal">
+    <div class="modal-header">
+      <h2 id="viewTitle">Detalhes do Serviço</h2>
+      <i data-lucide="x" class="modal-close" onclick="closeViewModal()"></i>
+    </div>
+    <div id="viewContent">
+      <div class="form-group">
+        <label>Nome do Serviço</label>
+        <p id="v-name" style="padding: 10px; background: var(--bg-general); border-radius: 8px; font-weight: 600;"></p>
+      </div>
+      <div class="form-group">
+        <label>Descrição</label>
+        <p id="v-description" style="padding: 10px; background: var(--bg-general); border-radius: 8px; min-height: 40px;"></p>
+      </div>
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px">
+        <div class="form-group">
+          <label>Duração</label>
+          <p id="v-duration" style="padding: 10px; background: var(--bg-general); border-radius: 8px;"></p>
         </div>
-        <div id="viewContent">
-          <div class="form-group">
-            <label>Nome do Serviço</label>
-            <p
-              id="v-name"
-              style="
-                padding: 10px;
-                background: var(--bg-general);
-                border-radius: 8px;
-                font-weight: 600;
-              "
-            ></p>
-          </div>
-          <div class="form-group">
-            <label>Descrição</label>
-            <p
-              id="v-description"
-              style="
-                padding: 10px;
-                background: var(--bg-general);
-                border-radius: 8px;
-                min-height: 40px;
-              "
-            ></p>
-          </div>
-          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px">
-            <div class="form-group">
-              <label>Duração</label>
-              <p
-                id="v-duration"
-                style="
-                  padding: 10px;
-                  background: var(--bg-general);
-                  border-radius: 8px;
-                "
-              ></p>
-            </div>
-            <div class="form-group">
-              <label>Preço</label>
-              <p
-                id="v-price"
-                style="
-                  padding: 10px;
-                  background: var(--bg-general);
-                  border-radius: 8px;
-                  color: var(--primary);
-                  font-weight: 800;
-                "
-              ></p>
-            </div>
-          </div>
-        </div>
-        <div class="modal-footer">
-          <button
-            type="button"
-            class="btn-block btn-ghost"
-            onclick="closeViewModal()"
-          >
-            Fechar
-          </button>
+        <div class="form-group">
+          <label>Preço</label>
+          <p id="v-price" style="padding: 10px; background: var(--bg-general); border-radius: 8px; color: var(--primary); font-weight: 800;"></p>
         </div>
       </div>
     </div>
+    <div class="modal-footer">
+      <button type="button" class="btn-block btn-ghost" onclick="closeViewModal()">Fechar</button>
+    </div>
+  </div>
+</div>
 
     <!-- Toast Feedback -->
     <div class="toast" id="toast">

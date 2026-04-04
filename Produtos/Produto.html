@@ -365,6 +365,30 @@
         font-size: 0.8rem;
       }
 
+      /* Estado ATIVO (Serviço ligado) - Botão Branco com detalhes em Azul */
+      .action-btn.toggle.active {
+        background: var(--white); /* Força o fundo branco */
+        color: var(--primary); /* Cor do ícone em azul */
+        border: 1px solid var(--primary); /* Borda azul para destacar */
+        box-shadow: 0 4px 12px rgba(58, 134, 255, 0.1);
+      }
+
+      .action-btn.toggle.active:hover {
+        background: var(
+          --primary-bg-light
+        ); /* Um azul bem clarinho quase branco ao passar o mouse */
+        border-color: var(--primary-hover);
+        color: var(--primary-hover);
+        transform: translateY(-1px);
+      }
+
+      /* Estado INATIVO (Serviço desligado) - Mantém o padrão neutro */
+      .action-btn.toggle:not(.active) {
+        background: var(--white);
+        color: var(--text-secondary);
+        border: 1px solid var(--border);
+      }
+
       .price-badge {
         font-weight: 700;
         color: var(--secondary);
@@ -433,14 +457,59 @@
 
       /* Base do botão profissional */
       .action-btn {
+        position: relative;
+        overflow: hidden;
+        border: none;
         border-radius: 8px;
-        padding: 6px 12px;
-        border: 1px solid transparent;
-        cursor: pointer;
-        transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+        width: 36px;
+        height: 36px;
         display: inline-flex;
         align-items: center;
         justify-content: center;
+        cursor: pointer;
+        transition: all 0.3s ease;
+      }
+
+      .action-btn::after {
+        content: "";
+        position: absolute;
+        top: -100%;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: rgba(255, 255, 255, 0.25);
+        transform: rotate(45deg);
+        transition: all 0.5s ease;
+      }
+
+      .action-btn:hover::after {
+        top: 100%;
+        left: 100%;
+      }
+
+      .action-btn:hover {
+        transform: translateY(-2px);
+        filter: brightness(1.1);
+      }
+
+      /* INFO - Azul/Ciano */
+      .action-btn.info {
+        background: linear-gradient(135deg, #0ea5e9, #0284c7);
+        color: white;
+        box-shadow: 0 4px 6px -1px rgba(14, 165, 233, 0.2);
+      }
+
+      /* EDIT - O que já estava funcionando */
+      .action-btn.edit {
+        background: linear-gradient(135deg, #3b82f6, #2563eb);
+        color: white;
+      }
+
+      /* TOGGLE (Ativar/Inativar) - Cinza/Sóbrio ou Âmbar para atenção */
+      .action-btn.toggle {
+        background: linear-gradient(135deg, #64748b, #475569);
+        color: white;
+        box-shadow: 0 4px 6px -1px rgba(71, 85, 105, 0.2);
       }
 
       /* Botão Editar com Gradiente e Efeito de Brilho (Glimmer) */
@@ -1077,27 +1146,29 @@
           </span>
         </td>
         
-        <td style="text-align: right;">
-          <div class="actions">
-            <!-- Botão Ver Observação -->
-            <button class="action-btn info" title="Ver Observação" 
-                    onclick="showObservation('${p.descricaoProduto || "Sem observações"}')">
-              <i data-lucide="info" style="width: 18px;"></i>
-            </button>
+   <td style="text-align: right;">
+  <div class="actions" style="display: flex; gap: 8px; justify-content: flex-end;">
+    <!-- Botão Ver Observação -->
+    <button class="action-btn info" title="Ver Observação" 
+            onclick="showObservation(${p.id})">
+      <i data-lucide="info" style="width: 18px;"></i>
+    </button>
 
-            <!-- Botão Editar (Com efeito Glimmer no CSS) -->
-            <button class="action-btn edit" title="Editar" 
-                    onclick="openModal('edit', ${p.id})">
-              <i data-lucide="edit-3" style="width: 18px;"></i>
-            </button>
+    <!-- Botão Editar -->
+    <button class="action-btn edit" title="Editar" 
+            onclick="openModal('edit', ${p.id})">
+      <i data-lucide="edit-3" style="width: 18px;"></i>
+    </button>
 
-            <!-- Botão Visibilidade (Toggle) -->
-            <button class="action-btn toggle" title="${isActive ? "Desativar" : "Ativar"}" 
-                    onclick="toggleStatus(${p.id}, ${isActive})">
-              <i data-lucide="${isActive ? "eye" : "eye-off"}" style="width: 18px;"></i>
-            </button>
-          </div>
-        </td>
+    <!-- Botão Visibilidade (Toggle) -->
+    <!-- ADICIONADO: ${isActive ? "active" : ""} na class -->
+    <button class="action-btn toggle ${isActive ? "active" : ""}" 
+            title="${isActive ? "Inativar" : "Ativar"}" 
+            onclick="toggleStatus(${p.id}, ${isActive})">
+      <i data-lucide="${isActive ? "eye" : "eye-off"}" style="width: 18px;"></i>
+    </button>
+  </div>
+</td>
       </tr>`;
           })
           .join("");
@@ -1183,15 +1254,19 @@
         }
       }
 
-      function showObservation(texto) {
-        const modal = el("obsModal");
-        el("obsText").textContent =
-          texto && texto !== "undefined" && texto !== ""
-            ? texto
-            : "Este produto não possui observações cadastradas.";
+      function showObservation(id) {
+        const p = inventory.find((item) => item.id === id);
+        if (!p) return;
 
-        modal.style.display = "flex"; // Usando flex para centralizar
-        lucide.createIcons(); // Garante que o ícone info dentro do modal apareça
+        const obs =
+          p.descricaoProduto && p.descricaoProduto.trim() !== ""
+            ? p.descricaoProduto
+            : "Sem observações cadastradas.";
+
+        document.getElementById("infoTitle").innerText =
+          `Observação: ${p.nomeProduto}`;
+        document.getElementById("infoContent").innerText = obs;
+        document.getElementById("wdglInfo").style.display = "flex";
       }
 
       function closeObs() {
