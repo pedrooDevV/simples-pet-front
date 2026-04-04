@@ -214,6 +214,77 @@
         align-items: center;
       }
 
+      /* Container dos botões no rodapé do modal */
+      .modal-footer {
+        display: flex;
+        gap: 12px;
+        margin-top: 30px;
+      }
+
+      /* Base comum para ambos os botões */
+      .btn-modal {
+        flex: 1;
+        padding: 12px 20px;
+        border-radius: 10px;
+        font-weight: 700;
+        font-size: 0.9rem;
+        cursor: pointer;
+        border: none;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        transition: all 0.2s ease;
+      }
+
+      .btn-modal:active {
+        transform: scale(0.96);
+      }
+
+      /* Botão CANCELAR (Cinza) */
+      .btn-cancel {
+        background: #f1f5f9;
+        color: #64748b;
+        border: 1px solid #e2e8f0;
+      }
+
+      .btn-cancel:hover {
+        background: #e2e8f0;
+        color: #1e293b;
+      }
+
+      /* Botão SALVAR (Azul com Gradiente e Brilho) */
+      .btn-save {
+        background: linear-gradient(135deg, #3b82f6, #2563eb);
+        color: #ffffff;
+        position: relative;
+        overflow: hidden;
+        box-shadow: 0 4px 10px rgba(37, 99, 235, 0.25);
+      }
+
+      /* Efeito de Brilho (Glimmer) passando pelo botão */
+      .btn-save::after {
+        content: "";
+        position: absolute;
+        top: -100%;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: rgba(255, 255, 255, 0.2);
+        transform: rotate(45deg);
+        transition: all 0.6s ease;
+      }
+
+      .btn-save:hover::after {
+        top: 100%;
+        left: 100%;
+      }
+
+      .btn-save:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 15px rgba(37, 99, 235, 0.4);
+      }
+
       .input-group i {
         position: absolute;
         left: 14px;
@@ -332,12 +403,48 @@
         left: 0;
         width: 100%;
         height: 100%;
-        background: rgba(15, 23, 42, 0.6);
-        backdrop-filter: blur(4px);
-        display: none;
+        background: rgba(15, 23, 42, 0.7); /* Fundo escuro semi-transparente */
+        backdrop-filter: blur(4px); /* Efeito de vidro embaçado no fundo */
+        display: none; /* Começa escondido */
         align-items: center;
         justify-content: center;
-        z-index: 200;
+        z-index: 9999;
+      }
+
+      .modal-content {
+        background: #ffffff;
+        width: 100%;
+        max-width: 400px;
+        padding: 30px;
+        border-radius: 16px;
+        box-shadow:
+          0 20px 25px -5px rgba(0, 0, 0, 0.1),
+          0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        animation: modalPop 0.2s ease-out;
+      }
+
+      @keyframes modalPop {
+        from {
+          transform: scale(0.95);
+          opacity: 0;
+        }
+        to {
+          transform: scale(1);
+          opacity: 1;
+        }
+      }
+
+      .modal-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 20px;
+      }
+
+      .modal-footer {
+        display: flex;
+        gap: 12px;
+        margin-top: 25px;
       }
 
       .modal {
@@ -443,7 +550,9 @@
           <i data-lucide="scissors"></i> Catálogo de Serviços
         </a>
         <p class="menu-label" style="margin-top: 24px">Cadastros</p>
-        <a href="../Clientes/Cliente.html" class="nav-item"><i data-lucide="users"></i> Clientes</a>
+        <a href="../Clientes/Cliente.html" class="nav-item"
+          ><i data-lucide="users"></i> Clientes</a
+        >
         <a href="../Pet/Pet.html" class="nav-item">
           <i data-lucide="paw-print"></i> Animais
         </a>
@@ -553,16 +662,23 @@
             </div>
             <button
               class="btn-adjust"
-              onclick="toggleFilterModal()"
+              onclick="toggleStockModal()"
               style="
                 background: #f1f5f9;
                 color: var(--text-secondary);
                 display: flex;
                 align-items: center;
                 gap: 8px;
+                padding: 10px 16px;
+                border-radius: 10px;
+                border: 1px solid var(--border);
+                cursor: pointer;
+                font-weight: 600;
+                transition: 0.2s;
               "
             >
-              <i data-lucide="filter" style="width: 14px"></i> Filtros Avançados
+              <i data-lucide="package-plus" style="width: 16px"></i> Ajustar
+              Quantidade
             </button>
           </div>
           <table>
@@ -628,21 +744,22 @@
           </div>
 
           <div class="modal-footer">
+            <!-- Botão Cancelar -->
             <button
               type="button"
-              class="btn-full"
-              style="background: #f1f5f9"
-              onclick="closeModal()"
+              class="btn-modal btn-cancel"
+              onclick="closeStockModal()"
             >
-              Cancelar
+              <i data-lucide="x-circle" style="width: 18px"></i> Cancelar
             </button>
+
             <button
-              type="submit"
-              class="btn-full"
-              id="confirmBtn"
-              style="background: var(--primary); color: white"
+              type="button"
+              class="btn-modal btn-save"
+              id="btnSaveStock"
+              onclick="saveStockUpdate()"
             >
-              Confirmar
+              <i data-lucide="check-circle" style="width: 18px"></i> Salvar
             </button>
           </div>
         </form>
@@ -719,6 +836,83 @@
       </div>
     </div>
 
+    <!-- Modal Alterar Estoque -->
+    <div class="modal-overlay" id="stockModalOverlay">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h3 style="color: var(--text-main); font-weight: 700">
+            Ajustar Estoque
+          </h3>
+          <button
+            onclick="closeStockModal()"
+            style="
+              background: none;
+              border: none;
+              cursor: pointer;
+              color: #94a3b8;
+            "
+          >
+            <i data-lucide="x"></i>
+          </button>
+        </div>
+
+        <p
+          id="stockProdName"
+          style="
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            margin-bottom: 8px;
+          "
+        ></p>
+
+        <div class="form-group">
+          <label
+            style="
+              display: block;
+              font-size: 0.8rem;
+              font-weight: 600;
+              margin-bottom: 5px;
+            "
+            >Nova Quantidade</label
+          >
+          <input
+            type="number"
+            id="newQuantityInput"
+            class="form-control"
+            style="
+              width: 100%;
+              padding: 12px;
+              border-radius: 8px;
+              border: 1px solid #e2e8f0;
+              font-size: 1.1rem;
+              font-weight: 700;
+            "
+          />
+        </div>
+
+        <div class="modal-footer">
+          <!-- Botão Cancelar -->
+          <button
+            type="button"
+            class="btn-modal btn-cancel"
+            onclick="closeStockModal()"
+          >
+            <i data-lucide="x-circle" style="width: 18px"></i> Cancelar
+          </button>
+
+          <!-- Botão Salvar -->
+          <button
+            type="button"
+            class="btn-modal btn-save"
+            id="btnSaveStock"
+            onclick="saveStockUpdate()"
+          >
+            <i data-lucide="check-circle" style="width: 18px"></i> Salvar
+          </button>
+        </div>
+      </div>
+    </div>
+
     <!-- Toast Notification -->
     <div class="toast" id="toast">
       <i data-lucide="check-circle"></i>
@@ -736,6 +930,96 @@
         ativo: "all",
         min: null,
         max: null,
+      };
+
+      // Abre o modal de estoque preenchendo os campos
+      function toggleStockModal(id, nome, qtdAtual) {
+        document.getElementById("stockProdId").value = id;
+        document.getElementById("stockProdName").innerText = nome;
+        document.getElementById("newQuantity").value = qtdAtual;
+        document.getElementById("stockModalOverlay").style.display = "flex";
+        lucide.createIcons();
+      }
+
+      async function saveStockUpdate() {
+        const API_URL = "http://localhost:8080/produto";
+        const inputQtd = document.getElementById("newQuantityInput");
+
+        if (!productToEdit) return; // Sai silenciosamente se não houver produto
+
+        const newQty = parseInt(inputQtd.value);
+        if (isNaN(newQty)) {
+          if (typeof showToast === "function")
+            showToast("Quantidade inválida!");
+          return;
+        }
+
+        try {
+          // Monta o objeto exatamente como o seu fetch anterior fazia
+          const productData = {
+            ...productToEdit,
+            quantidadeProduto: newQty,
+          };
+
+          const res = await fetch(`${API_URL}/atualizar`, {
+            method: "PUT",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(productData),
+          });
+
+          if (!res.ok) throw new Error("Erro ao atualizar");
+
+          // 1. Atualiza o dado na lista local (inventory)
+          productToEdit.quantidadeProduto = newQty;
+
+          // 2. Re-renderiza a tabela (ajuste para o nome da sua função de desenho)
+          if (typeof renderStock === "function") renderStock();
+          else if (typeof renderProducts === "function") renderProducts();
+
+          // 3. Fecha o modal e avisa o usuário de forma elegante
+          closeStockModal();
+
+          if (typeof showToast === "function") {
+            showToast("Estoque atualizado com sucesso!");
+          }
+        } catch (err) {
+          console.error(err);
+          if (typeof showToast === "function") {
+            showToast("Erro ao salvar: " + err.message);
+          }
+        }
+      }
+
+      // Fecha o modal
+      function closeStockModal() {
+        document.getElementById("stockModalOverlay").style.display = "none";
+      }
+
+      // Evento de envio do formulário de estoque
+      document.getElementById("stockForm").onsubmit = async (e) => {
+        e.preventDefault();
+        const id = document.getElementById("stockProdId").value;
+        const novaQtd = document.getElementById("newQuantity").value;
+
+        try {
+          // Ajuste o endpoint conforme sua API (Ex: /produto/estoque/${id})
+          const res = await fetch(
+            `${API_URL}/atualizar-estoque/${id}?quantidade=${novaQtd}`,
+            {
+              method: "PATCH",
+            },
+          );
+
+          if (res.ok) {
+            showToast("Estoque atualizado com sucesso!");
+            closeStockModal();
+            fetchProducts(); // Recarrega a tabela
+          } else {
+            showToast("Erro ao atualizar estoque.");
+          }
+        } catch (err) {
+          showToast("Erro de conexão com o servidor.");
+        }
       };
 
       // Carregar Produtos (Mockado por padrão)
@@ -1004,31 +1288,38 @@
       });
 
       // Ajuste Rápido (Prompt)
-      async function quickAdjust(id) {
+      let productToEdit = null; // Variável global para saber quem estamos editando
+
+      function quickAdjust(id) {
+        productToEdit = inventory.find((p) => p.id === id);
+        if (!productToEdit) return;
+
+        // Preenche os campos
+        document.getElementById("stockProdName").innerText =
+          productToEdit.nomeProduto;
+        document.getElementById("newQuantityInput").value =
+          productToEdit.quantidadeProduto;
+
+        // Mostra o modal estilizadinho
+        document.getElementById("stockModalOverlay").style.display = "flex";
+        lucide.createIcons();
+      }
+
+      function closeStockModal() {
+        document.getElementById("stockModalOverlay").style.display = "none";
+      }
+
+      // Evento do botão SALVAR do modal
+      document.getElementById("btnSaveStock").onclick = async () => {
+        const newQty = parseInt(
+          document.getElementById("newQuantityInput").value,
+        );
         const API_URL = "http://localhost:8080/produto";
 
-        const product = inventory.find((p) => p.id === id);
-        if (!product) return showToast("Produto não encontrado!");
-
-        const newQtyStr = prompt(
-          "Insira a nova quantidade física em estoque:",
-          product.quantidadeProduto,
-        );
-        if (newQtyStr === null) return; // usuário cancelou
-
-        const newQty = parseInt(newQtyStr);
-        if (isNaN(newQty)) return showToast("Quantidade inválida!");
+        if (isNaN(newQty)) return alert("Quantidade inválida");
 
         try {
-          const productData = {
-            id: product.id,
-            nomeProduto: product.nomeProduto,
-            categoriaProdutoId: product.categoriaProdutoId,
-            quantidadeProduto: newQty,
-            quantidadeMinimoProduto: product.quantidadeMinimoProduto,
-            precoProduto: product.precoProduto,
-            ativo: product.ativo,
-          };
+          const productData = { ...productToEdit, quantidadeProduto: newQty };
 
           const res = await fetch(`${API_URL}/atualizar`, {
             method: "PUT",
@@ -1036,18 +1327,16 @@
             body: JSON.stringify(productData),
           });
 
-          if (!res.ok) {
-            throw new Error("Erro ao atualizar produto");
-          }
+          if (!res.ok) throw new Error("Erro ao salvar");
 
-          // Atualiza localmente e re-renderiza
-          product.quantidadeProduto = newQty;
-          renderStock();
-          showToast("Quantidade atualizada com sucesso!");
+          productToEdit.quantidadeProduto = newQty;
+          renderStock(); // Atualiza a tabela
+          closeStockModal();
+          showToast("Estoque atualizado!");
         } catch (err) {
-          showToast(err.message || "Erro desconhecido ao atualizar");
+          alert(err.message);
         }
-      }
+      };
 
       // Função de Feedback (Toast)
       function showToast(msg) {
