@@ -660,26 +660,19 @@
                 oninput="filterByTerm(this.value)"
               />
             </div>
-            <button
+                  <button
               class="btn-adjust"
-              onclick="toggleStockModal()"
+              onclick="toggleFilterModal()"
               style="
                 background: #f1f5f9;
                 color: var(--text-secondary);
                 display: flex;
                 align-items: center;
                 gap: 8px;
-                padding: 10px 16px;
-                border-radius: 10px;
-                border: 1px solid var(--border);
-                cursor: pointer;
-                font-weight: 600;
-                transition: 0.2s;
               "
             >
-              <i data-lucide="package-plus" style="width: 16px"></i> Ajustar
-              Quantidade
-            </button>
+              <i data-lucide="filter" style="width: 14px"></i> Filtros Avançados
+         
           </div>
           <table>
             <thead>
@@ -918,6 +911,8 @@
       <i data-lucide="check-circle"></i>
       <span id="toastMsg">Operação realizada!</span>
     </div>
+
+    
 
     <script>
       // Inicializar Ícones

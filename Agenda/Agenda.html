@@ -159,26 +159,33 @@
       }
 
       .event-card.AGENDADO {
-        background-color: #3b82f6; /* azul */
-        color: white;
+        background-color: #93c5fd; /* azul claro */
+        color: #1e3a8a; /* azul escuro para contraste */
       }
 
       .event-card.FINALIZADA {
-        background-color: #22c55e; /* verde */
-        color: white;
+        background-color: #bbf7d0; /* verde claro */
+        color: #166534; /* verde escuro */
       }
 
       .event-card.CANCELADA {
-        background-color: #ef4444; /* vermelho */
-        color: white;
+        background-color: #fecaca; /* vermelho claro */
+        color: #991b1b; /* vermelho escuro */
       }
 
       /* opcional: hover para efeito */
+      .event-card {
+        transition:
+          transform 0.2s ease,
+          box-shadow 0.2s ease;
+      }
+
       .event-card:hover {
-        transform: scale(1.02);
-        transition: 0.2s;
+        transform: scale(1.03); /* leve aumento */
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12); /* sombra suave */
         cursor: pointer;
       }
+
       .agenda-select {
         border: none;
         background: var(--bg-general);

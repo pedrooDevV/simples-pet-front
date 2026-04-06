@@ -492,11 +492,18 @@
         filter: brightness(1.1);
       }
 
-      /* INFO - Azul/Ciano */
       .action-btn.info {
-        background: linear-gradient(135deg, #0ea5e9, #0284c7);
-        color: white;
-        box-shadow: 0 4px 6px -1px rgba(14, 165, 233, 0.2);
+        background: #eff6ff;
+        color: #2563eb;
+        border: 1px solid #bfdbfe;
+      }
+
+      .action-btn.info:hover {
+        background: #dbeafe;
+        color: #1e3a8a;
+        border-color: #93c5fd;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 10px rgba(37, 99, 235, 0.15);
       }
 
       /* EDIT - O que já estava funcionando */
@@ -545,15 +552,17 @@
 
       /* Botão de Informação (Sutil) */
       .action-btn.info {
-        background: #f8fafc;
-        color: #64748b;
-        border: 1px solid #e2e8f0;
+        background: #eff6ff;
+        color: #2563eb;
+        border: 1px solid #bfdbfe;
       }
 
       .action-btn.info:hover {
-        background: #f1f5f9;
-        color: #1e293b;
+        background: #dbeafe;
+        color: #1e3a8a;
+        border-color: #93c5fd;
         transform: translateY(-2px);
+        box-shadow: 0 4px 10px rgba(37, 99, 235, 0.15);
       }
 
       /* Ajuste para inputs que ocupam a linha toda no modal pequeno */
@@ -1042,6 +1051,8 @@
 
     <script>
       let products = [];
+      let inventory = []; // array global
+
       const API_URL = "http://localhost:8080/produto";
       const el = (id) => document.getElementById(id);
 
@@ -1149,10 +1160,10 @@
    <td style="text-align: right;">
   <div class="actions" style="display: flex; gap: 8px; justify-content: flex-end;">
     <!-- Botão Ver Observação -->
-    <button class="action-btn info" title="Ver Observação" 
-            onclick="showObservation(${p.id})">
-      <i data-lucide="info" style="width: 18px;"></i>
-    </button>
+  <button class="action-btn info" title="Ver Observação" 
+        onclick="showObservation(${p.id})">
+  <i data-lucide="info" style="width: 18px;"></i>
+</button>
 
     <!-- Botão Editar -->
     <button class="action-btn edit" title="Editar" 
@@ -1255,18 +1266,15 @@
       }
 
       function showObservation(id) {
-        const p = inventory.find((item) => item.id === id);
-        if (!p) return;
+        inventory = products;
+        const product = inventory.find((p) => p.id == id);
+        console.log("Inventory:", inventory, "Procurando id:", id);
 
-        const obs =
-          p.descricaoProduto && p.descricaoProduto.trim() !== ""
-            ? p.descricaoProduto
-            : "Sem observações cadastradas.";
+        const obsText = product ? product.descricaoProduto : "Sem observações";
 
-        document.getElementById("infoTitle").innerText =
-          `Observação: ${p.nomeProduto}`;
-        document.getElementById("infoContent").innerText = obs;
-        document.getElementById("wdglInfo").style.display = "flex";
+        const obsModal = document.getElementById("obsModal");
+        obsModal.querySelector(".obs-body").innerText = obsText;
+        obsModal.style.display = "flex";
       }
 
       function closeObs() {

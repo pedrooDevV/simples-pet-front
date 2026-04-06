@@ -888,23 +888,34 @@
         deleteModalOverlay.style.display = 'none';
       }
 
-      function confirmDeleteClient() {
-        const id = document.getElementById('deleteClientId').value;
-        
-        fetch(`http://localhost:8080/clientes/deletar/${id}`, {
-          method: "DELETE",
-        })
-        .then((response) => {
-          if (!response.ok) throw new Error("Erro ao deletar cliente");
-          showToast("Cliente removido com sucesso!");
-          closeDeleteModal();
-          loadClients();
-        })
-        .catch((error) => {
-          console.error("Erro:", error);
-          closeDeleteModal();
-        });
-      }
+function deleteClient(id) {
+    
+    const confirmDelete = confirm("Tem certeza que deseja deletar este cliente?");
+    if (!confirmDelete) return; 
+
+    // Chama o fetch passando o id direto
+    fetch(`http://localhost:8080/clientes/deletar/${id}`, {
+        method: "DELETE",
+    })
+    .then(async (response) => {
+        if (!response.ok) {
+            // Lê a mensagem do backend para verificar se é erro de FK
+            const text = await response.text();
+            if (text.includes("violates foreign key constraint")) {
+                throw showToast("Não é possível deletar este cliente: ainda possui itens no carrinho.", true);
+            } else {
+                throw showToast("Erro ao deletar cliente.", true);
+            }
+        }
+        // Se deu certo
+        showToast("Cliente removido com sucesso!");
+        loadClients(); // Recarrega a lista de clientes
+    })
+    .catch((error) => {
+        console.error("Erro:", error);
+        alert(error.message); // Mostra erro para o usuário
+    });
+}
 
       document.getElementById("searchBar").addEventListener("input", (e) => {
         const term = e.target.value.toLowerCase();
@@ -975,16 +986,18 @@
           .catch((error) => console.error("Erro:", error));
       });
 
-      function showToast(msg) {
+   function showToast(msg, isError = false) {
         const toast = document.getElementById("toast");
-        document.getElementById("toastMsg").innerText = msg;
+        const toastMsg = document.getElementById("toastMsg");
+        toastMsg.textContent = msg;
+        toast.style.background = isError ? "#ef4444" : "#1e293b";
         toast.classList.add("show");
         setTimeout(() => toast.classList.remove("show"), 3000);
       }
     </script>
 
     <!-- Scripts Externos (Preservados) -->
-    <script src="/Clientes/clienteApi.js"></script>
+    <script type="module" src="/Clientes/clienteApi.js"></script>
     <script type="module" src="/Clientes/main.js"></script>
   </body>
 </html>

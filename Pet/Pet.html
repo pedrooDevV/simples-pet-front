@@ -937,28 +937,47 @@
         if (id === "wdglDelete") petToDeleteId = null;
       }
 
-      document
-        .getElementById("confirmDeleteBtn")
-        .addEventListener("click", () => {
-          if (petToDeleteId) {
-            fetch(`http://localhost:8080/animais/deletar/${petToDeleteId}`, {
-              method: "DELETE",
-            })
-              .then((response) => {
-                if (!response.ok) throw new Error("Erro ao deletar animal");
-                pets = pets.filter((c) => c.id !== petToDeleteId);
-                renderPets(pets);
-                showToast("Pet removido com sucesso!");
-                closeWdgl("wdglDelete");
-              })
-              .catch((error) => {
-                console.error("Erro:", error);
-                showToast("Erro ao remover pet.");
-              });
-          }
-        });
+      function deletePet(petId) {
+        if (!petId) return;
 
-      // --- LOGICA MODAL CADASTRO (MANTIDA) ---
+        const confirmDelete = confirm(
+          "Tem certeza que deseja excluir este pet?",
+        );
+        if (!confirmDelete) return;
+
+        fetch(`http://localhost:8080/animais/deletar/${petId}`, {
+          method: "DELETE",
+        })
+          .then(async (response) => {
+            if (!response.ok) {
+              // Tratamento de erro
+              let msg = "Erro ao deletar pet.";
+              try {
+                const data = await response.json();
+                msg = data?.message || msg;
+              } catch {}
+
+              if (
+                response.status === 500 ||
+                msg.toLowerCase().includes("foreign key")
+              ) {
+                showToast(
+                  "Não é possível remover o pet. Ele ainda está vinculado a agendas.",
+                  true,
+                );
+              } else {
+                showToast(msg, true);
+              }
+              throw new Error(msg);
+            }
+
+            // Atualiza lista de pets
+            pets = pets.filter((p) => p.id !== petId);
+            renderPets(pets);
+            showToast("Pet removido com sucesso!");
+          })
+          .catch((err) => console.error(err));
+      }
 
       function openModal(mode, id = null) {
         document.getElementById("modalOverlay").style.display = "flex";
@@ -986,11 +1005,11 @@
       function closeModal() {
         document.getElementById("modalOverlay").style.display = "none";
       }
-
       document
         .getElementById("petForm")
         .addEventListener("submit", async (e) => {
           e.preventDefault();
+
           const id = document.getElementById("petId").value;
           const selectDono = document.getElementById("ownerId");
           const clienteId = parseInt(selectDono.value);
@@ -1003,8 +1022,8 @@
             idade: parseInt(document.getElementById("age").value),
             sexo: document.getElementById("gender").value,
             observacoes: document.getElementById("notes").value || "",
-            clienteId: clienteId,
-            nomeCliente: nomeCliente,
+            clienteId,
+            nomeCliente,
           };
 
           const url = id
@@ -1014,90 +1033,51 @@
 
           try {
             const res = await fetch(url, {
-              method: method,
+              method,
               headers: { "Content-Type": "application/json" },
               body: JSON.stringify(payload),
             });
 
             if (!res.ok) {
-              showToast("Erro ao salvar pet.");
+              let msgErro = "Erro ao salvar pet";
+
+              try {
+                const data = await res.json();
+                if (data?.message) msgErro = data.message;
+              } catch {
+                const text = await res.text();
+                if (text) msgErro = text;
+              }
+
+              showToast(msgErro, true);
               return;
             }
 
-            const payload = {
-              nome: document.getElementById("petName").value,
-              especie: document.getElementById("species").value,
-              raca: document.getElementById("breed").value,
-              idade: parseInt(document.getElementById("age").value),
-              sexo: document.getElementById("gender").value,
-              observacoes: document.getElementById("notes").value || "",
-              clienteId: clienteId, // O ID para o banco vincular
-              nomeCliente: nomeCliente, // O Nome para a nova coluna que você criou
-            };
+            const data = await res.json();
 
-            const url = id
-              ? `http://localhost:8080/animais/${id}`
-              : "http://localhost:8080/animais/criar";
-            const method = id ? "PUT" : "POST";
-
-            try {
-              const res = await fetch(url, {
-                method: method,
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(payload),
-              });
-
-              if (!res.ok) {
-                let msgErro = "Erro ao salvar";
-
-                // Tenta parsear JSON, mas se falhar, pega o texto cru
-                try {
-                  const errorData = await res.json();
-                  if (errorData.message) {
-                    msgErro = errorData.message;
-                  }
-                } catch {
-                  // Se não tiver JSON, pega o texto simples
-                  const text = await res.text();
-                  if (text) msgErro = text;
-                }
-
-                showToast(msgErro);
-                return; // não fecha modal
-              }
-              // --- FIM DA MUDANÇA ---
-
-              const data = await res.json();
-
-              // Atualiza a lista e fecha o modal (seu código atual)
-              if (id) {
-                const index = pets.findIndex((p) => p.id === data.id);
-                pets[index] = data;
-              } else {
-                pets.push(data);
-              }
-
-              renderPets(pets);
-              closeModal();
-              showToast("Pet salvo com sucesso!");
-            } catch (err) {
-              console.error(err);
-              showToast("Erro de conexão com o servidor, verifique os dados");
+            if (id) {
+              const index = pets.findIndex((p) => p.id === data.id);
+              pets[index] = data;
+            } else {
+              pets.push(data);
             }
 
             renderPets(pets);
             closeModal();
             showToast("Pet salvo com sucesso!");
           } catch (err) {
-            showToast("Erro de conexão");
+            console.error(err);
+            showToast("Erro de conexão com o servidor", true);
           }
         });
 
-      function showToast(msg) {
-        const t = document.getElementById("toast");
-        document.getElementById("toastMsg").innerText = msg;
-        t.classList.add("show");
-        setTimeout(() => t.classList.remove("show"), 3000);
+      function showToast(msg, isError = false) {
+        const toast = document.getElementById("toast");
+        const toastMsg = document.getElementById("toastMsg");
+        toastMsg.textContent = msg;
+        toast.style.background = isError ? "#ef4444" : "#1e293b";
+        toast.classList.add("show");
+        setTimeout(() => toast.classList.remove("show"), 3000);
       }
 
       document.getElementById("searchBar").addEventListener("input", (e) => {
