@@ -11,7 +11,7 @@ const sidebarContent = `
     
     <p class="menu-label">Painel</p>
     <nav>
-        <a href="../TelaInicial/TelaInicia.html" class="nav-item" data-page="dashboard">
+        <a href="../TelaInicial/index.html" class="nav-item" data-page="dashboard">
             <i data-lucide="layout-dashboard"></i> Dashboard
         </a>
         <a href="../Agenda/Agenda.html" class="nav-item" data-page="agenda">

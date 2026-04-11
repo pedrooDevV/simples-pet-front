@@ -27,7 +27,7 @@ clientForm.addEventListener("submit", async (e) => {
     let res, updatedClient;
 
     if (clientId) {
-      res = await fetch(`http://localhost:8080/clientes/${clientId}`, {
+      res = await fetch(`http://localhost:8081/clientes/${clientId}`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
@@ -35,7 +35,7 @@ clientForm.addEventListener("submit", async (e) => {
         body: JSON.stringify(clientData),
       });
     } else {
-      res = await fetch(`http://localhost:8080/clientes/criar`, {
+      res = await fetch(`http://localhost:8081/clientes/criar`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(clientData),

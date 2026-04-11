@@ -1,4 +1,4 @@
-const API_URL = "http://localhost:8080/clientes/";
+const API_URL = "http://localhost:8081/clientes/";
 
 export async function createClient(clientData) {
     try {
@@ -65,7 +65,7 @@ export async function updateClient(id, clientData) {
 
 export async function loadClients() {
     try {
-        const response = await fetch("http://localhost:8080/clientes/listar");
+        const response = await fetch("http://localhost:8081/clientes/listar");
         if (!response.ok) throw new Error("Erro ao buscar clientes");
         return await response.json();
     } catch (error) {

@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>PetShop Pro - Controle de Estoque</title>
     <script src="https://unpkg.com/lucide@latest"></script>
+    <link rel="icon" type="image/png" href="../gato-preto-malvado.png">
     <link
       href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
       rel="stylesheet"
@@ -536,7 +537,7 @@
       </div>
       <p class="menu-label">Painel</p>
       <nav>
-        <a href="../TelaInicial/TelaInicia.html" class="nav-item"
+        <a href="../TelaInicial/index.html" class="nav-item"
           ><i data-lucide="layout-dashboard"></i> Dashboard</a
         >
         <a href="../Agenda/Agenda.html" class="nav-item"
@@ -937,7 +938,7 @@
       }
 
       async function saveStockUpdate() {
-        const API_URL = "http://localhost:8080/produto";
+        const API_URL = "http://localhost:8081/produto";
         const inputQtd = document.getElementById("newQuantityInput");
 
         if (!productToEdit) return; // Sai silenciosamente se não houver produto
@@ -1020,7 +1021,7 @@
       // Carregar Produtos (Mockado por padrão)
       async function carregarProdutos() {
         try {
-          const res = await fetch("http://localhost:8080/produto/listar").catch(
+          const res = await fetch("http://localhost:8081/produto/listar").catch(
             () => null,
           );
           if (res && res.ok) {
@@ -1309,7 +1310,7 @@
         const newQty = parseInt(
           document.getElementById("newQuantityInput").value,
         );
-        const API_URL = "http://localhost:8080/produto";
+        const API_URL = "http://localhost:8081/produto";
 
         if (isNaN(newQty)) return alert("Quantidade inválida");
 

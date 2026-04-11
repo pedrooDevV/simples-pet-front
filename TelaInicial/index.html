@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>PetShop Pro - Dashboard Estratégico</title>
     <script src="https://unpkg.com/lucide@latest"></script>
+    <link rel="icon" type="image/png" href="../gato-preto-malvado.png">
     <link
       href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
       rel="stylesheet"
@@ -333,7 +334,7 @@
 
       <p class="menu-label">Painel</p>
       <nav>
-        <a href="../TelaInicial/TelaInicia.html" class="nav-item active">
+        <a href="../TelaInicial/index.html" class="nav-item active">
           <i data-lucide="layout-dashboard"></i> <span>Dashboard</span>
         </a>
         <a href="../Agenda/Agenda.html" class="nav-item">
@@ -467,21 +468,18 @@
             </button>
           </div>
         </div>
-        <div class="teams-agenda">
-
-
-        </div>
+        <div class="teams-agenda"></div>
       </div>
     </main>
 
     <script>
       lucide.createIcons();
 
-      const API_AGENDA = "http://localhost:8080/agenda";
-      const API_CLIENTES = "http://localhost:8080/clientes/listar";
+      const API_AGENDA = "http://localhost:8081/agenda";
+      const API_CLIENTES = "http://localhost:8081/clientes/listar";
 
       const agendaNumero = 1;
-     let currentDate = new Date(Date.now());
+      let currentDate = new Date(Date.now());
       let agendas = [];
 
       function pad(n) {
@@ -522,9 +520,8 @@
         }).format(value || 0);
       }
 
-      function timeToMinutes(timeStr) {
-        if (!timeStr) return 0;
-        const [h, m] = timeStr.substring(0, 5).split(":").map(Number);
+      function timeToMinutes(time) {
+        const [h, m] = time.split(":").map(Number);
         return h * 60 + m;
       }
 
@@ -536,9 +533,14 @@
 
       function getSlots() {
         const slots = [];
-        for (let min = 8 * 60; min <= 22 * 60; min += 60) {
-          slots.push(min);
+
+        for (let h = 8; h <= 22; h++) {
+          slots.push(h * 60); // :00
+          slots.push(h * 60 + 15); // :15
+          slots.push(h * 60 + 30); // :30
+          slots.push(h * 60 + 45); // :45
         }
+
         return slots;
       }
 
@@ -600,66 +602,71 @@
 
         slots.forEach((slotMinutes) => {
           const slotLabel = minutesToLabel(slotMinutes);
-          const items = dayAgendas.filter(
-            (a) => timeToMinutes(a.horaInicio) === slotMinutes,
-          );
+
+          // 🔥 agora pega APENAS o slot exato (15min)
+          const items = dayAgendas.filter((a) => {
+            return timeToMinutes(a.horaInicio) === slotMinutes;
+          });
 
           html += `
-        <div class="agenda-row">
-          <div class="time-col">${slotLabel}</div>
-          <div class="event-col">
-            ${
-              items.length
-                ? items
-                    .map((e) => {
-                      const isFinalizada =
-                        e.statusAgenda === "FINALIZADA" || e.pago === true;
-                      const isCancelada = e.statusAgenda === "CANCELADA";
+      <div class="agenda-row">
+        <div class="time-col">${slotLabel}</div>
+        <div class="event-col">
+          ${
+            items.length
+              ? items
+                  .map((e) => {
+                    const isFinalizada =
+                      e.statusAgenda === "FINALIZADA" || e.pago === true;
+                    const isCancelada = e.statusAgenda === "CANCELADA";
 
-                      const cssClass = isCancelada
-                        ? "pending"
-                        : isFinalizada
-                          ? "confirmed"
-                          : "pending";
+                    const cssClass = isCancelada
+                      ? "pending"
+                      : isFinalizada
+                        ? "confirmed"
+                        : "pending";
 
-                      const pagamentoTexto = isCancelada
-                        ? "Cancelada"
-                        : isFinalizada || e.pago
-                          ? `Pago: ${formatMoney(e.valorDaAgenda)}`
-                          : `Pendente: ${formatMoney(e.valorDaAgenda)}`;
+                    const pagamentoTexto = isCancelada
+                      ? "Cancelada"
+                      : isFinalizada || e.pago
+                        ? `Pago: ${formatMoney(e.valorDaAgenda)}`
+                        : `Pendente: ${formatMoney(e.valorDaAgenda)}`;
 
-                      return `
-                        <div class="event-card ${cssClass}">
-                          <span class="event-title">
-                            ${e.nomeAnimal || "Pet"} ${e.nomeServico ? `- ${e.nomeServico}` : ""}
+                    return `
+                      <div class="event-card ${cssClass}">
+                        <span class="event-title">
+                          ${e.nomeAnimal || "Pet"} ${e.nomeServico ? `- ${e.nomeServico}` : ""}
+                        </span>
+
+                        <div class="event-subtitle">
+                          <i data-lucide="user" style="width: 14px; height: 14px"></i>
+                          ${e.nomeCliente || "Cliente"}
+
+                          <span style="margin-left: 10px; color: ${
+                            isCancelada
+                              ? "var(--danger)"
+                              : isFinalizada || e.pago
+                                ? "var(--secondary)"
+                                : "var(--accent)"
+                          }">
+                            • ${pagamentoTexto}
                           </span>
-                          <div class="event-subtitle">
-                            <i data-lucide="user" style="width: 14px; height: 14px"></i>
-                            ${e.nomeCliente || "Cliente"}
-                            <span style="margin-left: 10px; color: ${
-                              isCancelada
-                                ? "var(--danger)"
-                                : isFinalizada || e.pago
-                                  ? "var(--secondary)"
-                                  : "var(--accent)"
-                            }">
-                              • ${pagamentoTexto}
-                            </span>
-                          </div>
                         </div>
-                      `;
-                    })
-                    .join("")
-                : ""
-            }
-          </div>
+                      </div>
+                    `;
+                  })
+                  .join("")
+              : ""
+          }
         </div>
-      `;
+      </div>
+    `;
         });
 
         teamsAgenda.innerHTML =
           html ||
           "<div style='padding: 32px'>Nenhum agendamento encontrado.</div>";
+
         lucide.createIcons();
       }
 

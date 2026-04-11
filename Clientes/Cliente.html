@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>PetShop Pro - Clientes</title>
     <script src="https://unpkg.com/lucide@latest"></script>
+    <link rel="icon" type="image/png" href="../gato-preto-malvado.png">
     <link
       href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
       rel="stylesheet"
@@ -538,7 +539,7 @@
 
       <p class="menu-label">Painel</p>
       <nav>
-        <a href="../TelaInicial/TelaInicia.html" class="nav-item">
+        <a href="../TelaInicial/index.html" class="nav-item">
           <i data-lucide="layout-dashboard"></i> Dashboard
         </a>
         <a href="../Agenda/Agenda.html" class="nav-item">
@@ -791,7 +792,7 @@
       }
 
       function loadClients() {
-        fetch("http://localhost:8080/clientes/listar")
+        fetch("http://localhost:8081/clientes/listar")
           .then((response) => {
             if (!response.ok) throw new Error("Erro ao buscar clientes");
             return response.json();
@@ -894,7 +895,7 @@ function deleteClient(id) {
     if (!confirmDelete) return; 
 
     // Chama o fetch passando o id direto
-    fetch(`http://localhost:8080/clientes/deletar/${id}`, {
+    fetch(`http://localhost:8081/clientes/deletar/${id}`, {
         method: "DELETE",
     })
     .then(async (response) => {
@@ -951,6 +952,56 @@ function deleteClient(id) {
         }
       }
 
+
+      // validar cpf
+
+const cpfInput = document.getElementById("cpf");
+
+cpfInput.addEventListener("input", (e) => {
+  let value = e.target.value;
+
+  value = value.replace(/\D/g, "");
+
+  if (value.length > 9) {
+    value = value.replace(/(\d{3})(\d{3})(\d{3})(\d{0,2})/, "$1.$2.$3-$4");
+  } else if (value.length > 6) {
+    value = value.replace(/(\d{3})(\d{3})(\d{0,3})/, "$1.$2.$3");
+  } else if (value.length > 3) {
+    value = value.replace(/(\d{3})(\d{0,3})/, "$1.$2");
+  }
+
+  e.target.value = value;
+});
+
+// validar telefone
+
+const phone = document.getElementById("phone");
+
+phone.addEventListener("input", (e) => {
+  let value = e.target.value;
+
+  value = value.replace(/\D/g, "");
+
+  value = value.substring(0, 11);
+
+  if (value.length === 11 && value[2] !== "9") {
+    value = value.substring(0, 2) + "9" + value.substring(2, 11);
+  }
+
+  if (value.length > 10) {
+    // Celular: (XX) 9XXXX-XXXX
+    value = value.replace(/^(\d{2})(\d{5})(\d{4})$/, "($1) $2-$3");
+  } else if (value.length > 5) {
+    // Fixo: (XX) XXXX-XXXX
+    value = value.replace(/^(\d{2})(\d{4})(\d{0,4})$/, "($1) $2-$3");
+  } else if (value.length > 2) {
+    // Só DDD + primeiros dígitos
+    value = value.replace(/^(\d{2})(\d+)/, "($1) $2");
+  }
+
+  e.target.value = value;
+});
+
       function closeModal() { modalOverlay.style.display = "none"; }
 
       clientForm.addEventListener("submit", (e) => {
@@ -967,8 +1018,8 @@ function deleteClient(id) {
         };
 
         const url = id
-          ? `http://localhost:8080/clientes/atualizar/${id}`
-          : "http://localhost:8080/clientes/cadastrar";
+          ? `http://localhost:8081/clientes/atualizar/${id}`
+          : "http://localhost:8081/clientes/criar";
 
         const method = id ? "PUT" : "POST";
 
@@ -996,8 +1047,6 @@ function deleteClient(id) {
       }
     </script>
 
-    <!-- Scripts Externos (Preservados) -->
-    <script type="module" src="/Clientes/clienteApi.js"></script>
-    <script type="module" src="/Clientes/main.js"></script>
+  
   </body>
 </html>

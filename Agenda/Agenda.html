@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>PetShop Pro - Agenda</title>
     <script src="https://unpkg.com/lucide@latest"></script>
+    <link rel="icon" type="image/png" href="../gato-preto-malvado.png">
     <link
       href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
       rel="stylesheet"
@@ -129,6 +130,7 @@
         font-size: 2rem;
         font-weight: 800;
       }
+
       .header-info p {
         color: var(--text-secondary);
         font-weight: 500;
@@ -159,18 +161,24 @@
       }
 
       .event-card.AGENDADO {
-        background-color: #93c5fd; /* azul claro */
-        color: #1e3a8a; /* azul escuro para contraste */
+        background-color: #93c5fd;
+        /* azul claro */
+        color: #1e3a8a;
+        /* azul escuro para contraste */
       }
 
       .event-card.FINALIZADA {
-        background-color: #bbf7d0; /* verde claro */
-        color: #166534; /* verde escuro */
+        background-color: #bbf7d0;
+        /* verde claro */
+        color: #166534;
+        /* verde escuro */
       }
 
       .event-card.CANCELADA {
-        background-color: #fecaca; /* vermelho claro */
-        color: #991b1b; /* vermelho escuro */
+        background-color: #fecaca;
+        /* vermelho claro */
+        color: #991b1b;
+        /* vermelho escuro */
       }
 
       /* opcional: hover para efeito */
@@ -181,8 +189,10 @@
       }
 
       .event-card:hover {
-        transform: scale(1.03); /* leve aumento */
-        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12); /* sombra suave */
+        transform: scale(1.03);
+        /* leve aumento */
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
+        /* sombra suave */
         cursor: pointer;
       }
 
@@ -253,6 +263,7 @@
         cursor: pointer;
         transition: 0.2s;
       }
+
       .nav-btn:hover {
         background: var(--border);
       }
@@ -387,10 +398,12 @@
         border-left-color: var(--primary);
         background: var(--primary-bg-light);
       }
+
       .event-card.FINALIZADA {
         border-left-color: var(--secondary);
         background: var(--secondary-bg-light);
       }
+
       .event-card.CANCELADO {
         border-left-color: var(--danger);
         background: var(--danger-bg-light);
@@ -402,6 +415,7 @@
         font-weight: 800;
         margin-bottom: 2px;
       }
+
       .event-card span {
         display: block;
         color: var(--text-secondary);
@@ -438,6 +452,7 @@
           opacity: 0;
           transform: translateY(20px);
         }
+
         to {
           opacity: 1;
           transform: translateY(0);
@@ -460,6 +475,7 @@
       .form-group {
         margin-bottom: 16px;
       }
+
       .form-group label {
         display: block;
         font-weight: 700;
@@ -478,6 +494,7 @@
         outline: none;
         transition: 0.2s;
       }
+
       .form-control:focus {
         border-color: var(--primary);
         background: var(--white);
@@ -491,6 +508,7 @@
         gap: 8px;
         margin-top: 8px;
       }
+
       .status-btn {
         border: 1px solid var(--border);
         background: var(--white);
@@ -503,16 +521,19 @@
         color: var(--text-secondary);
         text-align: center;
       }
+
       .status-btn.active[data-status="AGENDADO"] {
         background: var(--primary);
         color: white;
         border-color: var(--primary);
       }
+
       .status-btn.active[data-status="FINALIZADA"] {
         background: var(--secondary);
         color: white;
         border-color: var(--secondary);
       }
+
       .status-btn.active[data-status="CANCELADO"] {
         background: var(--danger);
         color: white;
@@ -536,6 +557,7 @@
         border-radius: 12px;
         transition: 0.2s;
       }
+
       .btn-ghost:hover {
         background: var(--bg-general);
       }
@@ -545,6 +567,7 @@
       }
     </style>
   </head>
+
   <body>
     <aside>
       <div class="logo-container">
@@ -554,7 +577,7 @@
 
       <p class="menu-label">Painel</p>
       <nav>
-        <a href="../TelaInicial/TelaInicia.html" class="nav-item">
+        <a href="../TelaInicial/index.html" class="nav-item">
           <i data-lucide="layout-dashboard"></i> Dashboard
         </a>
         <a href="../Agenda/Agenda.html" class="nav-item active">
@@ -596,7 +619,7 @@
           <h1>
             Agenda de:
             <span id="current-user-name" style="color: var(--primary)"
-              >Felipe</span
+              >Thais</span
             >
           </h1>
           <p>Gerencie os serviços e horários da semana</p>
@@ -610,8 +633,8 @@
               class="agenda-select"
               onchange="changeAgenda()"
             >
-              <option value="1">Agenda 1: Felipe</option>
-              <option value="2">Agenda 2: Maria</option>
+              <option value="1">Agenda 1: Tais</option>
+              <option value="2">Agenda 2: Tais</option>
             </select>
           </div>
 
@@ -741,11 +764,11 @@
     <script>
       lucide.createIcons();
 
-      const API_BASE_URL = "http://localhost:8080/agenda";
+      const API_BASE_URL = "http://localhost:8081/agenda";
       const ENDPOINTS_LISTAR = {
-        clientes: "http://localhost:8080/clientes/listar",
-        animais: "http://localhost:8080/animais/listar",
-        servicos: "http://localhost:8080/servico/listar",
+        clientes: "http://localhost:8081/clientes/listar",
+        animais: "http://localhost:8081/animais/listar",
+        servicos: "http://localhost:8081/servico/listar",
       };
 
       let loadedAgendas = [];
@@ -800,7 +823,7 @@
           selectPet.innerHTML = '<option value="">Selecione o Animal</option>';
 
           // Função para filtrar animais do cliente selecionado
-          function atualizarSelectPets(clienteId) {
+          window.atualizarSelectPets = function (clienteId) {
             selectPet.innerHTML =
               '<option value="">Selecione o Animal</option>';
             const petsFiltrados = clienteId
@@ -809,7 +832,7 @@
             petsFiltrados.forEach((a) => {
               selectPet.innerHTML += `<option value="${a.id}">${a.nome} (${a.especie})</option>`;
             });
-          }
+          };
 
           // Atualiza os pets quando mudar o cliente
           selectCliente.addEventListener("change", (e) => {
@@ -908,8 +931,7 @@
         }
 
         container.innerHTML = html;
-        document.getElementById("current-user-name").innerText =
-          agendaNumero == "1" ? "Felipe" : "Maria";
+        document.getElementById("current-user-name").innerText = "Tais";
         lucide.createIcons();
       }
 
@@ -918,15 +940,24 @@
         if (!item) return;
 
         carregarListasParaModal().then(() => {
+          const selectCliente = document.getElementById("select-cliente");
+          const selectPet = document.getElementById("select-pet");
+
           document.getElementById("edit-id").value = item.id;
-          document.getElementById("select-cliente").value = item.idCliente;
-          document.getElementById("select-pet").value = item.idAnimal;
+
+          selectCliente.value = item.idCliente;
+
+          atualizarSelectPets(item.idCliente);
+
+          selectPet.value = item.idAnimal;
+
           document.getElementById("select-servico").value = item.idServico;
           document.getElementById("input-data").value = item.data;
           document.getElementById("input-horario").value =
             item.horaInicio.substring(0, 5);
 
           setStatus(item.statusAgenda);
+
           document.getElementById("status-selection-container").style.display =
             "block";
           document.getElementById("modal-title").innerText =

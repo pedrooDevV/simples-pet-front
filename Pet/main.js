@@ -2,7 +2,7 @@
 
 async function buscarClientePorId(id) {
   try {
-    const res = await fetch(`http://localhost:8080/clientes/${id}`);
+    const res = await fetch(`http://localhost:8081/clientes/${id}`);
     if (!res.ok) throw new Error("Cliente não encontrado");
     const cliente = await res.json();
     return cliente.nome;
@@ -14,7 +14,7 @@ async function buscarClientePorId(id) {
 
 async function carregarPets() {
     try {
-        const response = await fetch("http://localhost:8080/animais/listar");
+        const response = await fetch("http://localhost:8081/animais/listar");
         if (!response.ok) throw new Error("Erro ao listar animais");
         
         pets = await response.json();
