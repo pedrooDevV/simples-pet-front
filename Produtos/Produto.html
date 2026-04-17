@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>PetShop Pro - Itens / Produtos</title>
     <script src="https://unpkg.com/lucide@latest"></script>
+    <link rel="icon" type="image/png" href="../gato-preto-malvado.png">
     <link
       href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
       rel="stylesheet"
@@ -805,7 +806,7 @@
 
       <nav>
         <p class="menu-label">Painel</p>
-        <a href="/TelaInicial/TelaInicia.html" class="nav-item"
+        <a href="/TelaInicial/index.html" class="nav-item"
           ><i data-lucide="layout-dashboard"></i> Dashboard</a
         >
         <a href="/Agenda/Agenda.html" class="nav-item"
@@ -1053,7 +1054,7 @@
       let products = [];
       let inventory = []; // array global
 
-      const API_URL = "http://localhost:8080/produto";
+      const API_URL = "http://localhost:8081/produto";
       const el = (id) => document.getElementById(id);
 
       // Helpers de UI
@@ -1075,7 +1076,7 @@
 
       async function carregarCategorias() {
         try {
-          const res = await fetch("http://localhost:8080/categoria");
+          const res = await fetch("http://localhost:8081/categoria");
           const categorias = await res.json();
           const select = el("category");
           select.innerHTML = categorias
@@ -1252,7 +1253,7 @@
       async function toggleStatus(id, active) {
         try {
           const res = await fetch(
-            `http://localhost:8080/produto/${active ? "inativar" : "ativar"}/${id}`,
+            `http://localhost:8081/produto/${active ? "inativar" : "ativar"}/${id}`,
             { method: "PATCH" },
           );
           const updated = await res.json();
@@ -1306,7 +1307,7 @@
         e.preventDefault();
         const name = el("newCategoryName").value.trim();
         try {
-          const res = await fetch("http://localhost:8080/categoria", {
+          const res = await fetch("http://localhost:8081/categoria", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ descricaoCategoria: name }),

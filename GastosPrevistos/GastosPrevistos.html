@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>PetShop Pro - Gastos Previstos</title>
     <script src="https://unpkg.com/lucide@latest"></script>
+    <link rel="icon" type="image/png" href="../gato-preto-malvado.png">
     <link
       href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
       rel="stylesheet"
@@ -690,7 +691,7 @@
 
       <p class="menu-label">Painel</p>
       <nav>
-        <a href="../TelaInicial/TelaInicia.html" class="nav-item">
+        <a href="../TelaInicial/index.html" class="nav-item">
           <i data-lucide="layout-dashboard"></i> Dashboard
         </a>
         <a href="../Agenda/Agenda.html" class="nav-item">
@@ -1079,8 +1080,8 @@
     <script>
       lucide.createIcons();
 
-      const API_URL = "http://localhost:8080/gastos-previstos";
-      const CATEGORIA_URL = "http://localhost:8080/categoria-gasto";
+      const API_URL = "http://localhost:8081/gastos-previstos";
+      const CATEGORIA_URL = "http://localhost:8081/categoria-gasto";
 
       let gastos = [];
       let selectedMonth = "";

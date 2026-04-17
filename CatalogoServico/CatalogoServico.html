@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>PetShop Pro - Catálogo de Serviços</title>
     <script src="https://cdn.jsdelivr.net/npm/lucide@1.7.0/dist/umd/lucide.min.js"></script>
+    <link rel="icon" type="image/png" href="../gato-preto-malvado.png">
     <link
       href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
       rel="stylesheet"
@@ -598,7 +599,7 @@
 
       <p class="menu-label">Painel</p>
       <nav>
-        <a href="../TelaInicial/TelaInicia.html" class="nav-item">
+        <a href="../TelaInicial/index.html" class="nav-item">
           <i data-lucide="layout-dashboard"></i> Dashboard
         </a>
         <a href="../Agenda/Agenda.html" class="nav-item">
@@ -917,7 +918,7 @@
 
       async function carregarServicos() {
         try {
-          const res = await fetch("http://localhost:8080/servico/listar");
+          const res = await fetch("http://localhost:8081/servico/listar");
 
           if (!res.ok) {
             throw { status: res.status, message: "Erro ao buscar serviços" };
@@ -1066,8 +1067,8 @@
         console.log("Payload enviado:", payload);
 
         const url = id
-          ? "http://localhost:8080/servico/atualizar"
-          : "http://localhost:8080/servico/cadastrar";
+          ? "http://localhost:8081/servico/atualizar"
+          : "http://localhost:8081/servico/cadastrar";
         const method = id ? "PUT" : "POST";
 
         try {
@@ -1101,7 +1102,7 @@
 
       async function toggleStatus(id, isCurrentlyActive) {
         const endpoint = isCurrentlyActive ? "inativar" : "ativar";
-        const url = `http://localhost:8080/servico/${endpoint}/${id}`;
+        const url = `http://localhost:8081/servico/${endpoint}/${id}`;
 
         try {
           const res = await fetch(url, { method: "PATCH" });

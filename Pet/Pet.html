@@ -542,7 +542,7 @@
 
       <p class="menu-label">Painel</p>
       <nav>
-        <a href="../TelaInicial/TelaInicia.html" class="nav-item">
+        <a href="../TelaInicial/index.html" class="nav-item">
           <i data-lucide="layout-dashboard"></i> Dashboard
         </a>
         <a href="../Agenda/Agenda.html" class="nav-item">
@@ -795,10 +795,9 @@
       let clientes = [];
       let petToDeleteId = null;
 
-      // 1️⃣ Carrega clientes
       async function carregarClientes() {
         try {
-          const response = await fetch("http://localhost:8080/clientes/listar");
+          const response = await fetch("http://localhost:8081/clientes/listar");
           clientes = await response.json();
           const ownerSelect = document.getElementById("ownerId");
           ownerSelect.innerHTML = '<option value="">Selecione o dono</option>';
@@ -816,8 +815,7 @@
 
       carregarClientes();
 
-      // 2️⃣ Carrega pets
-      fetch("http://localhost:8080/animais/listar")
+      fetch("http://localhost:8081/animais/listar")
         .then((response) => response.json())
         .then((data) => {
           pets = data;
@@ -945,7 +943,7 @@
         );
         if (!confirmDelete) return;
 
-        fetch(`http://localhost:8080/animais/deletar/${petId}`, {
+        fetch(`http://localhost:8081/animais/deletar/${petId}`, {
           method: "DELETE",
         })
           .then(async (response) => {
@@ -1027,8 +1025,8 @@
           };
 
           const url = id
-            ? `http://localhost:8080/animais/${id}`
-            : "http://localhost:8080/animais/criar";
+            ? `http://localhost:8081/animais/${id}`
+            : "http://localhost:8081/animais/criar";
           const method = id ? "PUT" : "POST";
 
           try {
