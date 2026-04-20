@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>PetShop Pro - PDV / Carrinho</title>
     <script src="https://unpkg.com/lucide@latest"></script>
+    <link rel="icon" type="image/png" href="../gato-preto-malvado.png" />
     <link
       href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
       rel="stylesheet"
@@ -253,6 +254,23 @@
       .modal-body {
         padding: 24px;
         overflow-y: auto;
+      }
+
+      .payment-select {
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        padding: 6px 10px;
+        font-weight: 600;
+        background: var(--white);
+        color: var(--text-main);
+        cursor: pointer;
+        outline: none;
+        transition: 0.2s;
+      }
+
+      .payment-select:focus {
+        border-color: var(--primary);
+        box-shadow: 0 0 0 3px var(--primary-bg-light);
       }
 
       .customer-list-item {
@@ -588,7 +606,7 @@
 
       <p class="menu-label">Painel</p>
       <nav>
-        <a href="../TelaInicial/TelaInicia.html" class="nav-item">
+        <a href="../TelaInicial/index.html" class="nav-item">
           <i data-lucide="layout-dashboard"></i> Dashboard
         </a>
         <a href="../Agenda/Agenda.html" class="nav-item">
@@ -620,6 +638,10 @@
         >
         <a href="../GastosPrevistos/GastosPrevistos.html" class="nav-item"
           ><i data-lucide="trending-down"></i> Gastos Previstos</a
+        >
+        <a href="../HistoricoVendas/HistoricoVendas.html" class="nav-item"
+          ><i data-lucide="wallet"></i>
+          <span>Histórico de Vendas</span></a
         >
       </nav>
     </aside>
@@ -755,6 +777,16 @@
                 >- R$ 0,00</span
               >
             </div>
+            <div class="summary-row">
+              <span>Pagamento</span>
+              <select id="payment-method" class="payment-select">
+                <option value="dinheiro">Dinheiro</option>
+                <option value="credito">Cartão de Crédito</option>
+                <option value="debito">Cartão de Débito</option>
+                <option value="pix">PIX</option>
+                <option value="outros">Outros</option>
+              </select>
+            </div>
             <div class="total-row">
               <span>Total Final</span>
               <span class="total-value" id="total-final">R$ 0,00</span>
@@ -825,7 +857,7 @@
       let customers = [];
 
       function carregarCarrinhoDoBackend(idCliente) {
-        fetch(`http://localhost:8080/carrinho/itens/${idCliente}`)
+        fetch(`http://localhost:8081/carrinho/itens/${idCliente}`)
           .then((response) => {
             if (!response.ok) throw new Error("Erro ao buscar carrinho");
             return response.json();
@@ -849,7 +881,7 @@
       // Função para carregar serviços do backend
       async function fetchProdutos() {
         const res = await fetch(
-          "http://localhost:8080/produto/ativos-quantidade",
+          "http://localhost:8081/produto/ativos-quantidade",
         );
         if (!res.ok) throw new Error("Erro ao buscar produtos");
         const produtos = await res.json();
@@ -863,7 +895,7 @@
       }
 
       async function fetchServicos() {
-        const res = await fetch("http://localhost:8080/servico/ativos");
+        const res = await fetch("http://localhost:8081/servico/ativos");
         if (!res.ok) throw new Error("Erro ao buscar serviços");
         const servicos = await res.json();
 
@@ -1024,7 +1056,7 @@
           itens: [itemPayload],
         };
 
-        fetch("http://localhost:8080/carrinho", {
+        fetch("http://localhost:8081/carrinho", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(payload),
@@ -1057,7 +1089,7 @@
       }
 
       function carregarClientes() {
-        fetch("http://localhost:8080/clientes/listar")
+        fetch("http://localhost:8081/clientes/listar")
           .then((response) => {
             if (!response.ok) throw new Error("Erro ao buscar clientes");
             return response.json();
@@ -1131,6 +1163,7 @@
       // Finaliza venda
       function finishSale() {
         const idCliente = localStorage.getItem("idCliente");
+        const metodoPagamento = document.getElementById("payment-method").value;
 
         if (!idCliente) {
           alert("Selecione um cliente!");
@@ -1144,9 +1177,10 @@
 
         const payload = {
           idCliente: idCliente,
+          metodoPagamento: metodoPagamento,
         };
 
-        fetch("http://localhost:8080/carrinho/finalizar", {
+        fetch("http://localhost:8081/carrinho/finalizar", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -1169,9 +1203,9 @@
       // Atualiza a interface do carrinho
       let timeoutDesconto;
       function aplicarDescontoBackend(porcentagem) {
-        const idCliente = 1; // ⚠️ depois pega dinamicamente
+        const idCliente = 1;
 
-        fetch(`http://localhost:8080/carrinho/${idCliente}/${porcentagem}`, {
+        fetch(`http://localhost:8081/carrinho/${idCliente}/${porcentagem}`, {
           method: "PUT",
         })
           .then((res) => {
@@ -1212,8 +1246,8 @@
 
         const url =
           delta > 0
-            ? `http://localhost:8080/carrinho/adicionar-quantidade/${idCliente}`
-            : `http://localhost:8080/carrinho/remover-quantidade/${idCliente}`;
+            ? `http://localhost:8081/carrinho/adicionar-quantidade/${idCliente}`
+            : `http://localhost:8081/carrinho/remover-quantidade/${idCliente}`;
 
         fetch(url, {
           method: "PATCH",
@@ -1242,7 +1276,7 @@
           itens: [itemPayload],
         };
 
-        fetch(`http://localhost:8080/carrinho/deletar-item/${idCliente}`, {
+        fetch(`http://localhost:8081/carrinho/deletar-item/${idCliente}`, {
           method: "DELETE",
           headers: {
             "Content-Type": "application/json",
