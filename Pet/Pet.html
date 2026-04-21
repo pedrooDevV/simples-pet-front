@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>PetShop Pro - Animais</title>
     <script src="https://unpkg.com/lucide@latest"></script>
+    <link rel="icon" type="image/png" href="../gato-preto-malvado.png" />
     <link
       href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
       rel="stylesheet"
@@ -352,6 +353,26 @@
         }
       }
 
+      .btn-add-inline {
+        height: 44px;
+        width: 44px;
+        min-width: 44px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background-color: var(--primary-bg-light);
+        color: var(--primary);
+        border: 1px solid var(--primary);
+        border-radius: 10px;
+        cursor: pointer;
+        transition: 0.2s;
+      }
+
+      .btn-add-inline:hover {
+        background-color: var(--primary);
+        color: white;
+      }
+
       .action-btn {
         border-radius: 8px;
         font-weight: 500;
@@ -575,9 +596,8 @@
         <a href="../GastosPrevistos/GastosPrevistos.html" class="nav-item">
           <i data-lucide="trending-down"></i> Gastos Previstos
         </a>
-                <a href="../HistoricoVendas/HistoricoVendas.html" class="nav-item"
-          ><i data-lucide="wallet"></i>
-          <span>Histórico de Vendas</span></a
+        <a href="../HistoricoVendas/HistoricoVendas.html" class="nav-item"
+          ><i data-lucide="wallet"></i> <span>Histórico de Vendas</span></a
         >
       </nav>
     </aside>
@@ -603,16 +623,34 @@
               id="searchBar"
             />
           </div>
-          <div
-            style="
-              font-weight: 600;
-              color: var(--text-secondary);
-              font-size: 0.85rem;
-            "
-          >
-            Total:
-            <span id="count-pets" style="color: var(--primary)">0</span>
-            cadastrados
+
+          <div style="display: flex; gap: 10px; align-items: center">
+            <button
+              class="btn-add-inline"
+              id="sortAz"
+              title="Ordenar A-Z"
+              style="
+                width: auto;
+                padding: 0 10px;
+                gap: 5px;
+                font-size: 0.8rem;
+                font-weight: 600;
+              "
+            >
+              <i data-lucide="sort-asc" style="width: 16px"></i> A-Z
+            </button>
+
+            <div
+              style="
+                font-weight: 600;
+                color: var(--text-secondary);
+                font-size: 0.85rem;
+              "
+            >
+              Exibindo
+              <span id="count-pets" style="color: var(--primary)">0</span>
+              pets
+            </div>
           </div>
         </div>
 
@@ -1003,6 +1041,19 @@
           ownerSelect.value = p.clienteId || "";
         }
       }
+
+      document.getElementById("sortAz").addEventListener("click", () => {
+        // Ordena a lista de pets alfabeticamente
+        pets.sort((a, b) => {
+          return a.nome.localeCompare(b.nome, "pt-BR", { sensitivity: "base" });
+        });
+
+        // Renderiza a tabela de novo
+        renderPets(pets);
+
+        // Feedback visual
+        showToast("Pets ordenados de A a Z!");
+      });
 
       function closeModal() {
         document.getElementById("modalOverlay").style.display = "none";
