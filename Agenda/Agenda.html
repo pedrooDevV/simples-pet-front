@@ -1,0 +1,1079 @@
+<!doctype html>
+<html lang="pt-br">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>PetShop Pro - Agenda</title>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <link rel="icon" type="image/png" href="../gato-preto-malvado.png" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --primary: #3a86ff;
+        --primary-hover: #265df2;
+        --primary-bg-light: #eaf2ff;
+        --secondary: #2ec4b6;
+        --secondary-bg-light: #dff7f4;
+        --accent: #ff9f1c;
+        --accent-bg-light: #ffe8cc;
+        --danger: #ff4d4d;
+        --danger-bg-light: #fff0f0;
+        --bg-general: #f7f9fc;
+        --white: #ffffff;
+        --text-main: #1e293b;
+        --text-secondary: #64748b;
+        --border: #e2e8f0;
+        --shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1);
+      }
+
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: "Inter", sans-serif;
+      }
+
+      body {
+        background-color: var(--bg-general);
+        color: var(--text-main);
+        display: flex;
+        min-height: 100vh;
+      }
+
+      /* Sidebar - Identical to Dashboard */
+      aside {
+        width: 280px;
+        background-color: var(--white);
+        border-right: 1px solid var(--border);
+        display: flex;
+        flex-direction: column;
+        position: fixed;
+        height: 100vh;
+        z-index: 10;
+        box-shadow: 4px 0 20px rgba(0, 0, 0, 0.05);
+      }
+
+      .logo-container {
+        padding: 32px 24px;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        font-weight: 800;
+        font-size: 1.4rem;
+        color: var(--primary);
+      }
+
+      .menu-label {
+        padding: 0 24px 8px;
+        font-size: 0.7rem;
+        text-transform: uppercase;
+        font-weight: 700;
+        color: var(--text-secondary);
+        letter-spacing: 1px;
+      }
+
+      nav {
+        flex: 1;
+        padding: 0 16px;
+        overflow-y: auto;
+      }
+
+      .nav-item {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 14px 16px;
+        text-decoration: none;
+        color: var(--text-secondary);
+        border-radius: 12px;
+        margin-bottom: 6px;
+        transition: 0.2s;
+        font-weight: 600;
+        font-size: 0.9rem;
+      }
+
+      .nav-item:hover {
+        background-color: var(--primary-bg-light);
+        color: var(--primary);
+      }
+
+      .nav-item.active {
+        background-color: var(--primary);
+        color: var(--white);
+        box-shadow: 0 8px 15px rgba(58, 134, 255, 0.3);
+      }
+
+      .nav-item i {
+        width: 20px;
+        height: 20px;
+      }
+
+      /* Main Content Area */
+      main {
+        margin-left: 280px;
+        flex: 1;
+        padding: 40px;
+        max-width: calc(100vw - 280px);
+      }
+
+      header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 32px;
+      }
+
+      .header-info h1 {
+        font-size: 2rem;
+        font-weight: 800;
+      }
+
+      .header-info p {
+        color: var(--text-secondary);
+        font-weight: 500;
+      }
+
+      /* Agenda Selector Styling */
+      .agenda-header-actions {
+        display: flex;
+        align-items: center;
+        gap: 20px;
+      }
+
+      .agenda-selector-container {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        background: var(--white);
+        padding: 8px 16px;
+        border-radius: 12px;
+        border: 1px solid var(--border);
+      }
+
+      .agenda-selector-container label {
+        font-size: 0.8rem;
+        font-weight: 700;
+        color: var(--text-secondary);
+        text-transform: uppercase;
+      }
+
+      .event-card.AGENDADO {
+        background-color: #93c5fd;
+        /* azul claro */
+        color: #1e3a8a;
+        /* azul escuro para contraste */
+      }
+
+      .event-card.FINALIZADA {
+        background-color: #bbf7d0;
+        /* verde claro */
+        color: #166534;
+        /* verde escuro */
+      }
+
+      .event-card.CANCELADA {
+        background-color: #fecaca;
+        /* vermelho claro */
+        color: #991b1b;
+        /* vermelho escuro */
+      }
+
+      /* opcional: hover para efeito */
+      .event-card {
+        transition:
+          transform 0.2s ease,
+          box-shadow 0.2s ease;
+      }
+
+      .event-card:hover {
+        transform: scale(1.03);
+        /* leve aumento */
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
+        /* sombra suave */
+        cursor: pointer;
+      }
+
+      .agenda-select {
+        border: none;
+        background: var(--bg-general);
+        padding: 6px 12px;
+        border-radius: 8px;
+        font-weight: 700;
+        color: var(--primary);
+        cursor: pointer;
+        outline: none;
+      }
+
+      .btn-primary {
+        background: var(--primary);
+        color: white;
+        border: none;
+        padding: 12px 24px;
+        border-radius: 12px;
+        font-weight: 700;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        transition: 0.2s;
+      }
+
+      .btn-primary:hover {
+        background: var(--primary-hover);
+        transform: translateY(-2px);
+      }
+
+      /* Calendar Controls */
+      .calendar-controls {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        background: var(--white);
+        padding: 16px 24px;
+        border-radius: 16px 16px 0 0;
+        border: 1px solid var(--border);
+        border-bottom: none;
+      }
+
+      .date-navigation {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+      }
+
+      .current-month {
+        font-weight: 800;
+        font-size: 1.1rem;
+        min-width: 250px;
+        text-align: center;
+      }
+
+      .nav-btn {
+        background: var(--bg-general);
+        border: 1px solid var(--border);
+        width: 36px;
+        height: 36px;
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        transition: 0.2s;
+      }
+
+      .nav-btn:hover {
+        background: var(--border);
+      }
+
+      .view-switcher {
+        display: flex;
+        background: var(--bg-general);
+        padding: 4px;
+        border-radius: 10px;
+        gap: 4px;
+      }
+
+      .event-card {
+        position: absolute;
+        left: 4px;
+        right: 4px;
+        border-radius: 10px;
+        padding: 10px;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        transition:
+          transform 0.2s,
+          box-shadow 0.2s;
+        border-left-width: 5px;
+      }
+
+      .event-card:hover {
+        transform: scale(1.02);
+        z-index: 10;
+        box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.2);
+      }
+
+      .view-btn {
+        border: none;
+        background: none;
+        padding: 6px 16px;
+        border-radius: 8px;
+        font-weight: 700;
+        font-size: 0.85rem;
+        cursor: pointer;
+        color: var(--text-secondary);
+        transition: 0.2s;
+      }
+
+      .view-btn.active {
+        background: var(--white);
+        color: var(--primary);
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+      }
+
+      /* Agenda Grid */
+      .calendar-container {
+        background: var(--white);
+        border-radius: 0 0 16px 16px;
+        border: 1px solid var(--border);
+        overflow-x: auto;
+        display: grid;
+        grid-template-columns: 80px repeat(7, 1fr);
+        min-width: 900px;
+      }
+
+      .grid-header {
+        background: #fafbfc;
+        padding: 16px 0;
+        text-align: center;
+        border-bottom: 1px solid var(--border);
+        border-left: 1px solid var(--border);
+        font-weight: 700;
+        font-size: 0.85rem;
+      }
+
+      .grid-header span {
+        display: block;
+        color: var(--text-secondary);
+        font-size: 0.75rem;
+        margin-top: 4px;
+      }
+
+      .time-slots {
+        grid-column: 1;
+      }
+
+      .time-label {
+        padding: 12px 0;
+        text-align: center;
+        font-size: 0.75rem;
+        font-weight: 700;
+        color: var(--text-secondary);
+        border-bottom: 1px solid var(--border);
+        height: 100px;
+        display: flex;
+        align-items: flex-start;
+        justify-content: center;
+      }
+
+      .day-column {
+        border-left: 1px solid var(--border);
+        position: relative;
+        background-image: linear-gradient(var(--border) 1px, transparent 1px);
+        background-size: 100% 100px;
+        min-height: 1000px;
+      }
+
+      .day-column:hover {
+        background-color: rgba(58, 134, 255, 0.02);
+      }
+
+      /* Event Cards */
+      .event-card {
+        position: absolute;
+        left: 4px;
+        right: 4px;
+        background: var(--primary-bg-light);
+        border-left: 4px solid var(--primary);
+        border-radius: 8px;
+        padding: 8px;
+        font-size: 0.75rem;
+        cursor: pointer;
+        overflow: hidden;
+        transition: 0.2s;
+        z-index: 2;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+      }
+
+      .event-card:hover {
+        transform: translateY(-2px);
+        z-index: 10;
+        box-shadow: var(--shadow);
+      }
+
+      /* Status Colors - Refletindo o Enum Java */
+      .event-card.AGENDADO {
+        border-left-color: var(--primary);
+        background: var(--primary-bg-light);
+      }
+
+      .event-card.FINALIZADA {
+        border-left-color: var(--secondary);
+        background: var(--secondary-bg-light);
+      }
+
+      .event-card.CANCELADO {
+        border-left-color: var(--danger);
+        background: var(--danger-bg-light);
+      }
+
+      .event-card strong {
+        display: block;
+        color: var(--text-main);
+        font-weight: 800;
+        margin-bottom: 2px;
+      }
+
+      .event-card span {
+        display: block;
+        color: var(--text-secondary);
+        font-weight: 600;
+      }
+
+      /* Modal */
+      .modal-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(15, 23, 42, 0.6);
+        display: none;
+        justify-content: center;
+        align-items: center;
+        z-index: 1000;
+        backdrop-filter: blur(4px);
+      }
+
+      .modal {
+        background: var(--white);
+        width: 100%;
+        max-width: 480px;
+        border-radius: 20px;
+        padding: 32px;
+        box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+        animation: modalIn 0.3s ease-out;
+      }
+
+      @keyframes modalIn {
+        from {
+          opacity: 0;
+          transform: translateY(20px);
+        }
+
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      .modal-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 24px;
+      }
+
+      .modal-title {
+        font-weight: 800;
+        font-size: 1.4rem;
+        color: var(--text-main);
+      }
+
+      .form-group {
+        margin-bottom: 16px;
+      }
+
+      .form-group label {
+        display: block;
+        font-weight: 700;
+        font-size: 0.85rem;
+        margin-bottom: 8px;
+        color: var(--text-secondary);
+      }
+
+      .form-control {
+        width: 100%;
+        padding: 12px 16px;
+        border-radius: 10px;
+        border: 1px solid var(--border);
+        background: var(--bg-general);
+        font-weight: 600;
+        outline: none;
+        transition: 0.2s;
+      }
+
+      .form-control:focus {
+        border-color: var(--primary);
+        background: var(--white);
+        box-shadow: 0 0 0 4px var(--primary-bg-light);
+      }
+
+      /* Status Buttons Section */
+      .status-group {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 8px;
+        margin-top: 8px;
+      }
+
+      .status-btn {
+        border: 1px solid var(--border);
+        background: var(--white);
+        padding: 10px;
+        border-radius: 10px;
+        font-size: 0.75rem;
+        font-weight: 700;
+        cursor: pointer;
+        transition: 0.2s;
+        color: var(--text-secondary);
+        text-align: center;
+      }
+
+      .status-btn.active[data-status="AGENDADO"] {
+        background: var(--primary);
+        color: white;
+        border-color: var(--primary);
+      }
+
+      .status-btn.active[data-status="FINALIZADA"] {
+        background: var(--secondary);
+        color: white;
+        border-color: var(--secondary);
+      }
+
+      .status-btn.active[data-status="CANCELADO"] {
+        background: var(--danger);
+        color: white;
+        border-color: var(--danger);
+      }
+
+      .modal-footer {
+        display: flex;
+        gap: 12px;
+        margin-top: 24px;
+      }
+
+      .btn-ghost {
+        background: none;
+        border: 1px solid var(--border);
+        padding: 12px;
+        font-weight: 700;
+        color: var(--text-secondary);
+        cursor: pointer;
+        flex: 1;
+        border-radius: 12px;
+        transition: 0.2s;
+      }
+
+      .btn-ghost:hover {
+        background: var(--bg-general);
+      }
+
+      .btn-submit {
+        flex: 2;
+      }
+    </style>
+  </head>
+
+  <body>
+    <aside>
+      <div class="logo-container">
+        <i data-lucide="dog" style="width: 32px; height: 32px"></i>
+        <span>PetShop Pro</span>
+      </div>
+
+      <p class="menu-label">Painel</p>
+      <nav>
+        <a href="../TelaInicial/index.html" class="nav-item">
+          <i data-lucide="layout-dashboard"></i> Dashboard
+        </a>
+        <a href="../Agenda/Agenda.html" class="nav-item active">
+          <i data-lucide="calendar"></i> Agenda Teams
+        </a>
+
+        <p class="menu-label" style="margin-top: 24px">Vendas e Serviços</p>
+        <a href="../Carrinho/Carrinho.html" class="nav-item"
+          ><i data-lucide="shopping-cart"></i> Carrinho / PDV</a
+        >
+        <a href="../CatalogoServico/CatalogoServico.html" class="nav-item"
+          ><i data-lucide="scissors"></i> Catálogo de Serviços</a
+        >
+
+        <p class="menu-label" style="margin-top: 24px">Cadastros</p>
+        <a href="../Clientes/Cliente.html" class="nav-item"
+          ><i data-lucide="users"></i> Clientes</a
+        >
+        <a href="../Pet/Pet.html" class="nav-item"
+          ><i data-lucide="paw-print"></i> Animais</a
+        >
+        <a href="../Produtos/Produto.html" class="nav-item"
+          ><i data-lucide="package"></i> Itens / Produtos</a
+        >
+
+        <p class="menu-label" style="margin-top: 24px">Gestão</p>
+        <a href="../Estoque/Estoque.html" class="nav-item"
+          ><i data-lucide="boxes"></i> Controle de Estoque</a
+        >
+        <a href="../GastosPrevistos/GastosPrevistos.html" class="nav-item"
+          ><i data-lucide="trending-down"></i> Gastos Previstos</a
+        >
+        <a href="../HistoricoVendas/HistoricoVendas.html" class="nav-item"
+          ><i data-lucide="wallet"></i>
+          <span>Histórico de Vendas</span></a
+        >
+      </nav>
+    </aside>
+
+    <main>
+      <header>
+        <div class="header-info">
+          <h1>
+            Agenda de:
+            <span id="current-user-name" style="color: var(--primary)"
+              >Thais</span
+            >
+          </h1>
+          <p>Gerencie os serviços e horários da semana</p>
+        </div>
+
+        <div class="agenda-header-actions">
+          <div class="agenda-selector-container">
+            <label>Agenda:</label>
+            <select
+              id="agenda-switch"
+              class="agenda-select"
+              onchange="changeAgenda()"
+            >
+              <option value="1">Agenda 1: Tais</option>
+              <option value="2">Agenda 2: Tais</option>
+            </select>
+          </div>
+
+          <button class="btn-primary" onclick="openModal()">
+            <i data-lucide="plus"></i> Novo Agendamento
+          </button>
+        </div>
+      </header>
+
+      <div class="calendar-controls">
+        <div class="date-navigation">
+          <button class="nav-btn" onclick="changeWeek(-7)">
+            <i data-lucide="chevron-left"></i>
+          </button>
+          <div class="current-month" id="date-range-display">
+            23 - 29 de Março, 2026
+          </div>
+          <button class="nav-btn" onclick="changeWeek(7)">
+            <i data-lucide="chevron-right"></i>
+          </button>
+          <button
+            class="nav-btn"
+            onclick="goToday()"
+            style="
+              width: auto;
+              padding: 0 16px;
+              font-size: 0.8rem;
+              font-weight: 700;
+            "
+          >
+            Hoje
+          </button>
+        </div>
+      </div>
+
+      <div class="calendar-container" id="calendar-grid"></div>
+    </main>
+
+    <div class="modal-overlay" id="modalNovo">
+      <div class="modal">
+        <div class="modal-header">
+          <h2 class="modal-title" id="modal-title">Detalhes do Agendamento</h2>
+          <button
+            onclick="closeModal()"
+            style="
+              background: none;
+              border: none;
+              cursor: pointer;
+              color: var(--text-secondary);
+            "
+          >
+            <i data-lucide="x"></i>
+          </button>
+        </div>
+
+        <input type="hidden" id="edit-id" />
+
+        <div class="form-group">
+          <label>Cliente</label>
+          <select id="select-cliente" class="form-control">
+            <option value="">Carregando clientes...</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label>Animal (Pet)</label>
+          <select id="select-pet" class="form-control">
+            <option value="">Carregando animais...</option>
+          </select>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px">
+          <div class="form-group">
+            <label>Data</label>
+            <input type="date" id="input-data" class="form-control" />
+          </div>
+          <div class="form-group">
+            <label>Horário</label>
+            <input type="time" id="input-horario" class="form-control" />
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>Serviço</label>
+          <select id="select-servico" class="form-control">
+            <option value="">Carregando serviços...</option>
+          </select>
+        </div>
+
+        <div class="form-group" id="status-selection-container">
+          <label>Status do Atendimento</label>
+          <div class="status-group">
+            <button
+              class="status-btn"
+              data-status="AGENDADO"
+              onclick="updateStatusViaPatch(this)"
+            >
+              Agendada
+            </button>
+            <button
+              class="status-btn"
+              data-status="FINALIZADA"
+              onclick="updateStatusViaPatch(this)"
+            >
+              Finalizada
+            </button>
+            <button
+              class="status-btn"
+              data-status="CANCELADA"
+              onclick="updateStatusViaPatch(this)"
+            >
+              Cancelada
+            </button>
+          </div>
+          <input type="hidden" id="input-status" value="AGENDADO" />
+        </div>
+
+        <div class="modal-footer">
+          <button class="btn-ghost" onclick="closeModal()">Sair</button>
+          <button class="btn-primary btn-submit" onclick="saveChanges()">
+            Salvar Alterações
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      lucide.createIcons();
+
+      const API_BASE_URL = "http://localhost:8081/agenda";
+      const ENDPOINTS_LISTAR = {
+        clientes: "http://localhost:8081/clientes/listar",
+        animais: "http://localhost:8081/animais/listar",
+        servicos: "http://localhost:8081/servico/listar",
+      };
+
+      let loadedAgendas = [];
+      let currentAnchorDate = new Date();
+
+      function getMonday(d) {
+        d = new Date(d);
+        let day = d.getDay(),
+          diff = d.getDate() - day + (day === 0 ? -6 : 1);
+        let monday = new Date(d.setDate(diff));
+        monday.setHours(0, 0, 0, 0);
+        return monday;
+      }
+
+      function changeWeek(days) {
+        currentAnchorDate.setDate(currentAnchorDate.getDate() + days);
+        renderCalendar();
+      }
+
+      function goToday() {
+        currentAnchorDate = new Date();
+        renderCalendar();
+      }
+
+      let animaisCarregados = []; // Guarda todos os pets para filtrar depois
+
+      async function carregarListasParaModal() {
+        try {
+          const [resClie, resAnim, resServ] = await Promise.all([
+            fetch(ENDPOINTS_LISTAR.clientes),
+            fetch(ENDPOINTS_LISTAR.animais),
+            fetch(ENDPOINTS_LISTAR.servicos),
+          ]);
+
+          if (!resClie.ok || !resAnim.ok || !resServ.ok)
+            throw new Error("Erro ao resgatar listas");
+
+          const clientes = await resClie.json();
+          const animais = await resAnim.json();
+          const servicos = await resServ.json();
+
+          // ===== Select de Clientes =====
+          const selectCliente = document.getElementById("select-cliente");
+          selectCliente.innerHTML =
+            '<option value="">Selecione o Cliente</option>';
+          clientes.forEach((c) => {
+            selectCliente.innerHTML += `<option value="${c.id}">${c.nome}</option>`;
+          });
+
+          // ===== Select de Animais =====
+          const selectPet = document.getElementById("select-pet");
+          selectPet.innerHTML = '<option value="">Selecione o Animal</option>';
+
+          // Função para filtrar animais do cliente selecionado
+          window.atualizarSelectPets = function (clienteId) {
+            selectPet.innerHTML =
+              '<option value="">Selecione o Animal</option>';
+            const petsFiltrados = clienteId
+              ? animais.filter((a) => a.clienteId === Number(clienteId))
+              : [];
+            petsFiltrados.forEach((a) => {
+              selectPet.innerHTML += `<option value="${a.id}">${a.nome} (${a.especie})</option>`;
+            });
+          };
+
+          // Atualiza os pets quando mudar o cliente
+          selectCliente.addEventListener("change", (e) => {
+            atualizarSelectPets(e.target.value);
+          });
+
+          // ===== Select de Serviços =====
+          const selectServico = document.getElementById("select-servico");
+          selectServico.innerHTML =
+            '<option value="">Selecione o Serviço</option>';
+          servicos.forEach((s) => {
+            selectServico.innerHTML += `<option value="${s.id}">${s.nomeServico}</option>`;
+          });
+        } catch (error) {
+          console.error("Erro ao carregar dados dos selects:", error);
+        }
+      }
+
+      async function renderCalendar() {
+        const agendaNumero = document.getElementById("agenda-switch").value;
+        const container = document.getElementById("calendar-grid");
+
+        const monday = getMonday(currentAnchorDate);
+        const sunday = new Date(monday);
+        sunday.setDate(monday.getDate() + 6);
+
+        const options = { day: "2-digit", month: "long" };
+        document.getElementById("date-range-display").innerText =
+          `${monday.toLocaleDateString("pt-BR", options)} - ${sunday.toLocaleDateString("pt-BR", options)}, ${monday.getFullYear()}`;
+
+        try {
+          const response = await fetch(
+            `${API_BASE_URL}/agenda/${agendaNumero}`,
+          );
+          if (!response.ok) throw new Error("Erro ao buscar dados");
+          loadedAgendas = await response.json();
+        } catch (error) {
+          console.error("Erro na API:", error);
+          loadedAgendas = [];
+        }
+
+        let html = `
+          <div class="grid-header" style="border-left: none">Horário</div>
+        `;
+
+        const daysNames = ["Seg", "Ter", "Qua", "Qui", "Sex", "Sáb", "Dom"];
+        for (let i = 0; i < 7; i++) {
+          const d = new Date(monday);
+          d.setDate(monday.getDate() + i);
+          html += `<div class="grid-header">${daysNames[i]} <span>${d.getDate()}</span></div>`;
+        }
+
+        html += `<div class="time-slots">`;
+        for (let h = 8; h <= 22; h++) {
+          html += `<div class="time-label">${h.toString().padStart(2, "0")}:00</div>`;
+        }
+        html += `</div>`;
+
+        for (let i = 0; i < 7; i++) {
+          const currentDay = new Date(monday);
+          currentDay.setDate(monday.getDate() + i);
+          const dStr = currentDay.toISOString().split("T")[0];
+
+          let eventHtml = "";
+          const dayEvents = loadedAgendas.filter((e) => e.data === dStr);
+
+          dayEvents.forEach((e) => {
+            const hour = parseInt(e.horaInicio.split(":")[0]);
+            const minutes = parseInt(e.horaInicio.split(":")[1]);
+            const topPosition = (hour - 8) * 100 + (minutes / 60) * 100;
+            const precoFormatado = new Intl.NumberFormat("pt-BR", {
+              style: "currency",
+              currency: "BRL",
+            }).format(e.valorDaAgenda);
+
+            eventHtml += `
+      <div class="event-card ${e.statusAgenda}" 
+           style="top: ${topPosition}px; height: 90px; display: flex; flex-direction: column; justify-content: space-between;" 
+           onclick="openEditModal(${e.id})">
+        <div>
+            <div style="font-weight: 800; font-size: 0.8rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+                ${e.nomeCliente} • ${e.nomeAnimal}
+            </div>
+            <div style="font-size: 0.7rem; opacity: 0.9; margin-top: 2px;">
+                <i data-lucide="scissors" style="width: 10px; height: 10px; display: inline-block;"></i> 
+                ${e.nomeServico}
+            </div>
+        </div>
+        <div style="font-weight: 700; color: var(--primary); background: rgba(255,255,255,0.5); padding: 2px 4px; border-radius: 4px; align-self: flex-start; font-size: 0.7rem; margin-top: 4px;">
+            ${precoFormatado}
+        </div>
+      </div>`;
+          });
+
+          html += `<div class="day-column">${eventHtml}</div>`;
+        }
+
+        container.innerHTML = html;
+        document.getElementById("current-user-name").innerText = "Tais";
+        lucide.createIcons();
+      }
+
+      function openEditModal(id) {
+        const item = loadedAgendas.find((a) => a.id === id);
+        if (!item) return;
+
+        carregarListasParaModal().then(() => {
+          const selectCliente = document.getElementById("select-cliente");
+          const selectPet = document.getElementById("select-pet");
+
+          document.getElementById("edit-id").value = item.id;
+
+          selectCliente.value = item.idCliente;
+
+          atualizarSelectPets(item.idCliente);
+
+          selectPet.value = item.idAnimal;
+
+          document.getElementById("select-servico").value = item.idServico;
+          document.getElementById("input-data").value = item.data;
+          document.getElementById("input-horario").value =
+            item.horaInicio.substring(0, 5);
+
+          setStatus(item.statusAgenda);
+
+          document.getElementById("status-selection-container").style.display =
+            "block";
+          document.getElementById("modal-title").innerText =
+            "Editar Agendamento";
+          document.getElementById("modalNovo").style.display = "flex";
+        });
+      }
+
+      function setStatus(status) {
+        document.getElementById("input-status").value = status;
+        document.querySelectorAll(".status-btn").forEach((btn) => {
+          btn.classList.remove("active");
+          if (btn.dataset.status === status) btn.classList.add("active");
+        });
+      }
+
+      async function updateStatusViaPatch(button) {
+        const id = document.getElementById("edit-id").value;
+        if (!id) return;
+
+        const status = button.dataset.status; // "AGENDADO", "FINALIZADA", "CANCELADA"
+        const path = status.toLowerCase(); // transforma em "agendado", "finalizada", "cancelado"
+
+        try {
+          const response = await fetch(`${API_BASE_URL}/${path}/${id}`, {
+            method: "PATCH",
+          });
+          if (response.ok) {
+            closeModal();
+            renderCalendar();
+          } else {
+            console.error("Erro no fetch:", await response.text());
+          }
+        } catch (error) {
+          console.error("Erro ao atualizar status", error);
+        }
+      }
+
+      async function saveChanges() {
+        const btn = document.querySelector(".btn-submit");
+        const elId = document.getElementById("edit-id");
+        const elCliente = document.getElementById("select-cliente");
+        const elPet = document.getElementById("select-pet");
+        const elServico = document.getElementById("select-servico");
+        const elData = document.getElementById("input-data");
+        const elHorario = document.getElementById("input-horario");
+        const elAgenda = document.getElementById("agenda-switch");
+
+        if (
+          !elCliente.value ||
+          !elPet.value ||
+          !elServico.value ||
+          !elHorario.value
+        ) {
+          alert(
+            "Erro: Certifique-se de que Cliente, Pet, Serviço e Horário foram selecionados.",
+          );
+          return;
+        }
+
+        const [horas, minutos] = elHorario.value.split(":").map(Number);
+        const d = new Date();
+        d.setHours(horas + 1, minutos, 0);
+        const horaFimStr =
+          d.toTimeString().split(" ")[0].substring(0, 5) + ":00";
+
+        const agendaDTO = {
+          id: elId.value ? parseInt(elId.value) : null,
+          idCliente: Number(elCliente.value),
+          idAnimal: Number(elPet.value),
+          idServico: Number(elServico.value),
+          data: elData.value,
+          horaInicio: elHorario.value + ":00",
+          horaFim: horaFimStr,
+          numeroAgenda: parseInt(elAgenda.value),
+        };
+
+        try {
+          const response = await fetch(API_BASE_URL, {
+            method: agendaDTO.id ? "PUT" : "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(agendaDTO),
+          });
+          if (response.ok) {
+            closeModal();
+            renderCalendar();
+          }
+        } catch (error) {
+          console.error("Erro na conexão:", error);
+        }
+      }
+
+      function changeAgenda() {
+        renderCalendar();
+      }
+      function openModal() {
+        document.getElementById("edit-id").value = "";
+        carregarListasParaModal();
+        document.getElementById("status-selection-container").style.display =
+          "none";
+        document.getElementById("modal-title").innerText = "Novo Agendamento";
+        setStatus("AGENDADO");
+        document.getElementById("modalNovo").style.display = "flex";
+      }
+      function closeModal() {
+        document.getElementById("modalNovo").style.display = "none";
+      }
+      window.onclick = function (event) {
+        if (event.target == document.getElementById("modalNovo")) closeModal();
+      };
+
+      renderCalendar();
+    </script>
+  </body>
+</html>
