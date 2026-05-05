@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>PetShop Pro - Itens / Produtos</title>
     <script src="https://unpkg.com/lucide@latest"></script>
-    <link rel="icon" type="image/png" href="../gato-preto-malvado.png">
+    <link rel="icon" type="image/png" href="../gato-preto-malvado.png" />
     <link
       href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
       rel="stylesheet"
@@ -822,7 +822,7 @@
         >
 
         <p class="menu-label" style="margin-top: 24px">Cadastros</p>
-        <a href="/Clientes/Cliente.html" class="nav-item"
+        <a href="../Clientes/Cliente.html" class="nav-item"
           ><i data-lucide="users"></i> Clientes</a
         >
         <a href="../Pet/Pet.html" class="nav-item"
@@ -839,9 +839,8 @@
         <a href="../GastosPrevistos/GastosPrevistos.html" class="nav-item"
           ><i data-lucide="trending-down"></i> Gastos Previstos</a
         >
-                <a href="../HistoricoVendas/HistoricoVendas.html" class="nav-item"
-          ><i data-lucide="wallet"></i>
-          <span>Histórico de Vendas</span></a
+        <a href="../HistoricoVendas/HistoricoVendas.html" class="nav-item"
+          ><i data-lucide="wallet"></i> <span>Histórico de Vendas</span></a
         >
       </nav>
     </aside>
@@ -867,15 +866,33 @@
               id="searchBar"
             />
           </div>
-          <div
-            style="
-              font-weight: 600;
-              color: var(--text-secondary);
-              font-size: 0.85rem;
-            "
-          >
-            Exibindo
-            <span id="count-items" style="color: var(--primary)">0</span> itens
+
+          <div style="display: flex; gap: 10px; align-items: center">
+            <button
+              class="btn-add-inline"
+              id="sortAz"
+              title="Ordenar A-Z"
+              style="
+                width: auto;
+                padding: 0 10px;
+                gap: 5px;
+                font-size: 0.8rem;
+                font-weight: 600;
+              "
+            >
+              <i data-lucide="sort-asc" style="width: 16px"></i> A-Z
+            </button>
+            <div
+              style="
+                font-weight: 600;
+                color: var(--text-secondary);
+                font-size: 0.85rem;
+              "
+            >
+              Exibindo
+              <span id="count-items" style="color: var(--primary)">0</span>
+              itens
+            </div>
           </div>
         </div>
 
@@ -1324,6 +1341,32 @@
         } catch (err) {
           showToast("Erro ao criar categoria!");
         }
+      };
+
+      function sortProductsAlphabetically() {
+        products.sort((a, b) => {
+          const nameA = a.nomeProduto.toLowerCase();
+          const nameB = b.nomeProduto.toLowerCase();
+          if (nameA < nameB) return -1;
+          if (nameA > nameB) return 1;
+          return 0;
+        });
+        renderProducts(products); // Renderiza a lista já ordenada
+        showToast("Produtos ordenados de A a Z");
+      }
+
+      // Evento de clique no botão de ordenação
+      document
+        .getElementById("sortAz")
+        .addEventListener("click", sortProductsAlphabetically);
+
+      // Ajuste na renderização para atualizar o contador (que estava travado em 0 no seu print)
+      const originalRender = renderProducts;
+      renderProducts = function (data) {
+        originalRender(data);
+        const countEl = document.getElementById("count-items");
+        if (countEl) countEl.innerText = data.length;
+        lucide.createIcons(); // Recria os ícones para as novas linhas
       };
 
       window.onclick = (e) => {
