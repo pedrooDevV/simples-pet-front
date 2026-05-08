@@ -1,798 +1,855 @@
 <!doctype html>
 <html lang="pt-br">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Histórico de Vendas</title>
 
-    <script src="https://unpkg.com/lucide@latest"></script>
-    <link rel="icon" type="image/png" href="../gato-preto-malvado.png" />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
-      rel="stylesheet"
-    />
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Histórico de Vendas</title>
 
-    <style>
-      :root {
-        --primary: #3a86ff;
-        --primary-hover: #0056e0;
-        --primary-light: #eaf2ff;
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <link rel="icon" type="image/png" href="../gato-preto-malvado.png" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
 
-        --secondary: #00c1b2;
-        --secondary-light: #e0f9f7;
+  <style>
+    :root {
+      --primary: #3a86ff;
+      --primary-hover: #0056e0;
+      --primary-light: #eaf2ff;
 
-        --accent: #ff9f1c;
-        --accent-hover: #e68a00;
-        --accent-light: #fff4e5;
+      --secondary: #00c1b2;
+      --secondary-light: #e0f9f7;
 
-        --danger: #ff4d4d;
+      --accent: #ff9f1c;
+      --accent-hover: #e68a00;
+      --accent-light: #fff4e5;
 
-        --bg-general: #f0f4f8;
-        --white: #ffffff;
+      --danger: #ff4d4d;
 
-        --text-main: #0f172a;
-        --text-secondary: #475569;
+      --bg-general: #f0f4f8;
+      --white: #ffffff;
 
-        --border: #cbd5e1;
+      --text-main: #0f172a;
+      --text-secondary: #475569;
 
-        --shadow:
-          0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
-      }
+      --border: #cbd5e1;
 
-      * {
-        margin: 0;
-        padding: 0;
-        box-sizing: border-box;
-        font-family: "Inter", sans-serif;
-      }
+      --shadow:
+        0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+    }
 
-      body {
-        background: var(--bg-general);
-        display: flex;
-        color: var(--text-main);
-      }
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: "Inter", sans-serif;
+    }
 
-      /* SIDEBAR */
+    body {
+      background: var(--bg-general);
+      display: flex;
+      color: var(--text-main);
+    }
+
+    /* SIDEBAR */
+    aside {
+      width: 280px;
+      background: var(--white);
+      position: fixed;
+      height: 100vh;
+      border-right: 1px solid var(--border);
+      box-shadow: 4px 0 20px rgba(0, 0, 0, 0.05);
+      display: flex;
+      flex-direction: column;
+    }
+
+    .logo-container {
+      padding: 32px 24px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-weight: 800;
+      font-size: 1.4rem;
+      color: var(--primary);
+    }
+
+    .menu-label {
+      padding: 0 24px 8px;
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      font-weight: 700;
+      color: var(--text-secondary);
+      letter-spacing: 1px;
+    }
+
+    nav {
+      flex: 1;
+      padding: 0 16px;
+    }
+
+    nav a {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 14px 16px;
+      text-decoration: none;
+      color: var(--text-secondary);
+      border-radius: 12px;
+      margin-bottom: 6px;
+      transition: 0.2s;
+      font-weight: 600;
+      font-size: 0.9rem;
+    }
+
+    nav a:hover {
+      background: var(--primary-light);
+      color: var(--primary);
+      transform: translateX(4px);
+    }
+
+    nav a.active {
+      background: var(--primary);
+      color: var(--white);
+      box-shadow: 0 8px 15px rgba(58, 134, 255, 0.35);
+    }
+
+    /* MAIN */
+    main {
+      margin-left: 280px;
+      padding: 40px;
+      width: 100%;
+    }
+
+    /* HEADER */
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 40px;
+    }
+
+    .header h1 {
+      font-size: 2.2rem;
+      font-weight: 800;
+      letter-spacing: -1px;
+    }
+
+    /* FILTROS */
+    .filters {
+      display: grid;
+      grid-template-columns: repeat(6, minmax(120px, 180px));
+      justify-content: center;
+      gap: 12px;
+      margin-bottom: 30px;
+      max-width: 1000px;
+      /* limita largura */
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    input,
+    select {
+      padding: 12px;
+      border-radius: 12px;
+      border: 1px solid var(--border);
+      outline: none;
+      transition: 0.2s;
+    }
+
+    input:focus,
+    select:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px var(--primary-light);
+    }
+
+    /* PAGINAÇÃO MELHORADA */
+    .pagination {
+      display: flex;
+      justify-content: flex-end;
+      align-items: center;
+      gap: 12px;
+      padding: 20px;
+      border-top: 1px solid #f1f5f9;
+    }
+
+    /* Indicador de página (opcional, para dar contexto) */
+    .page-indicator {
+      font-size: 0.85rem;
+      color: var(--text-secondary);
+      font-weight: 600;
+    }
+
+    .pagination button {
+      background: var(--primary-light);
+      color: var(--primary);
+      border: 1px solid transparent;
+      padding: 10px 18px;
+      border-radius: 12px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      font-weight: 700;
+      font-size: 0.85rem;
+      letter-spacing: 0.3px;
+    }
+
+    .pagination button:hover:not(:disabled) {
+      background: var(--primary);
+      color: var(--white);
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(58, 134, 255, 0.2);
+    }
+
+    .pagination button:disabled {
+      background: #f1f5f9;
+      color: var(--border);
+      cursor: not-allowed;
+      opacity: 0.7;
+    }
+
+    /* BOTÕES */
+    .btn {
+      padding: 12px;
+      border-radius: 12px;
+      border: none;
+      cursor: pointer;
+      font-weight: 700;
+      transition: 0.2s;
+    }
+
+    .btn-primary {
+      background: var(--primary);
+      color: white;
+      box-shadow: 0 4px 12px rgba(58, 134, 255, 0.2);
+    }
+
+    .btn-primary:hover {
+      background: var(--primary-hover);
+      transform: translateY(-2px);
+    }
+
+    .btn-secondary {
+      background: #e2e8f0;
+    }
+
+    .btn-secondary:hover {
+      transform: translateY(-2px);
+    }
+
+    /* CARDS */
+    /* CARDS PADRÃO (igual tela de gastos) */
+    .cards {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 24px;
+      margin-bottom: 32px;
+    }
+
+    .card {
+      background: var(--white);
+      padding: 24px;
+      border-radius: 20px;
+      border: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.05);
+      transition: 0.2s;
+    }
+
+    /* HEADER DO CARD */
+    .card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--text-secondary);
+    }
+
+    /* VALOR */
+    .card-value {
+      font-size: 1.6rem;
+      font-weight: 800;
+      color: var(--text-main);
+    }
+
+    /* ÍCONE */
+    .card-icon {
+      width: 42px;
+      height: 42px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    /* TABLE */
+    .table {
+      background: var(--white);
+      border-radius: 20px;
+      overflow: hidden;
+      box-shadow: var(--shadow);
+      border: 1px solid var(--border);
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    th {
+      padding: 16px 20px;
+      background: #f8fafc;
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      color: var(--text-secondary);
+      font-weight: 700;
+    }
+
+    td {
+      padding: 18px 20px;
+      border-bottom: 1px solid #f1f5f9;
+      font-size: 0.9rem;
+    }
+
+    tr:hover {
+      background: #f8fafc;
+    }
+
+    /* BADGES */
+    .badge {
+      padding: 6px 12px;
+      border-radius: 20px;
+      font-size: 0.75rem;
+      font-weight: 700;
+    }
+
+    .pago {
+      background: var(--secondary-light);
+      color: var(--secondary);
+    }
+
+    .pendente {
+      background: var(--accent-light);
+      color: var(--accent);
+    }
+
+    /* BOTÃO TABELA */
+    .btn-table {
+      background: var(--primary-light);
+      color: var(--primary);
+      padding: 6px 12px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: 600;
+      border: none;
+      transition: 0.2s;
+    }
+
+    .btn-table:hover {
+      transform: translateY(-2px);
+    }
+
+    /* PAGINAÇÃO MELHORADA */
+    .pagination {
+      display: flex;
+      justify-content: flex-end;
+      align-items: center;
+      gap: 12px;
+      padding: 20px;
+      border-top: 1px solid #f1f5f9;
+    }
+
+    /* Indicador de página (opcional, para dar contexto) */
+    .page-indicator {
+      font-size: 0.85rem;
+      color: var(--text-secondary);
+      font-weight: 600;
+    }
+
+    .pagination button {
+      background: var(--primary-light);
+      color: var(--primary);
+      border: 1px solid transparent;
+      padding: 10px 18px;
+      border-radius: 12px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      font-weight: 700;
+      font-size: 0.85rem;
+      letter-spacing: 0.3px;
+    }
+
+    .pagination button:hover:not(:disabled) {
+      background: var(--primary);
+      color: var(--white);
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(58, 134, 255, 0.2);
+    }
+
+    .pagination button:disabled {
+      background: #f1f5f9;
+      color: var(--border);
+      cursor: not-allowed;
+      opacity: 0.7;
+    }
+
+    /* MODAL */
+    .modal {
+      position: fixed;
+      inset: 0;
+      background: rgba(15, 23, 42, 0.6);
+      backdrop-filter: blur(4px);
+      display: none;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .modal-content {
+      background: var(--white);
+      padding: 32px;
+      border-radius: 20px;
+      width: 600px;
+      box-shadow: var(--shadow);
+    }
+
+    /* ITENS */
+    .item-row {
+      display: flex;
+      justify-content: space-between;
+      padding: 12px 0;
+      border-bottom: 1px solid #f1f5f9;
+    }
+
+    .filter-group {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .filter-group label {
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: var(--text-secondary);
+    }
+
+    /* RESPONSIVO */
+    @media (max-width: 1024px) {
       aside {
-        width: 280px;
-        background: var(--white);
-        position: fixed;
-        height: 100vh;
-        border-right: 1px solid var(--border);
-        box-shadow: 4px 0 20px rgba(0, 0, 0, 0.05);
-        display: flex;
-        flex-direction: column;
+        width: 80px;
       }
 
-      .logo-container {
-        padding: 32px 24px;
-        display: flex;
-        align-items: center;
-        gap: 12px;
-        font-weight: 800;
-        font-size: 1.4rem;
-        color: var(--primary);
+      aside .logo-container span,
+      aside .menu-label,
+      nav a span {
+        display: none;
       }
 
-      .menu-label {
-        padding: 0 24px 8px;
-        font-size: 0.7rem;
-        text-transform: uppercase;
-        font-weight: 700;
-        color: var(--text-secondary);
-        letter-spacing: 1px;
-      }
-
-      nav {
-        flex: 1;
-        padding: 0 16px;
-      }
-
-      nav a {
-        display: flex;
-        align-items: center;
-        gap: 12px;
-        padding: 14px 16px;
-        text-decoration: none;
-        color: var(--text-secondary);
-        border-radius: 12px;
-        margin-bottom: 6px;
-        transition: 0.2s;
-        font-weight: 600;
-        font-size: 0.9rem;
-      }
-
-      nav a:hover {
-        background: var(--primary-light);
-        color: var(--primary);
-        transform: translateX(4px);
-      }
-
-      nav a.active {
-        background: var(--primary);
-        color: var(--white);
-        box-shadow: 0 8px 15px rgba(58, 134, 255, 0.35);
-      }
-
-      /* MAIN */
       main {
-        margin-left: 280px;
-        padding: 40px;
-        width: 100%;
+        margin-left: 80px;
+        padding: 24px;
       }
 
-      /* HEADER */
-      .header {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        margin-bottom: 40px;
+      .cards {
+        grid-template-columns: repeat(2, 1fr);
       }
 
-      .header h1 {
-        font-size: 2.2rem;
-        font-weight: 800;
-        letter-spacing: -1px;
-      }
-
-      /* FILTROS */
       .filters {
         display: grid;
-        grid-template-columns: repeat(6, minmax(120px, 180px));
-        justify-content: center;
+        grid-template-columns: repeat(6, 1fr);
         gap: 12px;
-        margin-bottom: 30px;
-        max-width: 1000px; /* limita largura */
-        margin-left: auto;
-        margin-right: auto;
+        margin-bottom: 25px;
       }
 
-      input,
-      select {
-        padding: 12px;
-        border-radius: 12px;
-        border: 1px solid var(--border);
-        outline: none;
-        transition: 0.2s;
-      }
-
-      input:focus,
-      select:focus {
-        border-color: var(--primary);
-        box-shadow: 0 0 0 3px var(--primary-light);
-      }
-
-      /* BOTÕES */
-      .btn {
-        padding: 12px;
-        border-radius: 12px;
-        border: none;
-        cursor: pointer;
-        font-weight: 700;
-        transition: 0.2s;
-      }
-
-      .btn-primary {
-        background: var(--primary);
-        color: white;
-        box-shadow: 0 4px 12px rgba(58, 134, 255, 0.2);
-      }
-
-      .btn-primary:hover {
-        background: var(--primary-hover);
-        transform: translateY(-2px);
-      }
-
-      .btn-secondary {
-        background: #e2e8f0;
-      }
-
-      .btn-secondary:hover {
-        transform: translateY(-2px);
-      }
-
-      /* CARDS */
-      /* CARDS PADRÃO (igual tela de gastos) */
-      .cards {
-        display: grid;
-        grid-template-columns: repeat(3, 1fr);
-        gap: 24px;
-        margin-bottom: 32px;
-      }
-
-      .card {
-        background: var(--white);
-        padding: 24px;
-        border-radius: 20px;
-        border: 1px solid var(--border);
+      .filter-actions {
         display: flex;
-        flex-direction: column;
         gap: 10px;
-        box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.05);
-        transition: 0.2s;
       }
+    }
+  </style>
+</head>
 
-      /* HEADER DO CARD */
-      .card-header {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        font-size: 0.85rem;
-        font-weight: 600;
-        color: var(--text-secondary);
-      }
+<body>
+  <!-- SIDEBAR -->
+  <aside id="sidebar-target">
+    <div class="logo-container">
+      <i data-lucide="dog" style="width: 32px; height: 32px"></i>
+      <span>PetShop Pro</span>
+    </div>
 
-      /* VALOR */
-      .card-value {
-        font-size: 1.6rem;
-        font-weight: 800;
-        color: var(--text-main);
-      }
+    <p class="menu-label">Painel</p>
+    <nav>
+      <a href="../TelaInicial/index.html" class="nav-item">
+        <i data-lucide="layout-dashboard"></i> <span>Dashboard</span>
+      </a>
+      <a href="../Agenda/Agenda.html" class="nav-item">
+        <i data-lucide="calendar"></i> <span>Agenda Teams</span>
+      </a>
 
-      /* ÍCONE */
-      .card-icon {
-        width: 42px;
-        height: 42px;
-        border-radius: 12px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-      }
+      <p class="menu-label" style="margin-top: 24px">Vendas e Serviços</p>
+      <a href="../Carrinho/Carrinho.html" class="nav-item"><i data-lucide="shopping-cart"></i> <span>Carrinho /
+          PDV</span></a>
+      <a href="../CatalogoServico/CatalogoServico.html" class="nav-item"><i data-lucide="scissors"></i> <span>Catálogo
+          de Serviços</span></a>
 
-      /* TABLE */
-      .table {
-        background: var(--white);
-        border-radius: 20px;
-        overflow: hidden;
-        box-shadow: var(--shadow);
-        border: 1px solid var(--border);
-      }
+      <p class="menu-label" style="margin-top: 24px">Cadastros</p>
+      <a href="../Clientes/Cliente.html" class="nav-item"><i data-lucide="users"></i> <span>Clientes</span></a>
+      <a href="../Pet/Pet.html" class="nav-item"><i data-lucide="paw-print"></i> <span>Animais</span></a>
+      <a href="../Produtos/Produto.html" class="nav-item"><i data-lucide="package"></i> <span>Itens /
+          Produtos</span></a>
 
-      table {
-        width: 100%;
-        border-collapse: collapse;
-      }
+      <p class="menu-label" style="margin-top: 24px">Gestão</p>
+      <a href="../Estoque/Estoque.html" class="nav-item"><i data-lucide="boxes"></i> <span>Controle de
+          Estoque</span></a>
+      <a href="../GastosPrevistos/GastosPrevistos.html" class="nav-item"><i data-lucide="trending-down"></i>
+        <span>Gastos Previstos</span></a>
+      <a href="../HistoricoVendas/HistoricoVendas.html" class="nav-item active"><i data-lucide="wallet"></i>
+        <span>Histórico de Vendas</span></a>
+    </nav>
+  </aside>
 
-      th {
-        padding: 16px 20px;
-        background: #f8fafc;
-        font-size: 0.75rem;
-        text-transform: uppercase;
-        color: var(--text-secondary);
-        font-weight: 700;
-      }
+  <!-- MAIN -->
+  <main>
+    <div class="header">
+      <h1>Histórico de Vendas</h1>
+    </div>
 
-      td {
-        padding: 18px 20px;
-        border-bottom: 1px solid #f1f5f9;
-        font-size: 0.9rem;
-      }
-
-      tr:hover {
-        background: #f8fafc;
-      }
-
-      /* BADGES */
-      .badge {
-        padding: 6px 12px;
-        border-radius: 20px;
-        font-size: 0.75rem;
-        font-weight: 700;
-      }
-
-      .pago {
-        background: var(--secondary-light);
-        color: var(--secondary);
-      }
-
-      .pendente {
-        background: var(--accent-light);
-        color: var(--accent);
-      }
-
-      /* BOTÃO TABELA */
-      .btn-table {
-        background: var(--primary-light);
-        color: var(--primary);
-        padding: 6px 12px;
-        border-radius: 8px;
-        cursor: pointer;
-        font-weight: 600;
-        border: none;
-        transition: 0.2s;
-      }
-
-      .btn-table:hover {
-        transform: translateY(-2px);
-      }
-
-      /* PAGINAÇÃO */
-      .pagination {
-        display: flex;
-        justify-content: flex-end;
-        gap: 10px;
-        padding: 20px;
-      }
-
-      .pagination button {
-        background: var(--primary);
-        color: white;
-        border: none;
-        padding: 10px 14px;
-        border-radius: 10px;
-        cursor: pointer;
-        transition: 0.2s;
-      }
-
-      .pagination button:hover {
-        background: var(--primary-hover);
-      }
-
-      /* MODAL */
-      .modal {
-        position: fixed;
-        inset: 0;
-        background: rgba(15, 23, 42, 0.6);
-        backdrop-filter: blur(4px);
-        display: none;
-        justify-content: center;
-        align-items: center;
-      }
-
-      .modal-content {
-        background: var(--white);
-        padding: 32px;
-        border-radius: 20px;
-        width: 600px;
-        box-shadow: var(--shadow);
-      }
-
-      /* ITENS */
-      .item-row {
-        display: flex;
-        justify-content: space-between;
-        padding: 12px 0;
-        border-bottom: 1px solid #f1f5f9;
-      }
-
-      .filter-group {
-        display: flex;
-        flex-direction: column;
-        gap: 4px;
-      }
-
-      .filter-group label {
-        font-size: 0.75rem;
-        font-weight: 600;
-        color: var(--text-secondary);
-      }
-
-      /* RESPONSIVO */
-      @media (max-width: 1024px) {
-        aside {
-          width: 80px;
-        }
-
-        aside .logo-container span,
-        aside .menu-label,
-        nav a span {
-          display: none;
-        }
-
-        main {
-          margin-left: 80px;
-          padding: 24px;
-        }
-
-        .cards {
-          grid-template-columns: repeat(2, 1fr);
-        }
-
-        .filters {
-          display: grid;
-          grid-template-columns: repeat(6, 1fr);
-          gap: 12px;
-          margin-bottom: 25px;
-        }
-
-        .filter-actions {
-          display: flex;
-          gap: 10px;
-        }
-      }
-    </style>
-  </head>
-
-  <body>
-    <!-- SIDEBAR -->
-    <aside id="sidebar-target">
-      <div class="logo-container">
-        <i data-lucide="dog" style="width: 32px; height: 32px"></i>
-        <span>PetShop Pro</span>
-      </div>
-
-      <p class="menu-label">Painel</p>
-      <nav>
-        <a href="../TelaInicial/index.html" class="nav-item">
-          <i data-lucide="layout-dashboard"></i> <span>Dashboard</span>
-        </a>
-        <a href="../Agenda/Agenda.html" class="nav-item">
-          <i data-lucide="calendar"></i> <span>Agenda Teams</span>
-        </a>
-
-        <p class="menu-label" style="margin-top: 24px">Vendas e Serviços</p>
-        <a href="../Carrinho/Carrinho.html" class="nav-item"
-          ><i data-lucide="shopping-cart"></i> <span>Carrinho / PDV</span></a
-        >
-        <a href="../CatalogoServico/CatalogoServico.html" class="nav-item"
-          ><i data-lucide="scissors"></i> <span>Catálogo de Serviços</span></a
-        >
-
-        <p class="menu-label" style="margin-top: 24px">Cadastros</p>
-        <a href="../Clientes/Cliente.html" class="nav-item"
-          ><i data-lucide="users"></i> <span>Clientes</span></a
-        >
-        <a href="../Pet/Pet.html" class="nav-item"
-          ><i data-lucide="paw-print"></i> <span>Animais</span></a
-        >
-        <a href="../Produtos/Produto.html" class="nav-item"
-          ><i data-lucide="package"></i> <span>Itens / Produtos</span></a
-        >
-
-        <p class="menu-label" style="margin-top: 24px">Gestão</p>
-        <a href="../Estoque/Estoque.html" class="nav-item"
-          ><i data-lucide="boxes"></i> <span>Controle de Estoque</span></a
-        >
-        <a href="../GastosPrevistos/GastosPrevistos.html" class="nav-item"
-          ><i data-lucide="trending-down"></i> <span>Gastos Previstos</span></a
-        >
-        <a
-          href="../HistoricoVendas/HistoricoVendas.html"
-          class="nav-item active"
-          ><i data-lucide="wallet"></i> <span>Histórico de Vendas</span></a
-        >
-      </nav>
-    </aside>
-
-    <!-- MAIN -->
-    <main>
-      <div class="header">
-        <h1>Histórico de Vendas</h1>
-      </div>
-
-      <!-- FILTROS -->
-      <div class="filters">
-        <input type="date" id="dataFiltro" />
-        <div class="filter-group">
-          <select id="clienteFiltro">
-            <option value="">Todos</option>
-          </select>
-        </div>
-        <select id="pagamentoFiltro">
-          <option value="">Pagamento</option>
-          <option value="dinheiro">Dinheiro</option>
-          <option value="credito">Cartão de Crédito</option>
-          <option value="debito">Cartão de Débito</option>
-          <option value="pix">Pix</option>
-          <option value="outros">Outros</option>
+    <!-- FILTROS -->
+    <div class="filters">
+      <input type="date" id="dataFiltro" />
+      <div class="filter-group">
+        <select id="clienteFiltro">
+          <option value="">Todos</option>
         </select>
-        <input type="number" id="minFiltro" placeholder="Min" />
-        <input type="number" id="maxFiltro" placeholder="Max" />
-
-        <div class="filter-actions">
-          <button class="btn btn-primary" onclick="load()">Filtrar</button>
-          <button class="btn btn-secondary" onclick="reset()">Limpar</button>
-        </div>
       </div>
+      <select id="pagamentoFiltro">
+        <option value="">Pagamento</option>
+        <option value="dinheiro">Dinheiro</option>
+        <option value="credito">Cartão de Crédito</option>
+        <option value="debito">Cartão de Débito</option>
+        <option value="pix">Pix</option>
+        <option value="outros">Outros</option>
+      </select>
+      <input type="number" id="minFiltro" placeholder="Min" />
+      <input type="number" id="maxFiltro" placeholder="Max" />
 
-      <!-- CARDS -->
-      <div class="cards">
-        <!-- TOTAL -->
-        <div class="card">
-          <div class="card-header">
-            <span>Total</span>
-            <div
-              class="card-icon"
-              style="background: var(--primary-light); color: var(--primary)"
-            >
-              <i data-lucide="circle-dollar-sign" style="width: 20px"></i>
-            </div>
-          </div>
-          <div class="card-value" id="total">R$ 0</div>
-        </div>
-
-        <!-- VENDAS -->
-        <div class="card">
-          <div class="card-header">
-            <span>Vendas</span>
-            <div
-              class="card-icon"
-              style="
-                background: var(--secondary-light);
-                color: var(--secondary);
-              "
-            >
-              <i data-lucide="shopping-bag" style="width: 20px"></i>
-            </div>
-          </div>
-          <div class="card-value" id="qtd">0</div>
-        </div>
-
-        <!-- TICKET MÉDIO -->
-        <div class="card">
-          <div class="card-header">
-            <span>Ticket Médio</span>
-            <div
-              class="card-icon"
-              style="background: var(--accent-light); color: var(--accent)"
-            >
-              <i data-lucide="badge-dollar-sign" style="width: 20px"></i>
-            </div>
-          </div>
-          <div class="card-value" id="ticket">R$ 0</div>
-        </div>
-      </div>
-
-      <!-- TABELA -->
-      <div class="table">
-        <table>
-          <thead>
-            <tr>
-              <th>Cliente</th>
-              <th>CPF</th>
-              <th>Data</th>
-              <th>Pagamento</th>
-              <th>Total</th>
-              <th>Status</th>
-              <th>Ações</th>
-            </tr>
-          </thead>
-          <tbody id="tbody"></tbody>
-        </table>
-
-        <div class="pagination">
-          <button id="prev">Anterior</button>
-          <button id="next">Próxima</button>
-        </div>
-      </div>
-    </main>
-
-    <!-- MODAL -->
-    <div class="modal" id="modal">
-      <div class="modal-content">
-        <h3>Itens</h3>
-        <div id="itens"></div>
-        <br />
-        <button onclick="closeModal()">Fechar</button>
+      <div class="filter-actions">
+        <button class="btn btn-primary" onclick="load()">Filtrar</button>
+        <button class="btn btn-secondary" onclick="reset()">Limpar</button>
       </div>
     </div>
 
-    <script>
-      lucide.createIcons();
+    <!-- CARDS -->
+    <div class="cards">
+      <!-- TOTAL -->
+      <div class="card">
+        <div class="card-header">
+          <span>Total</span>
+          <div class="card-icon" style="background: var(--primary-light); color: var(--primary)">
+            <i data-lucide="circle-dollar-sign" style="width: 20px"></i>
+          </div>
+        </div>
+        <div class="card-value" id="total">R$ 0</div>
+      </div>
 
-      const API = "http://localhost:8081/vendas";
+      <!-- VENDAS -->
+      <div class="card">
+        <div class="card-header">
+          <span>Vendas</span>
+          <div class="card-icon" style="
+                background: var(--secondary-light);
+                color: var(--secondary);
+              ">
+            <i data-lucide="shopping-bag" style="width: 20px"></i>
+          </div>
+        </div>
+        <div class="card-value" id="qtd">0</div>
+      </div>
 
-      let page = 0;
-      let totalPages = 0;
-      let vendasCache = [];
+      <!-- TICKET MÉDIO -->
+      <div class="card">
+        <div class="card-header">
+          <span>Ticket Médio</span>
+          <div class="card-icon" style="background: var(--accent-light); color: var(--accent)">
+            <i data-lucide="badge-dollar-sign" style="width: 20px"></i>
+          </div>
+        </div>
+        <div class="card-value" id="ticket">R$ 0</div>
+      </div>
+    </div>
 
-      /* =========================
-   FORMATADORES
+    <!-- TABELA -->
+    <div class="table">
+      <table>
+        <thead>
+          <tr>
+            <th>Cliente</th>
+            <th>CPF</th>
+            <th>Data</th>
+            <th>Pagamento</th>
+            <th>Total</th>
+            <th>Status</th>
+            <th>Ações</th>
+          </tr>
+        </thead>
+        <tbody id="tbody"></tbody>
+      </table>
+
+      <div class="pagination">
+        <span class="page-indicator" id="page-info">Página 1 de 1</span>
+        <button id="prev">Anterior</button>
+        <button id="next">Próxima</button>
+      </div>
+    </div>
+  </main>
+
+  <!-- MODAL -->
+  <div class="modal" id="modal">
+    <div class="modal-content">
+      <h3>Itens</h3>
+      <div id="itens"></div>
+      <br />
+      <button onclick="closeModal()">Fechar</button>
+    </div>
+  </div>
+
+  <script>
+    lucide.createIcons();
+
+    const API = "http://localhost:8081/vendas";
+
+    let page = 0;
+    let totalPages = 0;
+    let vendasCache = [];
+
+    /* =========================
+ FORMATADORES
 ========================= */
-      function formatMoney(v) {
-        return new Intl.NumberFormat("pt-BR", {
-          style: "currency",
-          currency: "BRL",
-        }).format(v || 0);
-      }
+    function formatMoney(v) {
+      return new Intl.NumberFormat("pt-BR", {
+        style: "currency",
+        currency: "BRL",
+      }).format(v || 0);
+    }
 
-      /* =========================
-   LOAD PRINCIPAL
+    /* =========================
+ LOAD PRINCIPAL
 ========================= */
-      async function load() {
-        const data = document.getElementById("dataFiltro").value;
-        const cliente = document.getElementById("clienteFiltro").value;
-        const pagamento = document.getElementById("pagamentoFiltro").value;
-        const min = document.getElementById("minFiltro").value;
-        const max = document.getElementById("maxFiltro").value;
+    async function load() {
+      const data = document.getElementById("dataFiltro").value;
+      const cliente = document.getElementById("clienteFiltro").value;
+      const pagamento = document.getElementById("pagamentoFiltro").value;
+      const min = document.getElementById("minFiltro").value;
+      const max = document.getElementById("maxFiltro").value;
 
-        let url = `${API}/aplicar/filtros?page=${page}`;
+      let url = `${API}/aplicar/filtros?page=${page}`;
 
-        if (data) url += `&data=${data}`;
-        if (cliente) url += `&clienteId=${cliente}`;
-        if (pagamento) url += `&pagamento=${pagamento}`;
-        if (min) url += `&min=${min}`;
-        if (max) url += `&max=${max}`;
+      if (data) url += `&data=${data}`;
+      if (cliente) url += `&clienteId=${cliente}`;
+      if (pagamento) url += `&pagamento=${pagamento}`;
+      if (min) url += `&min=${min}`;
+      if (max) url += `&max=${max}`;
 
-        try {
-          const res = await fetch(url);
+      try {
+        const res = await fetch(url);
 
-          if (!res.ok) throw new Error("Erro ao buscar vendas");
+        if (!res.ok) throw new Error("Erro ao buscar vendas");
 
-          const json = await res.json();
+        const json = await res.json();
 
-          vendasCache = json.content;
-          totalPages = json.totalPages;
+        vendasCache = json.content;
+        totalPages = json.totalPages;
 
-          render();
+        render();
 
-          atualizarResumo(data, cliente, pagamento, min, max);
-        } catch (e) {
-          console.error(e);
-        }
+        atualizarResumo(data, cliente, pagamento, min, max);
+      } catch (e) {
+        console.error(e);
       }
-      /* =========================
-   Clientes (Carregar)
+    }
+    /* =========================
+ Clientes (Carregar)
 ========================= */
 
-      let clients = [];
+    let clients = [];
 
-      function loadClients() {
-        fetch("http://localhost:8081/clientes/listar")
-          .then((response) => {
-            if (!response.ok) throw new Error("Erro ao buscar clientes");
-            return response.json();
-          })
-          .then((data) => {
-            clients = data;
-            renderClients(clients);
-          })
-          .catch((error) => console.error("Erro:", error));
-      }
+    function loadClients() {
+      fetch("http://localhost:8081/clientes/listar")
+        .then((response) => {
+          if (!response.ok) throw new Error("Erro ao buscar clientes");
+          return response.json();
+        })
+        .then((data) => {
+          clients = data;
+          renderClients(clients);
+        })
+        .catch((error) => console.error("Erro:", error));
+    }
 
-      function renderClients(lista) {
-        const select = document.getElementById("clienteFiltro");
+    function renderClients(lista) {
+      const select = document.getElementById("clienteFiltro");
 
-        select.innerHTML = `<option value="">Todos</option>`;
+      select.innerHTML = `<option value="">Todos</option>`;
 
-        lista.forEach((c) => {
-          select.innerHTML += `
+      lista.forEach((c) => {
+        select.innerHTML += `
       <option value="${c.id}">
         ${c.nome}
       </option>
     `;
-        });
+      });
+    }
+
+    /* =========================
+ RESUMO (CARDS)
+========================= */
+    async function atualizarResumo(data, cliente, pagamento, min, max) {
+      let url = `${API}/resumo`;
+
+      const params = [];
+
+      if (data) params.push(`data=${data}`);
+      if (cliente) params.push(`clienteId=${cliente}`);
+      if (pagamento) params.push(`pagamento=${pagamento}`);
+      if (min) params.push(`min=${min}`);
+      if (max) params.push(`max=${max}`);
+
+      if (params.length > 0) {
+        url += `?${params.join("&")}`;
       }
 
-      /* =========================
-   RESUMO (CARDS)
-========================= */
-      async function atualizarResumo(data, cliente, pagamento, min, max) {
-        let url = `${API}/resumo`;
+      try {
+        const res = await fetch(url);
 
-        const params = [];
+        if (!res.ok) throw new Error("Erro ao buscar resumo");
 
-        if (data) params.push(`data=${data}`);
-        if (cliente) params.push(`clienteId=${cliente}`);
-        if (pagamento) params.push(`pagamento=${pagamento}`);
-        if (min) params.push(`min=${min}`);
-        if (max) params.push(`max=${max}`);
+        const json = await res.json();
 
-        if (params.length > 0) {
-          url += `?${params.join("&")}`;
-        }
+        document.getElementById("total").textContent = formatMoney(
+          json.total,
+        );
+        document.getElementById("qtd").textContent = json.quantidade ?? 0;
+        document.getElementById("ticket").textContent = formatMoney(
+          json.ticketMedio,
+        );
+      } catch (e) {
+        console.error(e);
 
-        try {
-          const res = await fetch(url);
-
-          if (!res.ok) throw new Error("Erro ao buscar resumo");
-
-          const json = await res.json();
-
-          document.getElementById("total").textContent = formatMoney(
-            json.total,
-          );
-          document.getElementById("qtd").textContent = json.quantidade ?? 0;
-          document.getElementById("ticket").textContent = formatMoney(
-            json.ticketMedio,
-          );
-        } catch (e) {
-          console.error(e);
-
-          document.getElementById("total").textContent = "Erro";
-          document.getElementById("qtd").textContent = "-";
-          document.getElementById("ticket").textContent = "-";
-        }
+        document.getElementById("total").textContent = "Erro";
+        document.getElementById("qtd").textContent = "-";
+        document.getElementById("ticket").textContent = "-";
       }
-      /* =========================
-   RENDER
-========================= */
-      function render() {
-        tbody.innerHTML = vendasCache
-          .map(
-            (v, i) => `
-<tr>
-<td>${v.cliente.nome}</td>
-<td>${v.cliente.cpf}</td>
-<td>${formatDate(v.dataVenda)}</td>
-<td>${v.carrinho.metodoPagamento}</td>
-<td>${formatMoney(v.carrinho.valorTotal)}</td>
-<td>
-  <span class="badge ${v.carrinho.pago ? "pago" : "pendente"}">
-    ${v.carrinho.pago ? "Pago" : "Pendente"}
-  </span>
-</td>
-<td>
-  <button class="btn-table" onclick="verItens(${i})">Ver</button>
-</td>
-</tr>`,
-          )
-          .join("");
+    }
 
-        lucide.createIcons();
+    function render() {
+      tbody.innerHTML = vendasCache
+        .map(
+          (v, i) => `
+      <tr>
+        <td>${v.cliente.nome}</td>
+        <td>${v.cliente.cpf}</td>
+        <td>${formatDate(v.dataVenda)}</td>
+        <td>${v.carrinho.metodoPagamento}</td>
+        <td>${formatMoney(v.carrinho.valorTotal)}</td>
+        <td>
+          <span class="badge ${v.carrinho.pago ? "pago" : "pendente"}">
+            ${v.carrinho.pago ? "Pago" : "Pendente"}
+          </span>
+        </td>
+        <td>
+          <button class="btn-table" onclick="verItens(${i})">Ver</button>
+        </td>
+      </tr>`,
+        )
+        .join("");
+
+      const btnPrev = document.getElementById("prev");
+      const btnNext = document.getElementById("next");
+      const pageInfo = document.getElementById("page-info");
+
+      pageInfo.textContent = `Página ${page + 1} de ${totalPages || 1}`;
+
+      btnPrev.disabled = (page === 0);
+
+      btnNext.disabled = (page >= totalPages - 1);
+
+      lucide.createIcons();
+    }
+
+    document.getElementById("next").onclick = () => {
+      if (page < totalPages - 1) {
+        page++;
+        load();
+      }
+    };
+
+    document.getElementById("prev").onclick = () => {
+      if (page > 0) {
+        page--;
+        load();
+      }
+    };
+
+    function formatDate(date) {
+      if (!date) return "";
+
+      const [ano, mes, dia] = date.split("-");
+
+      return `${dia}/${mes}/${ano}`;
+    }
+
+    /* =========================
+ PAGINAÇÃO
+========================= */
+    document.getElementById("next").onclick = () => {
+      if (page < totalPages - 1) {
+        page++;
+        load();
+      }
+    };
+
+    document.getElementById("prev").onclick = () => {
+      if (page > 0) {
+        page--;
+        load();
+      }
+    };
+
+    function verItens(i) {
+      const venda = vendasCache[i];
+
+      if (!venda || !venda.itemCarrinho) {
+        itens.innerHTML = "<p>Sem itens</p>";
+        modal.style.display = "flex";
+        return;
       }
 
-      /* =========================
-   FORMATAR DATA
-========================= */
-      function formatDate(date) {
-        if (!date) return "";
-
-        const [ano, mes, dia] = date.split("-");
-
-        return `${dia}/${mes}/${ano}`;
-      }
-
-      /* =========================
-   PAGINAÇÃO
-========================= */
-      document.getElementById("next").onclick = () => {
-        if (page < totalPages - 1) {
-          page++;
-          load();
-        }
-      };
-
-      document.getElementById("prev").onclick = () => {
-        if (page > 0) {
-          page--;
-          load();
-        }
-      };
-
-      /* =========================
-   MODAL
-========================= */
-      function verItens(i) {
-        const venda = vendasCache[i];
-
-        if (!venda || !venda.itemCarrinho) {
-          itens.innerHTML = "<p>Sem itens</p>";
-          modal.style.display = "flex";
-          return;
-        }
-
-        itens.innerHTML = venda.itemCarrinho
-          .map(
-            (it) => `
+      itens.innerHTML = venda.itemCarrinho
+        .map(
+          (it) => `
 <div class="item-row">
   <span>${it.nome || "-"}</span>
   <span>${it.quantidade || 0}x</span>
   <strong>${formatMoney(it.precoUnitario)}</strong>
 </div>`,
-          )
-          .join("");
+        )
+        .join("");
 
-        modal.style.display = "flex";
-      }
-      /* =========================
-   RESET
-========================= */
-      function reset() {
-        document
-          .querySelectorAll("input,select")
-          .forEach((e) => (e.value = ""));
+      modal.style.display = "flex";
+    }
 
-        page = 0;
+    function reset() {
+      document
+        .querySelectorAll("input,select")
+        .forEach((e) => (e.value = ""));
 
-        load();
-      }
+      page = 0;
 
-      /* =========================
-   INIT
-========================= */
       load();
-      loadClients();
-    </script>
-  </body>
+    }
+
+    load();
+    loadClients();
+  </script>
+</body>
+
 </html>

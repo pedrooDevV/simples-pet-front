@@ -1,1167 +1,1146 @@
 <!doctype html>
 <html lang="pt-br">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>PetShop Pro - Controle de Estoque</title>
-    <script src="https://unpkg.com/lucide@latest"></script>
-    <link rel="icon" type="image/png" href="../gato-preto-malvado.png">
-    <link
-      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
-      rel="stylesheet"
-    />
-    <style>
-      :root {
-        --primary: #3a86ff;
-        --primary-hover: #265df2;
-        --primary-bg-light: #eaf2ff;
-        --secondary: #2ec4b6;
-        --secondary-hover: #28b1a4;
-        --secondary-bg-light: #dff7f4;
-        --accent: #ff9f1c;
-        --accent-hover: #e68f19;
-        --accent-bg-light: #ffe8cc;
-        --bg-general: #f7f9fc;
-        --white: #ffffff;
-        --text-main: #1e293b;
-        --text-secondary: #64748b;
-        --border: #e2e8f0;
-        --shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1);
-        --danger: #ef4444;
-        --danger-light: #fee2e2;
-        --inactive: #94a3b8;
-        --inactive-light: #f1f5f9;
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>PetShop Pro - Controle de Estoque</title>
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <link rel="icon" type="image/png" href="../gato-preto-malvado.png">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --primary: #3a86ff;
+      --primary-hover: #265df2;
+      --primary-bg-light: #eaf2ff;
+      --secondary: #2ec4b6;
+      --secondary-hover: #28b1a4;
+      --secondary-bg-light: #dff7f4;
+      --accent: #ff9f1c;
+      --accent-hover: #e68f19;
+      --accent-bg-light: #ffe8cc;
+      --bg-general: #f7f9fc;
+      --white: #ffffff;
+      --text-main: #1e293b;
+      --text-secondary: #64748b;
+      --border: #e2e8f0;
+      --shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1);
+      --danger: #ef4444;
+      --danger-light: #fee2e2;
+      --inactive: #94a3b8;
+      --inactive-light: #f1f5f9;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family:
+        "Inter",
+        -apple-system,
+        sans-serif;
+    }
+
+    body {
+      background-color: var(--bg-general);
+      color: var(--text-main);
+      display: flex;
+      min-height: 100vh;
+    }
+
+    /* Sidebar */
+    aside {
+      width: 280px;
+      background-color: var(--white);
+      border-right: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      position: fixed;
+      height: 100vh;
+      z-index: 100;
+      box-shadow: 4px 0 20px rgba(0, 0, 0, 0.05);
+    }
+
+    .logo-container {
+      padding: 32px 24px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-weight: 800;
+      font-size: 1.4rem;
+      color: var(--primary);
+    }
+
+    .menu-label {
+      padding: 0 24px 8px;
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      font-weight: 700;
+      color: var(--text-secondary);
+      letter-spacing: 1px;
+    }
+
+    nav {
+      flex: 1;
+      padding: 0 16px;
+      overflow-y: auto;
+    }
+
+    .nav-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 14px 16px;
+      text-decoration: none;
+      color: var(--text-secondary);
+      border-radius: 12px;
+      margin-bottom: 6px;
+      transition: 0.2s;
+      font-weight: 600;
+      font-size: 0.9rem;
+    }
+
+    .nav-item:hover {
+      background-color: var(--primary-bg-light);
+      color: var(--primary);
+    }
+
+    .nav-item.active {
+      background-color: var(--primary);
+      color: var(--white);
+      box-shadow: 0 8px 15px rgba(58, 134, 255, 0.3);
+    }
+
+    /* Main Content */
+    main {
+      margin-left: 280px;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+
+    header {
+      padding: 24px 40px;
+      background: var(--white);
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: sticky;
+      top: 0;
+      z-index: 50;
+    }
+
+    .header-info h1 {
+      font-size: 1.5rem;
+      font-weight: 800;
+    }
+
+    .header-info p {
+      color: var(--text-secondary);
+      font-size: 0.85rem;
+    }
+
+    .header-actions {
+      display: flex;
+      gap: 12px;
+    }
+
+    .btn {
+      padding: 12px 20px;
+      border-radius: 12px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      cursor: pointer;
+      transition: 0.2s;
+      border: none;
+      font-size: 0.9rem;
+    }
+
+    .content-container {
+      padding: 32px 40px;
+    }
+
+    /* Stats Grid */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 24px;
+      margin-bottom: 32px;
+    }
+
+    .stat-card {
+      background: var(--white);
+      padding: 24px;
+      border-radius: 20px;
+      border: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.05);
+    }
+
+    .stat-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      color: var(--text-secondary);
+      font-size: 0.85rem;
+      font-weight: 600;
+    }
+
+    .stat-value {
+      font-size: 1.6rem;
+      font-weight: 800;
+      color: var(--text-main);
+    }
+
+    .stat-icon {
+      width: 40px;
+      height: 40px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    /* Estilo dos Inputs com Ícones Internos */
+    .input-group {
+      position: relative;
+      display: flex;
+      align-items: center;
+    }
+
+    /* PAGINAÇÃO MELHORADA */
+    .pagination {
+      display: flex;
+      justify-content: flex-end;
+      align-items: center;
+      gap: 12px;
+      padding: 20px;
+      border-top: 1px solid #f1f5f9;
+    }
+
+    /* Indicador de página (opcional, para dar contexto) */
+    .page-indicator {
+      font-size: 0.85rem;
+      color: var(--text-secondary);
+      font-weight: 600;
+    }
+
+    .pagination button {
+      background: var(--primary-light);
+      color: var(--primary);
+      border: 1px solid transparent;
+      padding: 10px 18px;
+      border-radius: 12px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      font-weight: 700;
+      font-size: 0.85rem;
+      letter-spacing: 0.3px;
+    }
+
+    .pagination button:hover:not(:disabled) {
+      background: var(--primary);
+      color: var(--white);
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(58, 134, 255, 0.2);
+    }
+
+    .pagination button:disabled {
+      background: #f1f5f9;
+      color: var(--border);
+      cursor: not-allowed;
+      opacity: 0.7;
+    }
+
+
+    /* Container dos botões no rodapé do modal */
+    .modal-footer {
+      display: flex;
+      gap: 12px;
+      margin-top: 30px;
+    }
+
+    /* Base comum para ambos os botões */
+    .btn-modal {
+      flex: 1;
+      padding: 12px 20px;
+      border-radius: 10px;
+      font-weight: 700;
+      font-size: 0.9rem;
+      cursor: pointer;
+      border: none;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      transition: all 0.2s ease;
+    }
+
+    .btn-modal:active {
+      transform: scale(0.96);
+    }
+
+    /* Botão CANCELAR (Cinza) */
+    .btn-cancel {
+      background: #f1f5f9;
+      color: #64748b;
+      border: 1px solid #e2e8f0;
+    }
+
+    .btn-cancel:hover {
+      background: #e2e8f0;
+      color: #1e293b;
+    }
+
+    /* Botão SALVAR (Azul com Gradiente e Brilho) */
+    .btn-save {
+      background: linear-gradient(135deg, #3b82f6, #2563eb);
+      color: #ffffff;
+      position: relative;
+      overflow: hidden;
+      box-shadow: 0 4px 10px rgba(37, 99, 235, 0.25);
+    }
+
+    /* Efeito de Brilho (Glimmer) passando pelo botão */
+    .btn-save::after {
+      content: "";
+      position: absolute;
+      top: -100%;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: rgba(255, 255, 255, 0.2);
+      transform: rotate(45deg);
+      transition: all 0.6s ease;
+    }
+
+    .btn-save:hover::after {
+      top: 100%;
+      left: 100%;
+    }
+
+    .btn-save:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 15px rgba(37, 99, 235, 0.4);
+    }
+
+    .input-group i {
+      position: absolute;
+      left: 14px;
+      color: var(--text-secondary);
+      width: 18px;
+      pointer-events: none;
+      z-index: 10;
+    }
+
+    .input-group input,
+    .input-group select,
+    .input-group textarea {
+      width: 100%;
+      padding: 12px 12px 12px 42px;
+      /* Espaço para o ícone à esquerda */
+      border-radius: 10px;
+      border: 1px solid var(--border);
+      outline: none;
+      transition: 0.2s;
+      font-size: 0.9rem;
+      background-color: var(--white);
+    }
+
+    .input-group input:focus,
+    .input-group select:focus,
+    .input-group textarea:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px var(--primary-bg-light);
+    }
+
+    /* Card da Tabela */
+    .card-container {
+      background: var(--white);
+      border-radius: 16px;
+      border: 1px solid var(--border);
+      overflow: hidden;
+      box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.05);
+    }
+
+    .table-header {
+      padding: 24px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    thead {
+      background: #f8fafc;
+    }
+
+    th {
+      padding: 16px 24px;
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      color: var(--text-secondary);
+      font-weight: 700;
+      text-align: left;
+    }
+
+    td {
+      padding: 18px 24px;
+      border-bottom: 1px solid #f1f5f9;
+      font-size: 0.9rem;
+      color: var(--text-main);
+    }
+
+    .status-pill {
+      padding: 6px 12px;
+      border-radius: 20px;
+      font-size: 0.75rem;
+      font-weight: 700;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .status-normal {
+      background: var(--secondary-bg-light);
+      color: var(--secondary);
+    }
+
+    .status-low {
+      background: var(--accent-bg-light);
+      color: var(--accent);
+    }
+
+    .status-out {
+      background: var(--danger-light);
+      color: var(--danger);
+    }
+
+    .status-inactive {
+      background: var(--inactive-light);
+      color: var(--inactive);
+    }
+
+    .btn-adjust {
+      background: var(--primary-bg-light);
+      color: var(--primary);
+      border: none;
+      padding: 8px 12px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 0.8rem;
+      transition: 0.2s;
+    }
+
+    .btn-adjust:hover {
+      background: var(--primary);
+      color: white;
+    }
+
+    /* Modals */
+    .modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(15, 23, 42, 0.7);
+      /* Fundo escuro semi-transparente */
+      backdrop-filter: blur(4px);
+      /* Efeito de vidro embaçado no fundo */
+      display: none;
+      /* Começa escondido */
+      align-items: center;
+      justify-content: center;
+      z-index: 9999;
+    }
+
+    .modal-content {
+      background: #ffffff;
+      width: 100%;
+      max-width: 400px;
+      padding: 30px;
+      border-radius: 16px;
+      box-shadow:
+        0 20px 25px -5px rgba(0, 0, 0, 0.1),
+        0 10px 10px -5px rgba(0, 0, 0, 0.04);
+      animation: modalPop 0.2s ease-out;
+    }
+
+    @keyframes modalPop {
+      from {
+        transform: scale(0.95);
+        opacity: 0;
       }
 
-      * {
-        margin: 0;
-        padding: 0;
-        box-sizing: border-box;
-        font-family:
-          "Inter",
-          -apple-system,
-          sans-serif;
+      to {
+        transform: scale(1);
+        opacity: 1;
+      }
+    }
+
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+
+    .modal-footer {
+      display: flex;
+      gap: 12px;
+      margin-top: 25px;
+    }
+
+    .modal {
+      background: var(--white);
+      width: 500px;
+      border-radius: 20px;
+      padding: 32px;
+      box-shadow: var(--shadow);
+      animation: slideIn 0.3s ease-out;
+    }
+
+    @keyframes slideIn {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
       }
 
-      body {
-        background-color: var(--bg-general);
-        color: var(--text-main);
-        display: flex;
-        min-height: 100vh;
-      }
-
-      /* Sidebar */
-      aside {
-        width: 280px;
-        background-color: var(--white);
-        border-right: 1px solid var(--border);
-        display: flex;
-        flex-direction: column;
-        position: fixed;
-        height: 100vh;
-        z-index: 100;
-        box-shadow: 4px 0 20px rgba(0, 0, 0, 0.05);
-      }
-
-      .logo-container {
-        padding: 32px 24px;
-        display: flex;
-        align-items: center;
-        gap: 12px;
-        font-weight: 800;
-        font-size: 1.4rem;
-        color: var(--primary);
-      }
-
-      .menu-label {
-        padding: 0 24px 8px;
-        font-size: 0.7rem;
-        text-transform: uppercase;
-        font-weight: 700;
-        color: var(--text-secondary);
-        letter-spacing: 1px;
-      }
-
-      nav {
-        flex: 1;
-        padding: 0 16px;
-        overflow-y: auto;
-      }
-
-      .nav-item {
-        display: flex;
-        align-items: center;
-        gap: 12px;
-        padding: 14px 16px;
-        text-decoration: none;
-        color: var(--text-secondary);
-        border-radius: 12px;
-        margin-bottom: 6px;
-        transition: 0.2s;
-        font-weight: 600;
-        font-size: 0.9rem;
-      }
-
-      .nav-item:hover {
-        background-color: var(--primary-bg-light);
-        color: var(--primary);
-      }
-
-      .nav-item.active {
-        background-color: var(--primary);
-        color: var(--white);
-        box-shadow: 0 8px 15px rgba(58, 134, 255, 0.3);
-      }
-
-      /* Main Content */
-      main {
-        margin-left: 280px;
-        flex: 1;
-        display: flex;
-        flex-direction: column;
-        min-height: 100vh;
-      }
-
-      header {
-        padding: 24px 40px;
-        background: var(--white);
-        border-bottom: 1px solid var(--border);
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        position: sticky;
-        top: 0;
-        z-index: 50;
-      }
-
-      .header-info h1 {
-        font-size: 1.5rem;
-        font-weight: 800;
-      }
-      .header-info p {
-        color: var(--text-secondary);
-        font-size: 0.85rem;
-      }
-
-      .header-actions {
-        display: flex;
-        gap: 12px;
-      }
-
-      .btn {
-        padding: 12px 20px;
-        border-radius: 12px;
-        font-weight: 700;
-        display: flex;
-        align-items: center;
-        gap: 8px;
-        cursor: pointer;
-        transition: 0.2s;
-        border: none;
-        font-size: 0.9rem;
-      }
-
-      .content-container {
-        padding: 32px 40px;
-      }
-
-      /* Stats Grid */
-      .stats-grid {
-        display: grid;
-        grid-template-columns: repeat(4, 1fr);
-        gap: 24px;
-        margin-bottom: 32px;
-      }
-
-      .stat-card {
-        background: var(--white);
-        padding: 24px;
-        border-radius: 20px;
-        border: 1px solid var(--border);
-        display: flex;
-        flex-direction: column;
-        gap: 8px;
-        box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.05);
-      }
-
-      .stat-header {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        color: var(--text-secondary);
-        font-size: 0.85rem;
-        font-weight: 600;
-      }
-
-      .stat-value {
-        font-size: 1.6rem;
-        font-weight: 800;
-        color: var(--text-main);
-      }
-
-      .stat-icon {
-        width: 40px;
-        height: 40px;
-        border-radius: 12px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-      }
-
-      /* Estilo dos Inputs com Ícones Internos */
-      .input-group {
-        position: relative;
-        display: flex;
-        align-items: center;
-      }
-
-      /* Container dos botões no rodapé do modal */
-      .modal-footer {
-        display: flex;
-        gap: 12px;
-        margin-top: 30px;
-      }
-
-      /* Base comum para ambos os botões */
-      .btn-modal {
-        flex: 1;
-        padding: 12px 20px;
-        border-radius: 10px;
-        font-weight: 700;
-        font-size: 0.9rem;
-        cursor: pointer;
-        border: none;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        gap: 8px;
-        transition: all 0.2s ease;
-      }
-
-      .btn-modal:active {
-        transform: scale(0.96);
-      }
-
-      /* Botão CANCELAR (Cinza) */
-      .btn-cancel {
-        background: #f1f5f9;
-        color: #64748b;
-        border: 1px solid #e2e8f0;
-      }
-
-      .btn-cancel:hover {
-        background: #e2e8f0;
-        color: #1e293b;
-      }
-
-      /* Botão SALVAR (Azul com Gradiente e Brilho) */
-      .btn-save {
-        background: linear-gradient(135deg, #3b82f6, #2563eb);
-        color: #ffffff;
-        position: relative;
-        overflow: hidden;
-        box-shadow: 0 4px 10px rgba(37, 99, 235, 0.25);
-      }
-
-      /* Efeito de Brilho (Glimmer) passando pelo botão */
-      .btn-save::after {
-        content: "";
-        position: absolute;
-        top: -100%;
-        left: -100%;
-        width: 100%;
-        height: 100%;
-        background: rgba(255, 255, 255, 0.2);
-        transform: rotate(45deg);
-        transition: all 0.6s ease;
-      }
-
-      .btn-save:hover::after {
-        top: 100%;
-        left: 100%;
-      }
-
-      .btn-save:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 8px 15px rgba(37, 99, 235, 0.4);
-      }
-
-      .input-group i {
-        position: absolute;
-        left: 14px;
-        color: var(--text-secondary);
-        width: 18px;
-        pointer-events: none;
-        z-index: 10;
-      }
-
-      .input-group input,
-      .input-group select,
-      .input-group textarea {
-        width: 100%;
-        padding: 12px 12px 12px 42px; /* Espaço para o ícone à esquerda */
-        border-radius: 10px;
-        border: 1px solid var(--border);
-        outline: none;
-        transition: 0.2s;
-        font-size: 0.9rem;
-        background-color: var(--white);
-      }
-
-      .input-group input:focus,
-      .input-group select:focus,
-      .input-group textarea:focus {
-        border-color: var(--primary);
-        box-shadow: 0 0 0 3px var(--primary-bg-light);
-      }
-
-      /* Card da Tabela */
-      .card-container {
-        background: var(--white);
-        border-radius: 16px;
-        border: 1px solid var(--border);
-        overflow: hidden;
-        box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.05);
-      }
-
-      .table-header {
-        padding: 24px;
-        border-bottom: 1px solid var(--border);
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-      }
-
-      table {
-        width: 100%;
-        border-collapse: collapse;
-      }
-      thead {
-        background: #f8fafc;
-      }
-      th {
-        padding: 16px 24px;
-        font-size: 0.75rem;
-        text-transform: uppercase;
-        color: var(--text-secondary);
-        font-weight: 700;
-        text-align: left;
-      }
-      td {
-        padding: 18px 24px;
-        border-bottom: 1px solid #f1f5f9;
-        font-size: 0.9rem;
-        color: var(--text-main);
-      }
-
-      .status-pill {
-        padding: 6px 12px;
-        border-radius: 20px;
-        font-size: 0.75rem;
-        font-weight: 700;
-        display: inline-flex;
-        align-items: center;
-        gap: 6px;
-      }
-
-      .status-normal {
-        background: var(--secondary-bg-light);
-        color: var(--secondary);
-      }
-      .status-low {
-        background: var(--accent-bg-light);
-        color: var(--accent);
-      }
-      .status-out {
-        background: var(--danger-light);
-        color: var(--danger);
-      }
-      .status-inactive {
-        background: var(--inactive-light);
-        color: var(--inactive);
-      }
-
-      .btn-adjust {
-        background: var(--primary-bg-light);
-        color: var(--primary);
-        border: none;
-        padding: 8px 12px;
-        border-radius: 8px;
-        cursor: pointer;
-        font-weight: 600;
-        font-size: 0.8rem;
-        transition: 0.2s;
-      }
-      .btn-adjust:hover {
-        background: var(--primary);
-        color: white;
-      }
-
-      /* Modals */
-      .modal-overlay {
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background: rgba(15, 23, 42, 0.7); /* Fundo escuro semi-transparente */
-        backdrop-filter: blur(4px); /* Efeito de vidro embaçado no fundo */
-        display: none; /* Começa escondido */
-        align-items: center;
-        justify-content: center;
-        z-index: 9999;
-      }
-
-      .modal-content {
-        background: #ffffff;
-        width: 100%;
-        max-width: 400px;
-        padding: 30px;
-        border-radius: 16px;
-        box-shadow:
-          0 20px 25px -5px rgba(0, 0, 0, 0.1),
-          0 10px 10px -5px rgba(0, 0, 0, 0.04);
-        animation: modalPop 0.2s ease-out;
-      }
-
-      @keyframes modalPop {
-        from {
-          transform: scale(0.95);
-          opacity: 0;
-        }
-        to {
-          transform: scale(1);
-          opacity: 1;
-        }
-      }
-
-      .modal-header {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        margin-bottom: 20px;
-      }
-
-      .modal-footer {
-        display: flex;
-        gap: 12px;
-        margin-top: 25px;
-      }
-
-      .modal {
-        background: var(--white);
-        width: 500px;
-        border-radius: 20px;
-        padding: 32px;
-        box-shadow: var(--shadow);
-        animation: slideIn 0.3s ease-out;
-      }
-
-      @keyframes slideIn {
-        from {
-          opacity: 0;
-          transform: translateY(20px);
-        }
-        to {
-          opacity: 1;
-          transform: translateY(0);
-        }
-      }
-
-      .modal-title {
-        font-size: 1.25rem;
-        font-weight: 800;
-        margin-bottom: 24px;
-        display: flex;
-        align-items: center;
-        gap: 10px;
-      }
-      .form-group {
-        margin-bottom: 20px;
-      }
-      .form-group label {
-        display: block;
-        font-size: 0.85rem;
-        font-weight: 700;
-        margin-bottom: 8px;
-        color: var(--text-main);
-      }
-      .modal-footer {
-        display: flex;
-        gap: 12px;
-        margin-top: 32px;
-      }
-      .btn-full {
-        flex: 1;
-        padding: 14px;
-        border-radius: 12px;
-        border: none;
-        font-weight: 700;
-        cursor: pointer;
-        transition: 0.2s;
-      }
-
-      .modal-entrada .modal-title {
-        color: var(--secondary);
-      }
-      .modal-saida .modal-title {
-        color: var(--accent);
-      }
-
-      /* Toast */
-      .toast {
-        position: fixed;
-        bottom: 30px;
-        right: 30px;
-        background: var(--text-main);
-        color: white;
-        padding: 16px 24px;
-        border-radius: 12px;
-        display: flex;
-        align-items: center;
-        gap: 12px;
-        transform: translateY(150px);
-        transition: 0.4s;
-        z-index: 300;
-      }
-      .toast.show {
+      to {
+        opacity: 1;
         transform: translateY(0);
       }
-    </style>
-  </head>
-  <body>
-    <aside>
-      <div class="logo-container">
-        <i data-lucide="dog" style="width: 32px; height: 32px"></i>
-        <span>PetShop Pro</span>
+    }
+
+    .modal-title {
+      font-size: 1.25rem;
+      font-weight: 800;
+      margin-bottom: 24px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .form-group {
+      margin-bottom: 20px;
+    }
+
+    .form-group label {
+      display: block;
+      font-size: 0.85rem;
+      font-weight: 700;
+      margin-bottom: 8px;
+      color: var(--text-main);
+    }
+
+    .modal-footer {
+      display: flex;
+      gap: 12px;
+      margin-top: 32px;
+    }
+
+    .btn-full {
+      flex: 1;
+      padding: 14px;
+      border-radius: 12px;
+      border: none;
+      font-weight: 700;
+      cursor: pointer;
+      transition: 0.2s;
+    }
+
+    .modal-entrada .modal-title {
+      color: var(--secondary);
+    }
+
+    .modal-saida .modal-title {
+      color: var(--accent);
+    }
+
+    /* Toast */
+    .toast {
+      position: fixed;
+      bottom: 30px;
+      right: 30px;
+      background: var(--text-main);
+      color: white;
+      padding: 16px 24px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      transform: translateY(150px);
+      transition: 0.4s;
+      z-index: 300;
+    }
+
+    .toast.show {
+      transform: translateY(0);
+    }
+  </style>
+</head>
+
+<body>
+  <aside>
+    <div class="logo-container">
+      <i data-lucide="dog" style="width: 32px; height: 32px"></i>
+      <span>PetShop Pro</span>
+    </div>
+    <p class="menu-label">Painel</p>
+    <nav>
+      <a href="../TelaInicial/index.html" class="nav-item"><i data-lucide="layout-dashboard"></i> Dashboard</a>
+      <a href="../Agenda/Agenda.html" class="nav-item"><i data-lucide="calendar"></i> Agenda Teams</a>
+      <p class="menu-label" style="margin-top: 24px">Vendas e Serviços</p>
+      <a href="../Carrinho/Carrinho.html" class="nav-item"><i data-lucide="shopping-cart"></i> Carrinho / PDV</a>
+      <a href="../CatalogoServico/CatalogoServico.html" class="nav-item">
+        <i data-lucide="scissors"></i> Catálogo de Serviços
+      </a>
+      <p class="menu-label" style="margin-top: 24px">Cadastros</p>
+      <a href="../Clientes/Cliente.html" class="nav-item"><i data-lucide="users"></i> Clientes</a>
+      <a href="../Pet/Pet.html" class="nav-item">
+        <i data-lucide="paw-print"></i> Animais
+      </a>
+      <a href="../Produtos/Produto.html" class="nav-item">
+        <i data-lucide="package"></i> Itens / Produtos
+      </a>
+      <p class="menu-label" style="margin-top: 24px">Gestão</p>
+      <a href="../Estoque/Estoque.html" class="nav-item active"><i data-lucide="boxes"></i> Controle de Estoque</a>
+      <a href="../GastosPrevistos/GastosPrevistos.html" class="nav-item">
+        <i data-lucide="trending-down"></i> Gastos Previstos
+      </a>
+      <a href="../HistoricoVendas/HistoricoVendas.html" class="nav-item"><i data-lucide="wallet"></i>
+        <span>Histórico de Vendas</span></a>
+    </nav>
+  </aside>
+
+  <main>
+    <header>
+      <div class="header-info">
+        <h1>Controle de Estoque</h1>
+        <p>Gerencie entradas, saídas e movimentações de produtos.</p>
       </div>
-      <p class="menu-label">Painel</p>
-      <nav>
-        <a href="../TelaInicial/index.html" class="nav-item"
-          ><i data-lucide="layout-dashboard"></i> Dashboard</a
-        >
-        <a href="../Agenda/Agenda.html" class="nav-item"
-          ><i data-lucide="calendar"></i> Agenda Teams</a
-        >
-        <p class="menu-label" style="margin-top: 24px">Vendas e Serviços</p>
-        <a href="../Carrinho/Carrinho.html" class="nav-item"
-          ><i data-lucide="shopping-cart"></i> Carrinho / PDV</a
-        >
-        <a href="../CatalogoServico/CatalogoServico.html" class="nav-item">
-          <i data-lucide="scissors"></i> Catálogo de Serviços
-        </a>
-        <p class="menu-label" style="margin-top: 24px">Cadastros</p>
-        <a href="../Clientes/Cliente.html" class="nav-item"
-          ><i data-lucide="users"></i> Clientes</a
-        >
-        <a href="../Pet/Pet.html" class="nav-item">
-          <i data-lucide="paw-print"></i> Animais
-        </a>
-        <a href="../Produtos/Produto.html" class="nav-item">
-          <i data-lucide="package"></i> Itens / Produtos
-        </a>
-        <p class="menu-label" style="margin-top: 24px">Gestão</p>
-        <a href="../Estoque/Estoque.html" class="nav-item active"
-          ><i data-lucide="boxes"></i> Controle de Estoque</a
-        >
-        <a href="../GastosPrevistos/GastosPrevistos.html" class="nav-item">
-          <i data-lucide="trending-down"></i> Gastos Previstos
-        </a>
-                <a href="../HistoricoVendas/HistoricoVendas.html" class="nav-item"
-          ><i data-lucide="wallet"></i>
-          <span>Histórico de Vendas</span></a
-        >
-      </nav>
-    </aside>
+    </header>
 
-    <main>
-      <header>
-        <div class="header-info">
-          <h1>Controle de Estoque</h1>
-          <p>Gerencie entradas, saídas e movimentações de produtos.</p>
-        </div>
-      </header>
-
-      <div class="content-container">
-        <!-- Dashboard Stats -->
-        <div class="stats-grid">
-          <div class="stat-card">
-            <div class="stat-header">
-              <span>Total de Itens</span>
-              <div
-                class="stat-icon"
-                style="
+    <div class="content-container">
+      <!-- Dashboard Stats -->
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-header">
+            <span>Total de Itens</span>
+            <div class="stat-icon" style="
                   background: var(--primary-bg-light);
                   color: var(--primary);
-                "
-              >
-                <i data-lucide="package" style="width: 20px"></i>
-              </div>
-            </div>
-            <div class="stat-value" id="total-itens">0</div>
-          </div>
-          <div class="stat-card">
-            <div class="stat-header">
-              <span>Estoque Baixo</span>
-              <div
-                class="stat-icon"
-                style="background: var(--accent-bg-light); color: var(--accent)"
-              >
-                <i data-lucide="alert-triangle" style="width: 20px"></i>
-              </div>
-            </div>
-            <div
-              class="stat-value"
-              id="low-stock-count"
-              style="color: var(--accent)"
-            >
-              0
+                ">
+              <i data-lucide="package" style="width: 20px"></i>
             </div>
           </div>
-          <div class="stat-card">
-            <div class="stat-header">
-              <span>Sem Estoque</span>
-              <div
-                class="stat-icon"
-                style="background: var(--danger-light); color: var(--danger)"
-              >
-                <i data-lucide="x-circle" style="width: 20px"></i>
-              </div>
-            </div>
-            <div
-              class="stat-value"
-              id="out-of-stock-count"
-              style="color: var(--danger)"
-            >
-              0
+          <div class="stat-value" id="total-itens">0</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-header">
+            <span>Estoque Baixo</span>
+            <div class="stat-icon" style="background: var(--accent-bg-light); color: var(--accent)">
+              <i data-lucide="alert-triangle" style="width: 20px"></i>
             </div>
           </div>
-          <div class="stat-card">
-            <div class="stat-header">
-              <span>Valor Inventário</span>
-              <div
-                class="stat-icon"
-                style="
-                  background: var(--secondary-bg-light);
-                  color: var(--secondary);
-                "
-              >
-                <i data-lucide="dollar-sign" style="width: 20px"></i>
-              </div>
-            </div>
-            <div class="stat-value" id="total-value">R$ 0,00</div>
+          <div class="stat-value" id="low-stock-count" style="color: var(--accent)">
+            0
           </div>
         </div>
-
-        <!-- Tabela Principal -->
-        <div class="card-container">
-          <div class="table-header">
-            <!-- Busca com Ícone Interno -->
-            <div class="input-group" style="width: 350px">
-              <i data-lucide="search"></i>
-              <input
-                type="text"
-                placeholder="Filtrar por nome..."
-                oninput="filterByTerm(this.value)"
-              />
+        <div class="stat-card">
+          <div class="stat-header">
+            <span>Sem Estoque</span>
+            <div class="stat-icon" style="background: var(--danger-light); color: var(--danger)">
+              <i data-lucide="x-circle" style="width: 20px"></i>
             </div>
-                  <button
-              class="btn-adjust"
-              onclick="toggleFilterModal()"
-              style="
+          </div>
+          <div class="stat-value" id="out-of-stock-count" style="color: var(--danger)">
+            0
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-header">
+            <span>Valor Inventário</span>
+            <div class="stat-icon" style="
+                  background: var(--secondary-bg-light);
+                  color: var(--secondary);
+                ">
+              <i data-lucide="dollar-sign" style="width: 20px"></i>
+            </div>
+          </div>
+          <div class="stat-value" id="total-value">R$ 0,00</div>
+        </div>
+      </div>
+
+      <!-- Tabela Principal -->
+      <div class="card-container">
+        <div class="table-header">
+          <!-- Busca com Ícone Interno -->
+          <div class="input-group" style="width: 350px">
+            <i data-lucide="search"></i>
+            <input type="text" placeholder="Filtrar por nome..." oninput="filterByTerm(this.value)" />
+          </div>
+          <button class="btn-adjust" onclick="toggleFilterModal()" style="
                 background: #f1f5f9;
                 color: var(--text-secondary);
                 display: flex;
                 align-items: center;
                 gap: 8px;
-              "
-            >
-              <i data-lucide="filter" style="width: 14px"></i> Filtros Avançados
-         
-          </div>
-          <table>
-            <thead>
-              <tr>
-                <th>Produto</th>
-                <th>Descrição</th>
-                <th>Qtd. Atual</th>
-                <th>Mínimo</th>
-                <th>Status Estoque</th>
-                <th>Ativo/Inativo</th>
-                <th style="text-align: right">Ações</th>
-              </tr>
-            </thead>
-            <tbody id="stock-list"></tbody>
-          </table>
+              ">
+            <i data-lucide="filter" style="width: 14px"></i> Filtros Avançados
+
         </div>
+        <table>
+          <thead>
+            <tr>
+              <th>Produto</th>
+              <th>Descrição</th>
+              <th>Qtd. Atual</th>
+              <th>Mínimo</th>
+              <th>Status Estoque</th>
+              <th>Ativo/Inativo</th>
+              <th style="text-align: right">Ações</th>
+            </tr>
+          </thead>
+          <tbody id="stock-list"></tbody>
+        </table>
       </div>
-    </main>
 
-    <!-- Modal de Movimentação (Entrada/Saída) -->
-    <div class="modal-overlay" id="modalOverlay">
-      <div class="modal" id="modalBox">
-        <div class="modal-title" id="modalHeaderTitle">
-          <i id="modalHeaderIcon" data-lucide="plus-circle"></i>
-          <span id="modalHeaderText">Registrar Movimento</span>
-        </div>
-        <form id="stockForm">
-          <input type="hidden" id="movementType" />
-
-          <div class="form-group">
-            <label>Selecione o Produto</label>
-            <div class="input-group">
-              <i data-lucide="box"></i>
-              <select id="productSelect" required></select>
-            </div>
-          </div>
-
-          <div class="form-group">
-            <label>Quantidade</label>
-            <div class="input-group">
-              <i data-lucide="hash"></i>
-              <input
-                type="number"
-                id="quantity"
-                min="1"
-                placeholder="Ex: 10"
-                required
-              />
-            </div>
-          </div>
-
-          <div class="form-group">
-            <label>Observações</label>
-            <div class="input-group">
-              <i data-lucide="file-text" style="top: 14px"></i>
-              <textarea
-                id="notes"
-                rows="2"
-                placeholder="Descreva o motivo..."
-              ></textarea>
-            </div>
-          </div>
-
-          <div class="modal-footer">
-            <!-- Botão Cancelar -->
-            <button
-              type="button"
-              class="btn-modal btn-cancel"
-              onclick="closeStockModal()"
-            >
-              <i data-lucide="x-circle" style="width: 18px"></i> Cancelar
-            </button>
-
-            <button
-              type="button"
-              class="btn-modal btn-save"
-              id="btnSaveStock"
-              onclick="saveStockUpdate()"
-            >
-              <i data-lucide="check-circle" style="width: 18px"></i> Salvar
-            </button>
-          </div>
-        </form>
+      <div class="pagination">
+        <span class="page-indicator" id="page-info">Página 1 de 1</span>
+        <button id="prev">Anterior</button>
+        <button id="next">Próxima</button>
       </div>
     </div>
+  </main>
 
-    <!-- Modal de Filtros Avançados -->
-    <div class="modal-overlay" id="filterModalOverlay">
-      <div class="modal">
-        <div class="modal-title" style="color: var(--primary)">
-          <i data-lucide="filter"></i> Filtros Avançados
+  <!-- Modal de Movimentação (Entrada/Saída) -->
+  <div class="modal-overlay" id="modalOverlay">
+    <div class="modal" id="modalBox">
+      <div class="modal-title" id="modalHeaderTitle">
+        <i id="modalHeaderIcon" data-lucide="plus-circle"></i>
+        <span id="modalHeaderText">Registrar Movimento</span>
+      </div>
+      <form id="stockForm">
+        <input type="hidden" id="movementType" />
+
+        <div class="form-group">
+          <label>Selecione o Produto</label>
+          <div class="input-group">
+            <i data-lucide="box"></i>
+            <select id="productSelect" required></select>
+          </div>
         </div>
 
         <div class="form-group">
-          <label>Status de Cadastro</label>
+          <label>Quantidade</label>
           <div class="input-group">
-            <i data-lucide="power"></i>
-            <select id="filterAtivo">
-              <option value="all">Todos (Ativos e Inativos)</option>
-              <option value="true">Apenas Ativos</option>
-              <option value="false">Apenas Inativos</option>
-            </select>
+            <i data-lucide="hash"></i>
+            <input type="number" id="quantity" min="1" placeholder="Ex: 10" required />
           </div>
         </div>
 
         <div class="form-group">
-          <label>Situação do Estoque</label>
+          <label>Observações</label>
           <div class="input-group">
-            <i data-lucide="activity"></i>
-            <select id="filterStatus">
-              <option value="all">Todos os Status</option>
-              <option value="normal">Status Normal</option>
-              <option value="baixo">Estoque Baixo</option>
-              <option value="zerado">Sem Estoque (Zerado)</option>
-            </select>
-          </div>
-        </div>
-
-        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px">
-          <div class="form-group">
-            <label>Qtd. Mínima</label>
-            <div class="input-group">
-              <i data-lucide="chevrons-down"></i>
-              <input type="number" id="filterQtyMin" placeholder="Ex: 5" />
-            </div>
-          </div>
-          <div class="form-group">
-            <label>Qtd. Máxima</label>
-            <div class="input-group">
-              <i data-lucide="chevrons-up"></i>
-              <input type="number" id="filterQtyMax" placeholder="Ex: 100" />
-            </div>
+            <i data-lucide="file-text" style="top: 14px"></i>
+            <textarea id="notes" rows="2" placeholder="Descreva o motivo..."></textarea>
           </div>
         </div>
 
         <div class="modal-footer">
-          <button
-            type="button"
-            class="btn-full"
-            style="background: #f1f5f9"
-            onclick="resetFilters()"
-          >
-            Limpar
+          <!-- Botão Cancelar -->
+          <button type="button" class="btn-modal btn-cancel" onclick="closeStockModal()">
+            <i data-lucide="x-circle" style="width: 18px"></i> Cancelar
           </button>
-          <button
-            type="button"
-            class="btn-full"
-            style="background: var(--primary); color: white"
-            onclick="applyAdvancedFilters()"
-          >
-            Aplicar Filtros
+
+          <button type="button" class="btn-modal btn-save" id="btnSaveStock" onclick="saveStockUpdate()">
+            <i data-lucide="check-circle" style="width: 18px"></i> Salvar
           </button>
         </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modal de Filtros Avançados -->
+  <div class="modal-overlay" id="filterModalOverlay">
+    <div class="modal">
+      <div class="modal-title" style="color: var(--primary)">
+        <i data-lucide="filter"></i> Filtros Avançados
+      </div>
+
+      <div class="form-group">
+        <label>Status de Cadastro</label>
+        <div class="input-group">
+          <i data-lucide="power"></i>
+          <select id="filterAtivo">
+            <option value="all">Todos (Ativos e Inativos)</option>
+            <option value="true">Apenas Ativos</option>
+            <option value="false">Apenas Inativos</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label>Situação do Estoque</label>
+        <div class="input-group">
+          <i data-lucide="activity"></i>
+          <select id="filterStatus">
+            <option value="all">Todos os Status</option>
+            <option value="normal">Status Normal</option>
+            <option value="baixo">Estoque Baixo</option>
+            <option value="zerado">Sem Estoque (Zerado)</option>
+          </select>
+        </div>
+      </div>
+
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px">
+        <div class="form-group">
+          <label>Qtd. Mínima</label>
+          <div class="input-group">
+            <i data-lucide="chevrons-down"></i>
+            <input type="number" id="filterQtyMin" placeholder="Ex: 5" />
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Qtd. Máxima</label>
+          <div class="input-group">
+            <i data-lucide="chevrons-up"></i>
+            <input type="number" id="filterQtyMax" placeholder="Ex: 100" />
+          </div>
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <button type="button" class="btn-full" style="background: #f1f5f9" onclick="resetFilters()">
+          Limpar
+        </button>
+        <button type="button" class="btn-full" style="background: var(--primary); color: white"
+          onclick="applyAdvancedFilters()">
+          Aplicar Filtros
+        </button>
       </div>
     </div>
+  </div>
 
-    <!-- Modal Alterar Estoque -->
-    <div class="modal-overlay" id="stockModalOverlay">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h3 style="color: var(--text-main); font-weight: 700">
-            Ajustar Estoque
-          </h3>
-          <button
-            onclick="closeStockModal()"
-            style="
+  <!-- Modal Alterar Estoque -->
+  <div class="modal-overlay" id="stockModalOverlay">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 style="color: var(--text-main); font-weight: 700">
+          Ajustar Estoque
+        </h3>
+        <button onclick="closeStockModal()" style="
               background: none;
               border: none;
               cursor: pointer;
               color: #94a3b8;
-            "
-          >
-            <i data-lucide="x"></i>
-          </button>
-        </div>
+            ">
+          <i data-lucide="x"></i>
+        </button>
+      </div>
 
-        <p
-          id="stockProdName"
-          style="
+      <p id="stockProdName" style="
             font-size: 0.9rem;
             color: var(--text-secondary);
             margin-bottom: 8px;
-          "
-        ></p>
+          "></p>
 
-        <div class="form-group">
-          <label
-            style="
+      <div class="form-group">
+        <label style="
               display: block;
               font-size: 0.8rem;
               font-weight: 600;
               margin-bottom: 5px;
-            "
-            >Nova Quantidade</label
-          >
-          <input
-            type="number"
-            id="newQuantityInput"
-            class="form-control"
-            style="
+            ">Nova Quantidade</label>
+        <input type="number" id="newQuantityInput" class="form-control" style="
               width: 100%;
               padding: 12px;
               border-radius: 8px;
               border: 1px solid #e2e8f0;
               font-size: 1.1rem;
               font-weight: 700;
-            "
-          />
-        </div>
+            " />
+      </div>
 
-        <div class="modal-footer">
-          <!-- Botão Cancelar -->
-          <button
-            type="button"
-            class="btn-modal btn-cancel"
-            onclick="closeStockModal()"
-          >
-            <i data-lucide="x-circle" style="width: 18px"></i> Cancelar
-          </button>
+      <div class="modal-footer">
+        <!-- Botão Cancelar -->
+        <button type="button" class="btn-modal btn-cancel" onclick="closeStockModal()">
+          <i data-lucide="x-circle" style="width: 18px"></i> Cancelar
+        </button>
 
-          <!-- Botão Salvar -->
-          <button
-            type="button"
-            class="btn-modal btn-save"
-            id="btnSaveStock"
-            onclick="saveStockUpdate()"
-          >
-            <i data-lucide="check-circle" style="width: 18px"></i> Salvar
-          </button>
-        </div>
+        <!-- Botão Salvar -->
+        <button type="button" class="btn-modal btn-save" id="btnSaveStock" onclick="saveStockUpdate()">
+          <i data-lucide="check-circle" style="width: 18px"></i> Salvar
+        </button>
       </div>
     </div>
+  </div>
 
-    <!-- Toast Notification -->
-    <div class="toast" id="toast">
-      <i data-lucide="check-circle"></i>
-      <span id="toastMsg">Operação realizada!</span>
-    </div>
+  <!-- Toast Notification -->
+  <div class="toast" id="toast">
+    <i data-lucide="check-circle"></i>
+    <span id="toastMsg">Operação realizada!</span>
+  </div>
 
-    
 
-    <script>
-      // Inicializar Ícones
+
+  <script>
+    // Inicializar Ícones
+    lucide.createIcons();
+
+    let inventory = [];
+    let currentFilters = {
+      term: "",
+      status: "all",
+      ativo: "all",
+      min: null,
+      max: null,
+    };
+
+    // Abre o modal de estoque preenchendo os campos
+    function toggleStockModal(id, nome, qtdAtual) {
+      document.getElementById("stockProdId").value = id;
+      document.getElementById("stockProdName").innerText = nome;
+      document.getElementById("newQuantity").value = qtdAtual;
+      document.getElementById("stockModalOverlay").style.display = "flex";
       lucide.createIcons();
+    }
 
-      let inventory = [];
-      let currentFilters = {
-        term: "",
-        status: "all",
-        ativo: "all",
-        min: null,
-        max: null,
-      };
+    async function saveStockUpdate() {
+      const API_URL = "http://localhost:8081/produto";
+      const inputQtd = document.getElementById("newQuantityInput");
 
-      // Abre o modal de estoque preenchendo os campos
-      function toggleStockModal(id, nome, qtdAtual) {
-        document.getElementById("stockProdId").value = id;
-        document.getElementById("stockProdName").innerText = nome;
-        document.getElementById("newQuantity").value = qtdAtual;
-        document.getElementById("stockModalOverlay").style.display = "flex";
-        lucide.createIcons();
+      if (!productToEdit) return; // Sai silenciosamente se não houver produto
+
+      const newQty = parseInt(inputQtd.value);
+      if (isNaN(newQty)) {
+        if (typeof showToast === "function")
+          showToast("Quantidade inválida!");
+        return;
       }
 
-      async function saveStockUpdate() {
-        const API_URL = "http://localhost:8081/produto";
-        const inputQtd = document.getElementById("newQuantityInput");
+      try {
+        // Monta o objeto exatamente como o seu fetch anterior fazia
+        const productData = {
+          ...productToEdit,
+          quantidadeProduto: newQty,
+        };
 
-        if (!productToEdit) return; // Sai silenciosamente se não houver produto
-
-        const newQty = parseInt(inputQtd.value);
-        if (isNaN(newQty)) {
-          if (typeof showToast === "function")
-            showToast("Quantidade inválida!");
-          return;
-        }
-
-        try {
-          // Monta o objeto exatamente como o seu fetch anterior fazia
-          const productData = {
-            ...productToEdit,
-            quantidadeProduto: newQty,
-          };
-
-          const res = await fetch(`${API_URL}/atualizar`, {
-            method: "PUT",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(productData),
-          });
-
-          if (!res.ok) throw new Error("Erro ao atualizar");
-
-          // 1. Atualiza o dado na lista local (inventory)
-          productToEdit.quantidadeProduto = newQty;
-
-          // 2. Re-renderiza a tabela (ajuste para o nome da sua função de desenho)
-          if (typeof renderStock === "function") renderStock();
-          else if (typeof renderProducts === "function") renderProducts();
-
-          // 3. Fecha o modal e avisa o usuário de forma elegante
-          closeStockModal();
-
-          if (typeof showToast === "function") {
-            showToast("Estoque atualizado com sucesso!");
-          }
-        } catch (err) {
-          console.error(err);
-          if (typeof showToast === "function") {
-            showToast("Erro ao salvar: " + err.message);
-          }
-        }
-      }
-
-      // Fecha o modal
-      function closeStockModal() {
-        document.getElementById("stockModalOverlay").style.display = "none";
-      }
-
-      // Evento de envio do formulário de estoque
-      document.getElementById("stockForm").onsubmit = async (e) => {
-        e.preventDefault();
-        const id = document.getElementById("stockProdId").value;
-        const novaQtd = document.getElementById("newQuantity").value;
-
-        try {
-          // Ajuste o endpoint conforme sua API (Ex: /produto/estoque/${id})
-          const res = await fetch(
-            `${API_URL}/atualizar-estoque/${id}?quantidade=${novaQtd}`,
-            {
-              method: "PATCH",
-            },
-          );
-
-          if (res.ok) {
-            showToast("Estoque atualizado com sucesso!");
-            closeStockModal();
-            fetchProducts(); // Recarrega a tabela
-          } else {
-            showToast("Erro ao atualizar estoque.");
-          }
-        } catch (err) {
-          showToast("Erro de conexão com o servidor.");
-        }
-      };
-
-      // Carregar Produtos (Mockado por padrão)
-      async function carregarProdutos() {
-        try {
-          const res = await fetch("http://localhost:8081/produto/listar").catch(
-            () => null,
-          );
-          if (res && res.ok) {
-            inventory = await res.json();
-          } else {
-            // Dados para demonstração (incluindo campo ativo)
-            inventory = [
-              {
-                id: 1,
-                nomeProduto: "Ração Premium Cão 15kg",
-                descricaoProduto: "Alimentos",
-                quantidadeProduto: 45,
-                quantidadeMinimoProduto: 10,
-                precoProduto: 189.9,
-                ativo: true,
-              },
-              {
-                id: 2,
-                nomeProduto: "Shampoo Pet Brilho",
-                descricaoProduto: "Higiene",
-                quantidadeProduto: 4,
-                quantidadeMinimoProduto: 8,
-                precoProduto: 35.0,
-                ativo: true,
-              },
-              {
-                id: 3,
-                nomeProduto: "Mordedor de Corda",
-                descricaoProduto: "Brinquedos",
-                quantidadeProduto: 0,
-                quantidadeMinimoProduto: 5,
-                precoProduto: 22.5,
-                ativo: false,
-              },
-              {
-                id: 4,
-                nomeProduto: "Anti-pulgas NextGard",
-                descricaoProduto: "Medicamentos",
-                quantidadeProduto: 12,
-                quantidadeMinimoProduto: 3,
-                precoProduto: 95.0,
-                ativo: true,
-              },
-            ];
-          }
-          renderStock();
-        } catch (err) {
-          console.error("Erro ao carregar stock:", err);
-        }
-      }
-
-      // Atualizar Indicadores (Cards)
-      function updateStats() {
-        const totalItems = inventory.length;
-        const lowStock = inventory.filter(
-          (p) =>
-            p.quantidadeProduto > 0 &&
-            p.quantidadeProduto <= p.quantidadeMinimoProduto &&
-            p.ativo !== false,
-        ).length;
-        const outStock = inventory.filter(
-          (p) => p.quantidadeProduto === 0 && p.ativo !== false,
-        ).length;
-        const totalVal = inventory.reduce(
-          (acc, p) =>
-            acc +
-            (p.ativo !== false ? p.quantidadeProduto * p.precoProduto : 0),
-          0,
-        );
-
-        document.getElementById("total-itens").innerText = totalItems;
-        document.getElementById("low-stock-count").innerText = lowStock;
-        document.getElementById("out-of-stock-count").innerText = outStock;
-        document.getElementById("total-value").innerText =
-          `R$ ${totalVal.toLocaleString("pt-BR", { minimumFractionDigits: 2 })}`;
-      }
-
-      // Renderizar Tabela com Filtros Combinados
-      function renderStock() {
-        const list = document.getElementById("stock-list");
-        list.innerHTML = "";
-
-        const filtered = inventory.filter((p) => {
-          const matchTerm = p.nomeProduto
-            .toLowerCase()
-            .includes(currentFilters.term.toLowerCase());
-
-          // Filtro de Ativo/Inativo
-          let matchAtivo = true;
-          if (currentFilters.ativo !== "all") {
-            const isAtivo = currentFilters.ativo === "true";
-            matchAtivo = p.ativo === isAtivo;
-          }
-
-          let matchStatus = true;
-          if (currentFilters.status === "baixo")
-            matchStatus =
-              p.quantidadeProduto > 0 &&
-              p.quantidadeProduto <= p.quantidadeMinimoProduto;
-          if (currentFilters.status === "zerado")
-            matchStatus = p.quantidadeProduto === 0;
-          if (currentFilters.status === "normal")
-            matchStatus = p.quantidadeProduto > p.quantidadeMinimoProduto;
-
-          const matchMin =
-            currentFilters.min === null ||
-            p.quantidadeProduto >= currentFilters.min;
-          const matchMax =
-            currentFilters.max === null ||
-            p.quantidadeProduto <= currentFilters.max;
-
-          return matchTerm && matchStatus && matchMin && matchMax && matchAtivo;
+        const res = await fetch(`${API_URL}/atualizar`, {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(productData),
         });
 
-        filtered.forEach((p) => {
-          let statusClass = "status-normal";
-          let statusText = "Normal";
-          let statusIcon = "check";
+        if (!res.ok) throw new Error("Erro ao atualizar");
 
-          if (p.quantidadeProduto === 0) {
-            statusClass = "status-out";
-            statusText = "Zerado";
-            statusIcon = "x";
-          } else if (p.quantidadeProduto <= p.quantidadeMinimoProduto) {
-            statusClass = "status-low";
-            statusText = "Baixo";
-            statusIcon = "alert-triangle";
-          }
+        // 1. Atualiza o dado na lista local (inventory)
+        productToEdit.quantidadeProduto = newQty;
 
-          const ativoClass =
-            p.ativo !== false ? "status-normal" : "status-inactive";
-          const ativoText = p.ativo !== false ? "Ativo" : "Inativo";
-          const ativoIcon = p.ativo !== false ? "check-circle" : "power-off";
+        // 2. Re-renderiza a tabela (ajuste para o nome da sua função de desenho)
+        if (typeof renderStock === "function") renderStock();
+        else if (typeof renderProducts === "function") renderProducts();
 
-          const tr = document.createElement("tr");
-          tr.innerHTML = `
+        // 3. Fecha o modal e avisa o usuário de forma elegante
+        closeStockModal();
+
+        if (typeof showToast === "function") {
+          showToast("Estoque atualizado com sucesso!");
+        }
+      } catch (err) {
+        console.error(err);
+        if (typeof showToast === "function") {
+          showToast("Erro ao salvar: " + err.message);
+        }
+      }
+    }
+
+    // Fecha o modal
+    function closeStockModal() {
+      document.getElementById("stockModalOverlay").style.display = "none";
+    }
+
+    // Evento de envio do formulário de estoque
+    document.getElementById("stockForm").onsubmit = async (e) => {
+      e.preventDefault();
+      const id = document.getElementById("stockProdId").value;
+      const novaQtd = document.getElementById("newQuantity").value;
+
+      try {
+        // Ajuste o endpoint conforme sua API (Ex: /produto/estoque/${id})
+        const res = await fetch(
+          `${API_URL}/atualizar-estoque/${id}?quantidade=${novaQtd}`,
+          {
+            method: "PATCH",
+          },
+        );
+
+        if (res.ok) {
+          showToast("Estoque atualizado com sucesso!");
+          closeStockModal();
+          fetchProducts(); // Recarrega a tabela
+        } else {
+          showToast("Erro ao atualizar estoque.");
+        }
+      } catch (err) {
+        showToast("Erro de conexão com o servidor.");
+      }
+    };
+
+    // Carregar Produtos (Mockado por padrão)
+    async function carregarProdutos() {
+      try {
+        const res = await fetch("http://localhost:8081/produto/listar").catch(
+          () => null,
+        );
+        if (res && res.ok) {
+          inventory = await res.json();
+        } else {
+          // Dados para demonstração (incluindo campo ativo)
+          inventory = [
+            {
+              id: 1,
+              nomeProduto: "Ração Premium Cão 15kg",
+              descricaoProduto: "Alimentos",
+              quantidadeProduto: 45,
+              quantidadeMinimoProduto: 10,
+              precoProduto: 189.9,
+              ativo: true,
+            },
+            {
+              id: 2,
+              nomeProduto: "Shampoo Pet Brilho",
+              descricaoProduto: "Higiene",
+              quantidadeProduto: 4,
+              quantidadeMinimoProduto: 8,
+              precoProduto: 35.0,
+              ativo: true,
+            },
+            {
+              id: 3,
+              nomeProduto: "Mordedor de Corda",
+              descricaoProduto: "Brinquedos",
+              quantidadeProduto: 0,
+              quantidadeMinimoProduto: 5,
+              precoProduto: 22.5,
+              ativo: false,
+            },
+            {
+              id: 4,
+              nomeProduto: "Anti-pulgas NextGard",
+              descricaoProduto: "Medicamentos",
+              quantidadeProduto: 12,
+              quantidadeMinimoProduto: 3,
+              precoProduto: 95.0,
+              ativo: true,
+            },
+          ];
+        }
+        renderStock();
+      } catch (err) {
+        console.error("Erro ao carregar stock:", err);
+      }
+    }
+
+    // Atualizar Indicadores (Cards)
+    function updateStats() {
+      const totalItems = inventory.length;
+      const lowStock = inventory.filter(
+        (p) =>
+          p.quantidadeProduto > 0 &&
+          p.quantidadeProduto <= p.quantidadeMinimoProduto &&
+          p.ativo !== false,
+      ).length;
+      const outStock = inventory.filter(
+        (p) => p.quantidadeProduto === 0 && p.ativo !== false,
+      ).length;
+      const totalVal = inventory.reduce(
+        (acc, p) =>
+          acc +
+          (p.ativo !== false ? p.quantidadeProduto * p.precoProduto : 0),
+        0,
+      );
+
+      document.getElementById("total-itens").innerText = totalItems;
+      document.getElementById("low-stock-count").innerText = lowStock;
+      document.getElementById("out-of-stock-count").innerText = outStock;
+      document.getElementById("total-value").innerText =
+        `R$ ${totalVal.toLocaleString("pt-BR", { minimumFractionDigits: 2 })}`;
+    }
+
+    // Renderizar Tabela com Filtros Combinados
+    function renderStock() {
+      const list = document.getElementById("stock-list");
+      list.innerHTML = "";
+
+      const filtered = inventory.filter((p) => {
+        const matchTerm = p.nomeProduto
+          .toLowerCase()
+          .includes(currentFilters.term.toLowerCase());
+
+        // Filtro de Ativo/Inativo
+        let matchAtivo = true;
+        if (currentFilters.ativo !== "all") {
+          const isAtivo = currentFilters.ativo === "true";
+          matchAtivo = p.ativo === isAtivo;
+        }
+
+        let matchStatus = true;
+        if (currentFilters.status === "baixo")
+          matchStatus =
+            p.quantidadeProduto > 0 &&
+            p.quantidadeProduto <= p.quantidadeMinimoProduto;
+        if (currentFilters.status === "zerado")
+          matchStatus = p.quantidadeProduto === 0;
+        if (currentFilters.status === "normal")
+          matchStatus = p.quantidadeProduto > p.quantidadeMinimoProduto;
+
+        const matchMin =
+          currentFilters.min === null ||
+          p.quantidadeProduto >= currentFilters.min;
+        const matchMax =
+          currentFilters.max === null ||
+          p.quantidadeProduto <= currentFilters.max;
+
+        return matchTerm && matchStatus && matchMin && matchMax && matchAtivo;
+      });
+
+      filtered.forEach((p) => {
+        let statusClass = "status-normal";
+        let statusText = "Normal";
+        let statusIcon = "check";
+
+        if (p.quantidadeProduto === 0) {
+          statusClass = "status-out";
+          statusText = "Zerado";
+          statusIcon = "x";
+        } else if (p.quantidadeProduto <= p.quantidadeMinimoProduto) {
+          statusClass = "status-low";
+          statusText = "Baixo";
+          statusIcon = "alert-triangle";
+        }
+
+        const ativoClass =
+          p.ativo !== false ? "status-normal" : "status-inactive";
+        const ativoText = p.ativo !== false ? "Ativo" : "Inativo";
+        const ativoIcon = p.ativo !== false ? "check-circle" : "power-off";
+
+        const tr = document.createElement("tr");
+        tr.innerHTML = `
             <td>
               <div style="font-weight: 700;">${p.nomeProduto}</div>
               <div style="font-size: 0.75rem; color: var(--text-secondary)">ID: #${p.id}</div>
@@ -1173,181 +1152,192 @@
             <td><span class="status-pill ${ativoClass}"><i data-lucide="${ativoIcon}" style="width: 12px;"></i>${ativoText}</span></td>
             <td style="text-align: right;"><button class="btn-adjust" onclick="quickAdjust(${p.id})">Ajustar</button></td>
           `;
-          list.appendChild(tr);
-        });
-
-        updateStats();
-        lucide.createIcons();
-      }
-
-      // Lógica de Filtro por Termo (Instantâneo)
-      function filterByTerm(term) {
-        currentFilters.term = term;
-        renderStock();
-      }
-
-      // Lógica de Modais
-      function toggleFilterModal() {
-        const modal = document.getElementById("filterModalOverlay");
-        modal.style.display = modal.style.display === "flex" ? "none" : "flex";
-      }
-
-      function applyAdvancedFilters() {
-        currentFilters.status = document.getElementById("filterStatus").value;
-        currentFilters.ativo = document.getElementById("filterAtivo").value;
-        currentFilters.min =
-          document.getElementById("filterQtyMin").value !== ""
-            ? parseInt(document.getElementById("filterQtyMin").value)
-            : null;
-        currentFilters.max =
-          document.getElementById("filterQtyMax").value !== ""
-            ? parseInt(document.getElementById("filterQtyMax").value)
-            : null;
-
-        renderStock();
-        toggleFilterModal();
-        showToast("Filtros aplicados!");
-      }
-
-      function resetFilters() {
-        document.getElementById("filterStatus").value = "all";
-        document.getElementById("filterAtivo").value = "all";
-        document.getElementById("filterQtyMin").value = "";
-        document.getElementById("filterQtyMax").value = "";
-        currentFilters = {
-          term: currentFilters.term,
-          status: "all",
-          ativo: "all",
-          min: null,
-          max: null,
-        };
-        renderStock();
-        toggleFilterModal();
-      }
-
-      function openModal(type) {
-        const overlay = document.getElementById("modalOverlay");
-        const box = document.getElementById("modalBox");
-        const title = document.getElementById("modalHeaderText");
-        const icon = document.getElementById("modalHeaderIcon");
-        const btn = document.getElementById("confirmBtn");
-
-        document.getElementById("movementType").value = type;
-        overlay.style.display = "flex";
-        box.className =
-          "modal " + (type === "entrada" ? "modal-entrada" : "modal-saida");
-
-        title.innerText =
-          type === "entrada" ? "Registrar Entrada" : "Registrar Saída";
-        icon.setAttribute(
-          "data-lucide",
-          type === "entrada" ? "plus-circle" : "minus-circle",
-        );
-        btn.style.background =
-          type === "entrada" ? "var(--secondary)" : "var(--accent)";
-        btn.innerText =
-          "Confirmar " + (type === "entrada" ? "Entrada" : "Saída");
-
-        const select = document.getElementById("productSelect");
-        select.innerHTML =
-          '<option value="">Escolha um produto...</option>' +
-          inventory
-            .map(
-              (p) =>
-                `<option value="${p.id}">${p.nomeProduto} (Saldo: ${p.quantidadeProduto})</option>`,
-            )
-            .join("");
-
-        lucide.createIcons();
-      }
-
-      function closeModal() {
-        document.getElementById("modalOverlay").style.display = "none";
-        document.getElementById("stockForm").reset();
-      }
-
-      // Submit do Formulário de Stock
-      document.getElementById("stockForm").addEventListener("submit", (e) => {
-        e.preventDefault();
-        const type = document.getElementById("movementType").value;
-        const id = parseInt(document.getElementById("productSelect").value);
-        const qty = parseInt(document.getElementById("quantity").value);
-        const p = inventory.find((i) => i.id === id);
-
-        if (type === "saida" && p.quantidadeProduto < qty) {
-          showToast("Erro: Saldo insuficiente!", "danger");
-          return;
-        }
-
-        p.quantidadeProduto += type === "entrada" ? qty : -qty;
-        showToast(
-          `${type.charAt(0).toUpperCase() + type.slice(1)} registada com sucesso!`,
-        );
-        renderStock();
-        closeModal();
+        list.appendChild(tr);
       });
 
-      // Ajuste Rápido (Prompt)
-      let productToEdit = null; // Variável global para saber quem estamos editando
+      const btnPrev = document.getElementById("prev");
+      const btnNext = document.getElementById("next");
+      const pageInfo = document.getElementById("page-info");
 
-      function quickAdjust(id) {
-        productToEdit = inventory.find((p) => p.id === id);
-        if (!productToEdit) return;
+      pageInfo.textContent = `Página ${page + 1} de ${totalPages || 1}`;
 
-        // Preenche os campos
-        document.getElementById("stockProdName").innerText =
-          productToEdit.nomeProduto;
-        document.getElementById("newQuantityInput").value =
-          productToEdit.quantidadeProduto;
+      btnPrev.disabled = (page === 0);
 
-        // Mostra o modal estilizadinho
-        document.getElementById("stockModalOverlay").style.display = "flex";
-        lucide.createIcons();
-      }
+      btnNext.disabled = (page >= totalPages - 1);
 
-      function closeStockModal() {
-        document.getElementById("stockModalOverlay").style.display = "none";
-      }
+      updateStats();
+      lucide.createIcons();
+    }
 
-      // Evento do botão SALVAR do modal
-      document.getElementById("btnSaveStock").onclick = async () => {
-        const newQty = parseInt(
-          document.getElementById("newQuantityInput").value,
-        );
-        const API_URL = "http://localhost:8081/produto";
+    // Lógica de Filtro por Termo (Instantâneo)
+    function filterByTerm(term) {
+      currentFilters.term = term;
+      renderStock();
+    }
 
-        if (isNaN(newQty)) return alert("Quantidade inválida");
+    // Lógica de Modais
+    function toggleFilterModal() {
+      const modal = document.getElementById("filterModalOverlay");
+      modal.style.display = modal.style.display === "flex" ? "none" : "flex";
+    }
 
-        try {
-          const productData = { ...productToEdit, quantidadeProduto: newQty };
+    function applyAdvancedFilters() {
+      currentFilters.status = document.getElementById("filterStatus").value;
+      currentFilters.ativo = document.getElementById("filterAtivo").value;
+      currentFilters.min =
+        document.getElementById("filterQtyMin").value !== ""
+          ? parseInt(document.getElementById("filterQtyMin").value)
+          : null;
+      currentFilters.max =
+        document.getElementById("filterQtyMax").value !== ""
+          ? parseInt(document.getElementById("filterQtyMax").value)
+          : null;
 
-          const res = await fetch(`${API_URL}/atualizar`, {
-            method: "PUT",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(productData),
-          });
+      renderStock();
+      toggleFilterModal();
+      showToast("Filtros aplicados!");
+    }
 
-          if (!res.ok) throw new Error("Erro ao salvar");
-
-          productToEdit.quantidadeProduto = newQty;
-          renderStock(); // Atualiza a tabela
-          closeStockModal();
-          showToast("Estoque atualizado!");
-        } catch (err) {
-          alert(err.message);
-        }
+    function resetFilters() {
+      document.getElementById("filterStatus").value = "all";
+      document.getElementById("filterAtivo").value = "all";
+      document.getElementById("filterQtyMin").value = "";
+      document.getElementById("filterQtyMax").value = "";
+      currentFilters = {
+        term: currentFilters.term,
+        status: "all",
+        ativo: "all",
+        min: null,
+        max: null,
       };
+      renderStock();
+      toggleFilterModal();
+    }
 
-      // Função de Feedback (Toast)
-      function showToast(msg) {
-        const t = document.getElementById("toast");
-        document.getElementById("toastMsg").innerText = msg;
-        t.classList.add("show");
-        setTimeout(() => t.classList.remove("show"), 3000);
+    function openModal(type) {
+      const overlay = document.getElementById("modalOverlay");
+      const box = document.getElementById("modalBox");
+      const title = document.getElementById("modalHeaderText");
+      const icon = document.getElementById("modalHeaderIcon");
+      const btn = document.getElementById("confirmBtn");
+
+      document.getElementById("movementType").value = type;
+      overlay.style.display = "flex";
+      box.className =
+        "modal " + (type === "entrada" ? "modal-entrada" : "modal-saida");
+
+      title.innerText =
+        type === "entrada" ? "Registrar Entrada" : "Registrar Saída";
+      icon.setAttribute(
+        "data-lucide",
+        type === "entrada" ? "plus-circle" : "minus-circle",
+      );
+      btn.style.background =
+        type === "entrada" ? "var(--secondary)" : "var(--accent)";
+      btn.innerText =
+        "Confirmar " + (type === "entrada" ? "Entrada" : "Saída");
+
+      const select = document.getElementById("productSelect");
+      select.innerHTML =
+        '<option value="">Escolha um produto...</option>' +
+        inventory
+          .map(
+            (p) =>
+              `<option value="${p.id}">${p.nomeProduto} (Saldo: ${p.quantidadeProduto})</option>`,
+          )
+          .join("");
+
+      lucide.createIcons();
+    }
+
+    function closeModal() {
+      document.getElementById("modalOverlay").style.display = "none";
+      document.getElementById("stockForm").reset();
+    }
+
+    // Submit do Formulário de Stock
+    document.getElementById("stockForm").addEventListener("submit", (e) => {
+      e.preventDefault();
+      const type = document.getElementById("movementType").value;
+      const id = parseInt(document.getElementById("productSelect").value);
+      const qty = parseInt(document.getElementById("quantity").value);
+      const p = inventory.find((i) => i.id === id);
+
+      if (type === "saida" && p.quantidadeProduto < qty) {
+        showToast("Erro: Saldo insuficiente!", "danger");
+        return;
       }
 
-      // Iniciar aplicação
-      window.addEventListener("DOMContentLoaded", carregarProdutos);
-    </script>
-  </body>
+      p.quantidadeProduto += type === "entrada" ? qty : -qty;
+      showToast(
+        `${type.charAt(0).toUpperCase() + type.slice(1)} registada com sucesso!`,
+      );
+      renderStock();
+      closeModal();
+    });
+
+    // Ajuste Rápido (Prompt)
+    let productToEdit = null; // Variável global para saber quem estamos editando
+
+    function quickAdjust(id) {
+      productToEdit = inventory.find((p) => p.id === id);
+      if (!productToEdit) return;
+
+      // Preenche os campos
+      document.getElementById("stockProdName").innerText =
+        productToEdit.nomeProduto;
+      document.getElementById("newQuantityInput").value =
+        productToEdit.quantidadeProduto;
+
+      // Mostra o modal estilizadinho
+      document.getElementById("stockModalOverlay").style.display = "flex";
+      lucide.createIcons();
+    }
+
+    function closeStockModal() {
+      document.getElementById("stockModalOverlay").style.display = "none";
+    }
+
+    // Evento do botão SALVAR do modal
+    document.getElementById("btnSaveStock").onclick = async () => {
+      const newQty = parseInt(
+        document.getElementById("newQuantityInput").value,
+      );
+      const API_URL = "http://localhost:8081/produto";
+
+      if (isNaN(newQty)) return alert("Quantidade inválida");
+
+      try {
+        const productData = { ...productToEdit, quantidadeProduto: newQty };
+
+        const res = await fetch(`${API_URL}/atualizar`, {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(productData),
+        });
+
+        if (!res.ok) throw new Error("Erro ao salvar");
+
+        productToEdit.quantidadeProduto = newQty;
+        renderStock(); // Atualiza a tabela
+        closeStockModal();
+        showToast("Estoque atualizado!");
+      } catch (err) {
+        alert(err.message);
+      }
+    };
+
+    // Função de Feedback (Toast)
+    function showToast(msg) {
+      const t = document.getElementById("toast");
+      document.getElementById("toastMsg").innerText = msg;
+      t.classList.add("show");
+      setTimeout(() => t.classList.remove("show"), 3000);
+    }
+
+    // Iniciar aplicação
+    window.addEventListener("DOMContentLoaded", carregarProdutos);
+  </script>
+</body>
+
 </html>

@@ -1,1381 +1,1322 @@
 <!doctype html>
 <html lang="pt-br">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>PetShop Pro - Gastos Previstos</title>
-    <script src="https://unpkg.com/lucide@latest"></script>
-    <link rel="icon" type="image/png" href="../gato-preto-malvado.png">
-    <link
-      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
-      rel="stylesheet"
-    />
-    <style>
-      :root {
-        --primary: #3a86ff;
-        --primary-hover: #265df2;
-        --primary-bg-light: #eaf2ff;
-        --secondary: #2ec4b6;
-        --secondary-hover: #28b1a4;
-        --secondary-bg-light: #dff7f4;
-        --accent: #ff9f1c;
-        --accent-hover: #e68f19;
-        --accent-bg-light: #ffe8cc;
-        --bg-general: #f7f9fc;
-        --white: #ffffff;
-        --text-main: #1e293b;
-        --text-secondary: #64748b;
-        --border: #e2e8f0;
-        --shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1);
-        --danger: #ef4444;
-        --danger-light: #fee2e2;
-      }
-
-      * {
-        margin: 0;
-        padding: 0;
-        box-sizing: border-box;
-        font-family:
-          "Inter",
-          -apple-system,
-          sans-serif;
-      }
-
-      body {
-        background-color: var(--bg-general);
-        color: var(--text-main);
-        display: flex;
-        min-height: 100vh;
-      }
-
-      /* Sidebar Padronizada */
-      aside {
-        width: 280px;
-        background-color: var(--white);
-        border-right: 1px solid var(--border);
-        display: flex;
-        flex-direction: column;
-        position: fixed;
-        height: 100vh;
-        z-index: 100;
-        box-shadow: 4px 0 20px rgba(0, 0, 0, 0.05);
-      }
-
-      .logo-container {
-        padding: 32px 24px;
-        display: flex;
-        align-items: center;
-        gap: 12px;
-        font-weight: 800;
-        font-size: 1.4rem;
-        color: var(--primary);
-      }
-
-      .menu-label {
-        padding: 0 24px 8px;
-        font-size: 0.7rem;
-        text-transform: uppercase;
-        font-weight: 700;
-        color: var(--text-secondary);
-        letter-spacing: 1px;
-      }
-
-      nav {
-        flex: 1;
-        padding: 0 16px;
-        overflow-y: auto;
-      }
-
-      .nav-item {
-        display: flex;
-        align-items: center;
-        gap: 12px;
-        padding: 14px 16px;
-        text-decoration: none;
-        color: var(--text-secondary);
-        border-radius: 12px;
-        margin-bottom: 6px;
-        transition: 0.2s;
-        font-weight: 600;
-        font-size: 0.9rem;
-      }
-
-      .monthFilter {
-        cursor: pointer;
-      }
-
-      .nav-item:hover {
-        background-color: var(--primary-bg-light);
-        color: var(--primary);
-      }
-
-      .nav-item.active {
-        background-color: var(--primary);
-        color: var(--white);
-        box-shadow: 0 8px 15px rgba(58, 134, 255, 0.3);
-      }
-
-      /* Conteúdo Principal */
-      main {
-        margin-left: 280px;
-        flex: 1;
-        display: flex;
-        flex-direction: column;
-        min-height: 100vh;
-      }
-
-      header {
-        padding: 24px 40px;
-        background: var(--white);
-        border-bottom: 1px solid var(--border);
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        position: sticky;
-        top: 0;
-        z-index: 50;
-      }
-
-      .header-info h1 {
-        font-size: 1.5rem;
-        font-weight: 800;
-      }
-      .header-info p {
-        color: var(--text-secondary);
-        font-size: 0.85rem;
-      }
-
-      .btn {
-        padding: 12px 20px;
-        border-radius: 12px;
-        font-weight: 700;
-        display: flex;
-        align-items: center;
-        gap: 8px;
-        cursor: pointer;
-        transition: 0.2s;
-        border: none;
-        font-size: 0.9rem;
-      }
-
-      .btn-primary {
-        background: var(--primary);
-        color: white;
-        box-shadow: 0 4px 12px rgba(58, 134, 255, 0.2);
-      }
-      .btn-primary:hover {
-        background: var(--primary-hover);
-        transform: translateY(-2px);
-      }
-
-      .content-container {
-        padding: 32px 40px;
-      }
-
-      /* Cards de Resumo */
-      .stats-grid {
-        display: grid;
-        grid-template-columns: repeat(4, 1fr);
-        gap: 24px;
-        margin-bottom: 32px;
-      }
-
-      .stat-card {
-        background: var(--white);
-        padding: 24px;
-        border-radius: 20px;
-        border: 1px solid var(--border);
-        display: flex;
-        flex-direction: column;
-        gap: 8px;
-        box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.05);
-      }
-
-      .stat-header {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        color: var(--text-secondary);
-        font-size: 0.85rem;
-        font-weight: 600;
-      }
-
-      .stat-value {
-        font-size: 1.4rem;
-        font-weight: 800;
-        color: var(--text-main);
-      }
-
-      .stat-icon {
-        width: 40px;
-        height: 40px;
-        border-radius: 12px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-      }
-
-      /* Tabela e Filtros */
-      .card-container {
-        background: var(--white);
-        border-radius: 16px;
-        border: 1px solid var(--border);
-        overflow: hidden;
-        box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.05);
-      }
-
-      .table-header {
-        padding: 24px;
-        border-bottom: 1px solid var(--border);
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        flex-wrap: wrap;
-        gap: 16px;
-      }
-
-      .search-box {
-        position: relative;
-        width: 300px;
-      }
-
-      .search-box i {
-        position: absolute;
-        left: 14px;
-        top: 50%;
-        transform: translateY(-50%);
-        color: var(--text-secondary);
-        width: 18px;
-      }
-
-      .search-box input {
-        width: 100%;
-        padding: 10px 10px 10px 42px;
-        border-radius: 10px;
-        border: 1px solid var(--border);
-        outline: none;
-        transition: 0.2s;
-      }
-
-      .filter-group {
-        display: flex;
-        gap: 12px;
-      }
-
-      .filter-select {
-        padding: 10px 16px;
-        border-radius: 10px;
-        border: 1px solid var(--border);
-        color: var(--text-secondary);
-        font-weight: 600;
-        outline: none;
-        background: var(--white);
-        cursor: pointer;
-      }
-
-      table {
-        width: 100%;
-        border-collapse: collapse;
-      }
-      thead {
-        background: #f8fafc;
-      }
-      th {
-        padding: 16px 24px;
-        font-size: 0.75rem;
-        text-transform: uppercase;
-        color: var(--text-secondary);
-        font-weight: 700;
-        text-align: left;
-      }
-      td {
-        padding: 18px 24px;
-        border-bottom: 1px solid #f1f5f9;
-        font-size: 0.9rem;
-        color: var(--text-main);
-      }
-
-      .status-pill {
-        padding: 6px 12px;
-        border-radius: 20px;
-        font-size: 0.75rem;
-        font-weight: 700;
-        display: inline-flex;
-        align-items: center;
-        gap: 6px;
-      }
-
-      .status-pago {
-        background: var(--secondary-bg-light);
-        color: var(--secondary);
-      }
-      .status-pendente {
-        background: var(--accent-bg-light);
-        color: var(--accent);
-      }
-
-      .actions-cell {
-        display: flex;
-        justify-content: flex-end;
-        gap: 8px;
-      }
-
-      .action-btn {
-        border-radius: 8px;
-        font-weight: 500;
-        padding: 6px 12px;
-        border: 1px solid transparent;
-        cursor: pointer;
-        transition: all 0.25s ease;
-        display: inline-flex;
-        align-items: center;
-        gap: 6px;
-      }
-
-      .action-btn:active {
-        transform: scale(0.96);
-      }
-      .action-btn.edit {
-        background: linear-gradient(135deg, #3b82f6, #2563eb);
-        color: #ffffff;
-        border: none;
-        position: relative;
-        overflow: hidden;
-      }
-
-      .action-btn.edit::after {
-        content: "";
-        position: absolute;
-        width: 120%;
-        height: 120%;
-        background: rgba(255, 255, 255, 0.2);
-        top: -100%;
-        left: -100%;
-        transform: rotate(25deg);
-        transition: all 0.5s ease;
-      }
-
-      .action-btn.edit:hover::after {
-        top: 100%;
-        left: 100%;
-      }
-
-      .action-btn.edit:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
-      }
-
-      .action-btn.pay {
-        background: linear-gradient(135deg, #22c55e, #16a34a);
-        color: #ffffff;
-        border: none;
-      }
-
-      .action-btn.pay:hover {
-        background: linear-gradient(135deg, #bbf7d0, #86efac);
-        color: #14532d;
-        transform: translateY(-2px);
-        box-shadow: 0 4px 12px rgba(34, 197, 94, 0.3);
-      }
-
-      .action-btn.delete {
-        background: #ef4444;
-        color: #ffffff;
-        border-color: #ef4444;
-      }
-
-      .action-btn.delete:hover {
-        background: #fee2e2;
-        color: #7f1d1d;
-        border-color: #ef4444;
-        transform: translateY(-2px);
-        box-shadow: 0 4px 10px rgba(239, 68, 68, 0.25);
-      }
-
-      .action-btn.info {
-        background: #eff6ff;
-        color: #2563eb;
-        border: 1px solid #bfdbfe;
-      }
-
-      .action-btn.info:hover {
-        background: #dbeafe;
-        color: #1e3a8a;
-        border-color: #93c5fd;
-        transform: translateY(-2px);
-        box-shadow: 0 4px 10px rgba(37, 99, 235, 0.15);
-      }
-
-      /* Modais */
-      .modal-overlay {
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background: rgba(15, 23, 42, 0.6);
-        backdrop-filter: blur(4px);
-        display: none;
-        align-items: center;
-        justify-content: center;
-        z-index: 200;
-      }
-
-      .modal {
-        background: var(--white);
-        width: 550px;
-        border-radius: 20px;
-        padding: 32px;
-        box-shadow: var(--shadow);
-        animation: slideIn 0.3s ease-out;
-      }
-
-      @keyframes slideIn {
-        from {
-          opacity: 0;
-          transform: translateY(20px);
-        }
-        to {
-          opacity: 1;
-          transform: translateY(0);
-        }
-      }
-
-      #obsModalContainer {
-        display: none;
-        position: fixed;
-        z-index: 999;
-        inset: 0;
-        background: rgba(15, 23, 42, 0.6);
-        backdrop-filter: blur(6px);
-        animation: fadeIn 0.2s ease;
-      }
-
-      .obs-modal-container {
-        display: none; /* oculto por padrão */
-        position: fixed;
-        z-index: 1000;
-        left: 0;
-        top: 0;
-        width: 100%;
-        height: 100%;
-        overflow: auto;
-        background-color: rgba(0, 0, 0, 0.5); /* fundo semi-transparente */
-        backdrop-filter: blur(3px); /* leve blur */
-      }
-
-      /* Caixa do modal */
-      .obs-modal-box {
-        background: #f8fafc;
-        padding: 16px;
-        border-radius: 12px;
-        border: 1px solid var(--border);
-        min-height: 80px;
-        font-size: 0.9rem;
-        color: var(--text-main);
-        white-space: pre-wrap;
-      }
-
-      #obsModalText {
-        color: #334155;
-        font-size: 14px;
-        line-height: 1.5;
-      }
-
-      /* Botão de fechar */
-      .obs-modal-close {
-        position: absolute;
-        top: 10px;
-        right: 12px;
-        font-size: 18px;
-        cursor: pointer;
-        color: #64748b;
-        transition: all 0.2s ease;
-      }
-
-      .obs-modal-close:hover {
-        color: #ef4444;
-        transform: scale(1.1);
-      }
-
-      .modal-title {
-        font-size: 1.25rem;
-        font-weight: 800;
-        margin-bottom: 24px;
-        color: var(--primary);
-        display: flex;
-        align-items: center;
-        gap: 10px;
-      }
-      .form-row {
-        display: flex;
-        gap: 16px;
-        margin-bottom: 20px;
-      }
-      .form-group {
-        flex: 1;
-        margin-bottom: 20px;
-      }
-      .form-group label {
-        display: block;
-        font-size: 0.85rem;
-        font-weight: 700;
-        margin-bottom: 8px;
-        color: var(--text-main);
-      }
-      .form-control {
-        width: 100%;
-        padding: 12px;
-        border-radius: 10px;
-        border: 1px solid var(--border);
-        outline: none;
-        transition: 0.2s;
-      }
-      .form-control:focus {
-        border-color: var(--primary);
-        box-shadow: 0 0 0 3px var(--primary-bg-light);
-      }
-
-      .modal-footer {
-        display: flex;
-        gap: 12px;
-        margin-top: 32px;
-      }
-      .btn-full {
-        flex: 1;
-        padding: 14px;
-        border-radius: 12px;
-        border: none;
-        font-weight: 700;
-        cursor: pointer;
-        transition: 0.2s;
-      }
-
-      /* Toast */
-      .toast {
-        position: fixed;
-        bottom: 30px;
-        right: 30px;
-        background: var(--text-main);
-        color: white;
-        padding: 16px 24px;
-        border-radius: 12px;
-        display: flex;
-        align-items: center;
-        gap: 12px;
-        transform: translateY(150px);
-        transition: 0.4s;
-        z-index: 300;
-      }
-
-      /* Estilo para o campo de Categoria com o Botão + ao lado */
-      .input-with-button {
-        display: flex;
-        gap: 8px;
-        align-items: center;
-      }
-
-      .btn-add-inline {
-        background: var(--primary-bg-light);
-        color: var(--primary);
-        border: 1px solid var(--primary);
-        border-radius: 10px;
-        width: 42px;
-        height: 42px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        cursor: pointer;
-        transition: 0.2s;
-        flex-shrink: 0; /* Impede o botão de espremer */
-      }
-
-      .btn-add-inline:hover {
-        background: var(--primary);
-        color: white;
-      }
-
-      /* Estilo específico para o Modal de Categoria (Menor) */
-      .modal.small {
-        max-width: 400px;
-      }
-
-      .modal-header {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        margin-bottom: 24px;
-      }
-
-      .modal-header h2 {
-        font-size: 1.25rem;
-        font-weight: 800;
-        color: var(--primary);
-      }
-
-      /* Botões utilitários para o formulário de categoria */
-      .btn-block {
-        flex: 1;
-        padding: 12px;
-        border-radius: 10px;
-        border: none;
-        font-weight: 700;
-        cursor: pointer;
-        transition: 0.2s;
-        font-size: 0.9rem;
-      }
-
-      .btn-success {
-        background: var(--secondary);
-        color: white;
-      }
-
-      .btn-success:hover {
-        background: var(--secondary-hover);
-      }
-
-      /* Ajuste para inputs que ocupam a linha toda no modal pequeno */
-      .form-group.full {
-        width: 100%;
-      }
 
-      .toast.show {
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>PetShop Pro - Gastos Previstos</title>
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <link rel="icon" type="image/png" href="../gato-preto-malvado.png">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --primary: #3a86ff;
+      --primary-hover: #265df2;
+      --primary-bg-light: #eaf2ff;
+      --secondary: #2ec4b6;
+      --secondary-hover: #28b1a4;
+      --secondary-bg-light: #dff7f4;
+      --accent: #ff9f1c;
+      --accent-hover: #e68f19;
+      --accent-bg-light: #ffe8cc;
+      --bg-general: #f7f9fc;
+      --white: #ffffff;
+      --text-main: #1e293b;
+      --text-secondary: #64748b;
+      --border: #e2e8f0;
+      --shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1);
+      --danger: #ef4444;
+      --danger-light: #fee2e2;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family:
+        "Inter",
+        -apple-system,
+        sans-serif;
+    }
+
+    body {
+      background-color: var(--bg-general);
+      color: var(--text-main);
+      display: flex;
+      min-height: 100vh;
+    }
+
+    /* Sidebar Padronizada */
+    aside {
+      width: 280px;
+      background-color: var(--white);
+      border-right: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      position: fixed;
+      height: 100vh;
+      z-index: 100;
+      box-shadow: 4px 0 20px rgba(0, 0, 0, 0.05);
+    }
+
+    .logo-container {
+      padding: 32px 24px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-weight: 800;
+      font-size: 1.4rem;
+      color: var(--primary);
+    }
+
+    .menu-label {
+      padding: 0 24px 8px;
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      font-weight: 700;
+      color: var(--text-secondary);
+      letter-spacing: 1px;
+    }
+
+    nav {
+      flex: 1;
+      padding: 0 16px;
+      overflow-y: auto;
+    }
+
+    .nav-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 14px 16px;
+      text-decoration: none;
+      color: var(--text-secondary);
+      border-radius: 12px;
+      margin-bottom: 6px;
+      transition: 0.2s;
+      font-weight: 600;
+      font-size: 0.9rem;
+    }
+
+    .monthFilter {
+      cursor: pointer;
+    }
+
+    .nav-item:hover {
+      background-color: var(--primary-bg-light);
+      color: var(--primary);
+    }
+
+    .nav-item.active {
+      background-color: var(--primary);
+      color: var(--white);
+      box-shadow: 0 8px 15px rgba(58, 134, 255, 0.3);
+    }
+
+    /* Conteúdo Principal */
+    main {
+      margin-left: 280px;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+
+    header {
+      padding: 24px 40px;
+      background: var(--white);
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: sticky;
+      top: 0;
+      z-index: 50;
+    }
+
+    .header-info h1 {
+      font-size: 1.5rem;
+      font-weight: 800;
+    }
+
+    .header-info p {
+      color: var(--text-secondary);
+      font-size: 0.85rem;
+    }
+
+    .btn {
+      padding: 12px 20px;
+      border-radius: 12px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      cursor: pointer;
+      transition: 0.2s;
+      border: none;
+      font-size: 0.9rem;
+    }
+
+    .btn-primary {
+      background: var(--primary);
+      color: white;
+      box-shadow: 0 4px 12px rgba(58, 134, 255, 0.2);
+    }
+
+    .btn-primary:hover {
+      background: var(--primary-hover);
+      transform: translateY(-2px);
+    }
+
+    .content-container {
+      padding: 32px 40px;
+    }
+
+    /* Cards de Resumo */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 24px;
+      margin-bottom: 32px;
+    }
+
+    .stat-card {
+      background: var(--white);
+      padding: 24px;
+      border-radius: 20px;
+      border: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.05);
+    }
+
+    .stat-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      color: var(--text-secondary);
+      font-size: 0.85rem;
+      font-weight: 600;
+    }
+
+    .stat-value {
+      font-size: 1.4rem;
+      font-weight: 800;
+      color: var(--text-main);
+    }
+
+    .stat-icon {
+      width: 40px;
+      height: 40px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    /* PAGINAÇÃO MELHORADA */
+    .pagination {
+      display: flex;
+      justify-content: flex-end;
+      align-items: center;
+      gap: 12px;
+      padding: 20px;
+      border-top: 1px solid #f1f5f9;
+    }
+
+    /* Indicador de página (opcional, para dar contexto) */
+    .page-indicator {
+      font-size: 0.85rem;
+      color: var(--text-secondary);
+      font-weight: 600;
+    }
+
+    .pagination button {
+      background: var(--primary-light);
+      color: var(--primary);
+      border: 1px solid transparent;
+      padding: 10px 18px;
+      border-radius: 12px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      font-weight: 700;
+      font-size: 0.85rem;
+      letter-spacing: 0.3px;
+    }
+
+    .pagination button:hover:not(:disabled) {
+      background: var(--primary);
+      color: var(--white);
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(58, 134, 255, 0.2);
+    }
+
+    .pagination button:disabled {
+      background: #f1f5f9;
+      color: var(--border);
+      cursor: not-allowed;
+      opacity: 0.7;
+    }
+
+    /* Tabela e Filtros */
+    .card-container {
+      background: var(--white);
+      border-radius: 16px;
+      border: 1px solid var(--border);
+      overflow: hidden;
+      box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.05);
+    }
+
+    .table-header {
+      padding: 24px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+
+    .search-box {
+      position: relative;
+      width: 300px;
+    }
+
+    .search-box i {
+      position: absolute;
+      left: 14px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--text-secondary);
+      width: 18px;
+    }
+
+    .search-box input {
+      width: 100%;
+      padding: 10px 10px 10px 42px;
+      border-radius: 10px;
+      border: 1px solid var(--border);
+      outline: none;
+      transition: 0.2s;
+    }
+
+    .filter-group {
+      display: flex;
+      gap: 12px;
+    }
+
+    .filter-select {
+      padding: 10px 16px;
+      border-radius: 10px;
+      border: 1px solid var(--border);
+      color: var(--text-secondary);
+      font-weight: 600;
+      outline: none;
+      background: var(--white);
+      cursor: pointer;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    thead {
+      background: #f8fafc;
+    }
+
+    th {
+      padding: 16px 24px;
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      color: var(--text-secondary);
+      font-weight: 700;
+      text-align: left;
+    }
+
+    td {
+      padding: 18px 24px;
+      border-bottom: 1px solid #f1f5f9;
+      font-size: 0.9rem;
+      color: var(--text-main);
+    }
+
+    .status-pill {
+      padding: 6px 12px;
+      border-radius: 20px;
+      font-size: 0.75rem;
+      font-weight: 700;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .status-pago {
+      background: var(--secondary-bg-light);
+      color: var(--secondary);
+    }
+
+    .status-pendente {
+      background: var(--accent-bg-light);
+      color: var(--accent);
+    }
+
+    .actions-cell {
+      display: flex;
+      justify-content: flex-end;
+      gap: 8px;
+    }
+
+    .action-btn {
+      border-radius: 8px;
+      font-weight: 500;
+      padding: 6px 12px;
+      border: 1px solid transparent;
+      cursor: pointer;
+      transition: all 0.25s ease;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .action-btn:active {
+      transform: scale(0.96);
+    }
+
+    .action-btn.edit {
+      background: linear-gradient(135deg, #3b82f6, #2563eb);
+      color: #ffffff;
+      border: none;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .action-btn.edit::after {
+      content: "";
+      position: absolute;
+      width: 120%;
+      height: 120%;
+      background: rgba(255, 255, 255, 0.2);
+      top: -100%;
+      left: -100%;
+      transform: rotate(25deg);
+      transition: all 0.5s ease;
+    }
+
+    .action-btn.edit:hover::after {
+      top: 100%;
+      left: 100%;
+    }
+
+    .action-btn.edit:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
+    }
+
+    .action-btn.pay {
+      background: linear-gradient(135deg, #22c55e, #16a34a);
+      color: #ffffff;
+      border: none;
+    }
+
+    .action-btn.pay:hover {
+      background: linear-gradient(135deg, #bbf7d0, #86efac);
+      color: #14532d;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(34, 197, 94, 0.3);
+    }
+
+    .action-btn.delete {
+      background: #ef4444;
+      color: #ffffff;
+      border-color: #ef4444;
+    }
+
+    .action-btn.delete:hover {
+      background: #fee2e2;
+      color: #7f1d1d;
+      border-color: #ef4444;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 10px rgba(239, 68, 68, 0.25);
+    }
+
+    .action-btn.info {
+      background: #eff6ff;
+      color: #2563eb;
+      border: 1px solid #bfdbfe;
+    }
+
+    .action-btn.info:hover {
+      background: #dbeafe;
+      color: #1e3a8a;
+      border-color: #93c5fd;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 10px rgba(37, 99, 235, 0.15);
+    }
+
+    /* Modais */
+    .modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(15, 23, 42, 0.6);
+      backdrop-filter: blur(4px);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 200;
+    }
+
+    .modal {
+      background: var(--white);
+      width: 550px;
+      border-radius: 20px;
+      padding: 32px;
+      box-shadow: var(--shadow);
+      animation: slideIn 0.3s ease-out;
+    }
+
+    @keyframes slideIn {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+
+      to {
+        opacity: 1;
         transform: translateY(0);
       }
+    }
 
-      .header-actions {
-        display: flex;
-        gap: 12px;
-        align-items: center;
+    #obsModalContainer {
+      display: none;
+      position: fixed;
+      z-index: 999;
+      inset: 0;
+      background: rgba(15, 23, 42, 0.6);
+      backdrop-filter: blur(6px);
+      animation: fadeIn 0.2s ease;
+    }
+
+    .obs-modal-container {
+      display: none;
+      /* oculto por padrão */
+      position: fixed;
+      z-index: 1000;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      overflow: auto;
+      background-color: rgba(0, 0, 0, 0.5);
+      /* fundo semi-transparente */
+      backdrop-filter: blur(3px);
+      /* leve blur */
+    }
+
+    /* Caixa do modal */
+    .obs-modal-box {
+      background: #f8fafc;
+      padding: 16px;
+      border-radius: 12px;
+      border: 1px solid var(--border);
+      min-height: 80px;
+      font-size: 0.9rem;
+      color: var(--text-main);
+      white-space: pre-wrap;
+    }
+
+    #obsModalText {
+      color: #334155;
+      font-size: 14px;
+      line-height: 1.5;
+    }
+
+    /* Botão de fechar */
+    .obs-modal-close {
+      position: absolute;
+      top: 10px;
+      right: 12px;
+      font-size: 18px;
+      cursor: pointer;
+      color: #64748b;
+      transition: all 0.2s ease;
+    }
+
+    .obs-modal-close:hover {
+      color: #ef4444;
+      transform: scale(1.1);
+    }
+
+    .modal-title {
+      font-size: 1.25rem;
+      font-weight: 800;
+      margin-bottom: 24px;
+      color: var(--primary);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .form-row {
+      display: flex;
+      gap: 16px;
+      margin-bottom: 20px;
+    }
+
+    .form-group {
+      flex: 1;
+      margin-bottom: 20px;
+    }
+
+    .form-group label {
+      display: block;
+      font-size: 0.85rem;
+      font-weight: 700;
+      margin-bottom: 8px;
+      color: var(--text-main);
+    }
+
+    .form-control {
+      width: 100%;
+      padding: 12px;
+      border-radius: 10px;
+      border: 1px solid var(--border);
+      outline: none;
+      transition: 0.2s;
+    }
+
+    .form-control:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px var(--primary-bg-light);
+    }
+
+    .modal-footer {
+      display: flex;
+      gap: 12px;
+      margin-top: 32px;
+    }
+
+    .btn-full {
+      flex: 1;
+      padding: 14px;
+      border-radius: 12px;
+      border: none;
+      font-weight: 700;
+      cursor: pointer;
+      transition: 0.2s;
+    }
+
+    /* Toast */
+    .toast {
+      position: fixed;
+      bottom: 30px;
+      right: 30px;
+      background: var(--text-main);
+      color: white;
+      padding: 16px 24px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      transform: translateY(150px);
+      transition: 0.4s;
+      z-index: 300;
+    }
+
+    /* Estilo para o campo de Categoria com o Botão + ao lado */
+    .input-with-button {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+    }
+
+    .btn-add-inline {
+      background: var(--primary-bg-light);
+      color: var(--primary);
+      border: 1px solid var(--primary);
+      border-radius: 10px;
+      width: 42px;
+      height: 42px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: 0.2s;
+      flex-shrink: 0;
+      /* Impede o botão de espremer */
+    }
+
+    .btn-add-inline:hover {
+      background: var(--primary);
+      color: white;
+    }
+
+    /* Estilo específico para o Modal de Categoria (Menor) */
+    .modal.small {
+      max-width: 400px;
+    }
+
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 24px;
+    }
+
+    .modal-header h2 {
+      font-size: 1.25rem;
+      font-weight: 800;
+      color: var(--primary);
+    }
+
+    /* Botões utilitários para o formulário de categoria */
+    .btn-block {
+      flex: 1;
+      padding: 12px;
+      border-radius: 10px;
+      border: none;
+      font-weight: 700;
+      cursor: pointer;
+      transition: 0.2s;
+      font-size: 0.9rem;
+    }
+
+    .btn-success {
+      background: var(--secondary);
+      color: white;
+    }
+
+    .btn-success:hover {
+      background: var(--secondary-hover);
+    }
+
+    /* Ajuste para inputs que ocupam a linha toda no modal pequeno */
+    .form-group.full {
+      width: 100%;
+    }
+
+    .toast.show {
+      transform: translateY(0);
+    }
+
+    .header-actions {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+    }
+
+    .month-picker {
+      padding: 10px 16px;
+      border-radius: 10px;
+      border: 1px solid var(--border);
+      font-weight: 600;
+      color: var(--text-main);
+      background-color: #f8fafc;
+      cursor: pointer;
+      outline: none;
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
       }
 
-      .month-picker {
-        padding: 10px 16px;
-        border-radius: 10px;
-        border: 1px solid var(--border);
-        font-weight: 600;
-        color: var(--text-main);
-        background-color: #f8fafc;
-        cursor: pointer;
-        outline: none;
+      to {
+        opacity: 1;
+      }
+    }
+
+    @keyframes slideUp {
+      from {
+        transform: translateY(20px);
+        opacity: 0;
       }
 
-      @keyframes fadeIn {
-        from {
-          opacity: 0;
-        }
-        to {
-          opacity: 1;
-        }
+      to {
+        transform: translateY(0);
+        opacity: 1;
       }
+    }
+  </style>
+</head>
 
-      @keyframes slideUp {
-        from {
-          transform: translateY(20px);
-          opacity: 0;
-        }
-        to {
-          transform: translateY(0);
-          opacity: 1;
-        }
-      }
-    </style>
-  </head>
-  <body>
-    <!-- Sidebar -->
-    <aside>
-      <div class="logo-container">
-        <i data-lucide="dog" style="width: 32px; height: 32px"></i>
-        <span>PetShop Pro</span>
+<body>
+  <!-- Sidebar -->
+  <aside>
+    <div class="logo-container">
+      <i data-lucide="dog" style="width: 32px; height: 32px"></i>
+      <span>PetShop Pro</span>
+    </div>
+
+    <p class="menu-label">Painel</p>
+    <nav>
+      <a href="../TelaInicial/index.html" class="nav-item">
+        <i data-lucide="layout-dashboard"></i> Dashboard
+      </a>
+      <a href="../Agenda/Agenda.html" class="nav-item">
+        <i data-lucide="calendar"></i> Agenda Teams
+      </a>
+
+      <p class="menu-label" style="margin-top: 24px">Vendas e Serviços</p>
+      <a href="../Carrinho/Carrinho.html" class="nav-item">
+        <i data-lucide="shopping-cart"></i> Carrinho / PDV
+      </a>
+      <a href="../CatalogoServico/CatalogoServico.html" class="nav-item">
+        <i data-lucide="scissors"></i> Catálogo de Serviços
+      </a>
+
+      <p class="menu-label" style="margin-top: 24px">Cadastros</p>
+      <a href="../Clientes/Cliente.html" class="nav-item">
+        <i data-lucide="users"></i> Clientes
+      </a>
+      <a href="../Pet/Pet.html" class="nav-item">
+        <i data-lucide="paw-print"></i> Animais
+      </a>
+      <a href="../Produtos/Produto.html" class="nav-item">
+        <i data-lucide="package"></i> Itens / Produtos
+      </a>
+
+      <p class="menu-label" style="margin-top: 24px">Gestão</p>
+      <a href="../Estoque/Estoque.html" class="nav-item">
+        <i data-lucide="boxes"></i> Controle de Estoque
+      </a>
+      <a href="../GastosPrevistos/GastosPrevistos.html" class="nav-item active">
+        <i data-lucide="trending-down"></i> Gastos Previstos
+      </a>
+      <a href="../HistoricoVendas/HistoricoVendas.html" class="nav-item"><i data-lucide="wallet"></i>
+        <span>Histórico de Vendas</span></a>
+    </nav>
+  </aside>
+
+  <main>
+    <header>
+      <div class="header-info">
+        <h1 id="pageTitle">Gastos de Janeiro 2024</h1>
+        <p>
+          Planeje e acompanhe suas despesas futuras para manter o caixa
+          saudável.
+        </p>
       </div>
+      <div class="header-actions">
+        <input type="month" id="monthFilter" class="month-picker" onchange="changeGlobalMonth(this.value)" />
+        <button class="btn btn-primary" onclick="openModal()">
+          <i data-lucide="plus-circle"></i> Novo Gasto
+        </button>
+      </div>
+    </header>
 
-      <p class="menu-label">Painel</p>
-      <nav>
-        <a href="../TelaInicial/index.html" class="nav-item">
-          <i data-lucide="layout-dashboard"></i> Dashboard
-        </a>
-        <a href="../Agenda/Agenda.html" class="nav-item">
-          <i data-lucide="calendar"></i> Agenda Teams
-        </a>
-
-        <p class="menu-label" style="margin-top: 24px">Vendas e Serviços</p>
-        <a href="../Carrinho/Carrinho.html" class="nav-item">
-          <i data-lucide="shopping-cart"></i> Carrinho / PDV
-        </a>
-        <a href="../CatalogoServico/CatalogoServico.html" class="nav-item">
-          <i data-lucide="scissors"></i> Catálogo de Serviços
-        </a>
-
-        <p class="menu-label" style="margin-top: 24px">Cadastros</p>
-        <a href="../Clientes/Cliente.html" class="nav-item">
-          <i data-lucide="users"></i> Clientes
-        </a>
-        <a href="../Pet/Pet.html" class="nav-item">
-          <i data-lucide="paw-print"></i> Animais
-        </a>
-        <a href="../Produtos/Produto.html" class="nav-item">
-          <i data-lucide="package"></i> Itens / Produtos
-        </a>
-
-        <p class="menu-label" style="margin-top: 24px">Gestão</p>
-        <a href="../Estoque/Estoque.html" class="nav-item">
-          <i data-lucide="boxes"></i> Controle de Estoque
-        </a>
-        <a
-          href="../GastosPrevistos/GastosPrevistos.html"
-          class="nav-item active"
-        >
-          <i data-lucide="trending-down"></i> Gastos Previstos
-        </a>
-                <a href="../HistoricoVendas/HistoricoVendas.html" class="nav-item"
-          ><i data-lucide="wallet"></i>
-          <span>Histórico de Vendas</span></a
-        >
-      </nav>
-    </aside>
-
-    <main>
-      <header>
-        <div class="header-info">
-          <h1 id="pageTitle">Gastos de Janeiro 2024</h1>
-          <p>
-            Planeje e acompanhe suas despesas futuras para manter o caixa
-            saudável.
-          </p>
-        </div>
-        <div class="header-actions">
-          <input
-            type="month"
-            id="monthFilter"
-            class="month-picker"
-            onchange="changeGlobalMonth(this.value)"
-          />
-          <button class="btn btn-primary" onclick="openModal()">
-            <i data-lucide="plus-circle"></i> Novo Gasto
-          </button>
-        </div>
-      </header>
-
-      <div class="content-container">
-        <!-- Cards de Resumo -->
-        <div class="stats-grid">
-          <div class="stat-card">
-            <div class="stat-header">
-              <span>Total do Mês</span>
-              <div
-                class="stat-icon"
-                style="
+    <div class="content-container">
+      <!-- Cards de Resumo -->
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-header">
+            <span>Total do Mês</span>
+            <div class="stat-icon" style="
                   background: var(--primary-bg-light);
                   color: var(--primary);
-                "
-              >
-                <i data-lucide="dollar-sign" style="width: 20px"></i>
-              </div>
+                ">
+              <i data-lucide="dollar-sign" style="width: 20px"></i>
             </div>
-            <div class="stat-value" id="stat-total">R$ 0,00</div>
           </div>
-          <div class="stat-card">
-            <div class="stat-header">
-              <span>Já Pagos</span>
-              <div
-                class="stat-icon"
-                style="
+          <div class="stat-value" id="stat-total">R$ 0,00</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-header">
+            <span>Já Pagos</span>
+            <div class="stat-icon" style="
                   background: var(--secondary-bg-light);
                   color: var(--secondary);
-                "
-              >
-                <i data-lucide="check-circle" style="width: 20px"></i>
-              </div>
-            </div>
-            <div
-              class="stat-value"
-              id="stat-pagos"
-              style="color: var(--secondary)"
-            >
-              R$ 0,00
+                ">
+              <i data-lucide="check-circle" style="width: 20px"></i>
             </div>
           </div>
-          <div class="stat-card">
-            <div class="stat-header">
-              <span>Pendentes</span>
-              <div
-                class="stat-icon"
-                style="background: var(--accent-bg-light); color: var(--accent)"
-              >
-                <i data-lucide="clock" style="width: 20px"></i>
-              </div>
-            </div>
-            <div
-              class="stat-value"
-              id="stat-pendentes"
-              style="color: var(--accent)"
-            >
-              R$ 0,00
-            </div>
-          </div>
-          <div class="stat-card">
-            <div class="stat-header">
-              <span>Próximo Vencimento</span>
-              <div
-                class="stat-icon"
-                style="background: var(--danger-light); color: var(--danger)"
-              >
-                <i data-lucide="clock" style="width: 20px"></i>
-              </div>
-            </div>
-            <div
-              class="stat-value"
-              id="stat-proximo"
-              style="font-size: 1.1rem; padding-top: 5px"
-            >
-              -
-            </div>
+          <div class="stat-value" id="stat-pagos" style="color: var(--secondary)">
+            R$ 0,00
           </div>
         </div>
-
-        <!-- Tabela Principal -->
-        <div class="card-container">
-          <div class="table-header">
-            <div class="search-box">
-              <i data-lucide="search"></i>
-              <input
-                type="text"
-                placeholder="Buscar descrição ou categoria..."
-                oninput="filterGastos(this.value)"
-              />
-            </div>
-            <div class="filter-group">
-              <select
-                class="filter-select"
-                id="statusFilter"
-                onchange="applyFilters()"
-              >
-                <option value="all">Todos os Status</option>
-                <option value="Pendente">Pendentes</option>
-                <option value="Pago">Pagos</option>
-              </select>
-
-              <select
-                class="filter-select"
-                id="categoryFilter"
-                onchange="applyFilters()"
-              >
-                <option value="all" selected>Todas as Categorias</option>
-              </select>
+        <div class="stat-card">
+          <div class="stat-header">
+            <span>Pendentes</span>
+            <div class="stat-icon" style="background: var(--accent-bg-light); color: var(--accent)">
+              <i data-lucide="clock" style="width: 20px"></i>
             </div>
           </div>
-          <table>
-            <thead>
-              <tr>
-                <th>Descrição</th>
-                <th>Categoria</th>
-                <th>Valor</th>
-                <th>Vencimento</th>
-                <th>Status</th>
-                <th>Data</th>
-                <th style="text-align: right">Ações</th>
-              </tr>
-            </thead>
-            <tbody id="gastos-list">
-              <!-- Conteúdo via JS -->
-            </tbody>
-          </table>
+          <div class="stat-value" id="stat-pendentes" style="color: var(--accent)">
+            R$ 0,00
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-header">
+            <span>Próximo Vencimento</span>
+            <div class="stat-icon" style="background: var(--danger-light); color: var(--danger)">
+              <i data-lucide="clock" style="width: 20px"></i>
+            </div>
+          </div>
+          <div class="stat-value" id="stat-proximo" style="font-size: 1.1rem; padding-top: 5px">
+            -
+          </div>
         </div>
       </div>
-    </main>
 
-    <!-- Modal Novo/Editar Gasto -->
-    <div class="modal-overlay" id="modalOverlay">
-      <div class="modal">
-        <div class="modal-title" id="modalTitle">
-          <i data-lucide="file-plus"></i>
-          <span>Novo Gasto Previsto</span>
+      <!-- Tabela Principal -->
+      <div class="card-container">
+        <div class="table-header">
+          <div class="search-box">
+            <i data-lucide="search"></i>
+            <input type="text" placeholder="Buscar descrição ou categoria..." oninput="filterGastos(this.value)" />
+          </div>
+          <div class="filter-group">
+            <select class="filter-select" id="statusFilter" onchange="applyFilters()">
+              <option value="all">Todos os Status</option>
+              <option value="Pendente">Pendentes</option>
+              <option value="Pago">Pagos</option>
+            </select>
+
+            <select class="filter-select" id="categoryFilter" onchange="applyFilters()">
+              <option value="all" selected>Todas as Categorias</option>
+            </select>
+          </div>
+        </div>
+        <table>
+          <thead>
+            <tr>
+              <th>Descrição</th>
+              <th>Categoria</th>
+              <th>Valor</th>
+              <th>Vencimento</th>
+              <th>Status</th>
+              <th>Data</th>
+              <th style="text-align: right">Ações</th>
+            </tr>
+          </thead>
+          <tbody id="gastos-list">
+            <!-- Conteúdo via JS -->
+          </tbody>
+        </table>
+      </div>
+
+      <div class="pagination">
+        <span class="page-indicator" id="page-info">Página 1 de 1</span>
+        <button id="prev">Anterior</button>
+        <button id="next">Próxima</button>
+      </div>
+    </div>
+  </main>
+
+  <!-- Modal Novo/Editar Gasto -->
+  <div class="modal-overlay" id="modalOverlay">
+    <div class="modal">
+      <div class="modal-title" id="modalTitle">
+        <i data-lucide="file-plus"></i>
+        <span>Novo Gasto Previsto</span>
+      </div>
+
+      <form id="gastoForm">
+        <input type="hidden" id="editId" />
+
+        <!-- Descrição -->
+        <div class="form-group">
+          <label for="desc">Descrição do Gasto</label>
+          <input type="text" id="desc" class="form-control" required placeholder="Ex: Aluguel da Loja" />
         </div>
 
-        <form id="gastoForm">
-          <input type="hidden" id="editId" />
-
-          <!-- Descrição -->
+        <div class="form-row">
           <div class="form-group">
-            <label for="desc">Descrição do Gasto</label>
-            <input
-              type="text"
-              id="desc"
-              class="form-control"
-              required
-              placeholder="Ex: Aluguel da Loja"
-            />
-          </div>
-
-          <div class="form-row">
-            <div class="form-group">
-              <label for="category">Categoria</label>
-              <div class="input-with-button">
-                <select id="category" class="form-control" required></select>
-                <button
-                  type="button"
-                  class="btn-add-inline"
-                  onclick="openCategoryModal()"
-                  title="Nova Categoria"
-                >
-                  <i data-lucide="plus" style="width: 18px"></i>
-                </button>
-              </div>
-            </div>
-
-            <!-- Valor -->
-            <div class="form-group">
-              <label for="value">Valor (R$)</label>
-              <input
-                type="number"
-                id="value"
-                class="form-control"
-                step="0.01"
-                required
-                placeholder="0,00"
-              />
+            <label for="category">Categoria</label>
+            <div class="input-with-button">
+              <select id="category" class="form-control" required></select>
+              <button type="button" class="btn-add-inline" onclick="openCategoryModal()" title="Nova Categoria">
+                <i data-lucide="plus" style="width: 18px"></i>
+              </button>
             </div>
           </div>
 
-          <div class="form-row">
-            <!-- NOVO CAMPO: DATA DO GASTO -->
-            <div class="form-group">
-              <label for="expenseDate">Data do Gasto</label>
-              <input
-                type="date"
-                id="expenseDate"
-                class="form-control"
-                required
-              />
-            </div>
-
-            <div class="form-group">
-              <label for="date">Data de Vencimento</label>
-              <input type="date" id="date" class="form-control" required />
-            </div>
-          </div>
-
-          <div class="form-row">
-            <div class="form-group">
-              <label for="status">Status Inicial</label>
-              <select id="status" class="form-control">
-                <option value="Pendente">Pendente</option>
-                <option value="Pago">Pago</option>
-              </select>
-            </div>
-          </div>
-
-          <!-- Observações -->
+          <!-- Valor -->
           <div class="form-group">
-            <label for="obs">Observações (Opcional)</label>
-            <textarea
-              id="obs"
-              class="form-control"
-              rows="2"
-              placeholder="Informações adicionais..."
-            ></textarea>
+            <label for="value">Valor (R$)</label>
+            <input type="number" id="value" class="form-control" step="0.01" required placeholder="0,00" />
           </div>
-
-          <!-- Rodapé/Botões -->
-          <div
-            class="modal-footer"
-            style="display: flex; gap: 12px; margin-top: 20px"
-          >
-            <button
-              type="button"
-              class="btn-full"
-              style="background: #f1f5f9; flex: 1"
-              onclick="closeModal()"
-            >
-              Cancelar
-            </button>
-            <button
-              type="submit"
-              class="btn-full"
-              style="background: var(--primary); color: white; flex: 1"
-              id="saveBtn"
-            >
-              Salvar Despesa
-            </button>
-          </div>
-        </form>
-      </div>
-    </div>
-
-    <div class="modal-overlay" id="categoryModalOverlay" style="z-index: 210">
-      <div class="modal small">
-        <div class="modal-header">
-          <h2>Nova Categoria</h2>
-          <i
-            data-lucide="x"
-            style="cursor: pointer"
-            onclick="closeCategoryModal()"
-          ></i>
         </div>
-        <form id="categoryForm">
-          <div class="form-group full">
-            <label for="newCategoryName">Nome da Categoria *</label>
-            <input
-              type="text"
-              id="newCategoryName"
-              class="form-control"
-              required
-              placeholder="Ex: Roupas, Petiscos..."
-            />
-          </div>
-          <div style="display: flex; gap: 12px; margin-top: 10px">
-            <button
-              type="button"
-              class="btn-block"
-              style="background: #f1f5f9"
-              onclick="closeCategoryModal()"
-            >
-              Cancelar
-            </button>
-            <button type="submit" class="btn-block btn-success">
-              Adicionar
-            </button>
-          </div>
-        </form>
-      </div>
-    </div>
 
-    <!-- Toast -->
-    <div class="toast" id="toast">
-      <i data-lucide="check-circle"></i>
-      <span id="toastMsg">Operação realizada com sucesso!</span>
-    </div>
-
-    <div id="obsModalContainer" class="obs-modal-container">
-      <div class="obs-modal-box">
-        <span class="obs-modal-close">&times;</span>
-        <p id="obsModalText"></p>
-      </div>
-    </div>
-
-    <div class="modal-overlay" id="wdlgOverlay">
-      <div class="modal">
-        <div class="modal-header">
-          <div>
-            <h2 id="wdlg-client-name">Informações do Gasto</h2>
-            <p
-              id="wdlg-client-id"
-              style="color: var(--text-secondary); font-size: 0.8rem"
-            ></p>
+        <div class="form-row">
+          <!-- NOVO CAMPO: DATA DO GASTO -->
+          <div class="form-group">
+            <label for="expenseDate">Data do Gasto</label>
+            <input type="date" id="expenseDate" class="form-control" required />
           </div>
-          <i data-lucide="x" class="modal-close" onclick="closeWdlg()"></i>
+
+          <div class="form-group">
+            <label for="date">Data de Vencimento</label>
+            <input type="date" id="date" class="form-control" required />
+          </div>
         </div>
-        <div class="form-group full">
-          <label>Observações:</label>
-          <div id="wdlg-text-content" class="obs-display"></div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="status">Status Inicial</label>
+            <select id="status" class="form-control">
+              <option value="Pendente">Pendente</option>
+              <option value="Pago">Pago</option>
+            </select>
+          </div>
         </div>
-        <div class="modal-footer">
-          <button
-            type="button"
-            class="btn-block btn-ghost"
-            onclick="closeWdlg()"
-          >
-            Fechar
+
+        <!-- Observações -->
+        <div class="form-group">
+          <label for="obs">Observações (Opcional)</label>
+          <textarea id="obs" class="form-control" rows="2" placeholder="Informações adicionais..."></textarea>
+        </div>
+
+        <!-- Rodapé/Botões -->
+        <div class="modal-footer" style="display: flex; gap: 12px; margin-top: 20px">
+          <button type="button" class="btn-full" style="background: #f1f5f9; flex: 1" onclick="closeModal()">
+            Cancelar
+          </button>
+          <button type="submit" class="btn-full" style="background: var(--primary); color: white; flex: 1" id="saveBtn">
+            Salvar Despesa
           </button>
         </div>
+      </form>
+    </div>
+  </div>
+
+  <div class="modal-overlay" id="categoryModalOverlay" style="z-index: 210">
+    <div class="modal small">
+      <div class="modal-header">
+        <h2>Nova Categoria</h2>
+        <i data-lucide="x" style="cursor: pointer" onclick="closeCategoryModal()"></i>
+      </div>
+      <form id="categoryForm">
+        <div class="form-group full">
+          <label for="newCategoryName">Nome da Categoria *</label>
+          <input type="text" id="newCategoryName" class="form-control" required placeholder="Ex: Roupas, Petiscos..." />
+        </div>
+        <div style="display: flex; gap: 12px; margin-top: 10px">
+          <button type="button" class="btn-block" style="background: #f1f5f9" onclick="closeCategoryModal()">
+            Cancelar
+          </button>
+          <button type="submit" class="btn-block btn-success">
+            Adicionar
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Toast -->
+  <div class="toast" id="toast">
+    <i data-lucide="check-circle"></i>
+    <span id="toastMsg">Operação realizada com sucesso!</span>
+  </div>
+
+  <div id="obsModalContainer" class="obs-modal-container">
+    <div class="obs-modal-box">
+      <span class="obs-modal-close">&times;</span>
+      <p id="obsModalText"></p>
+    </div>
+  </div>
+
+  <div class="modal-overlay" id="wdlgOverlay">
+    <div class="modal">
+      <div class="modal-header">
+        <div>
+          <h2 id="wdlg-client-name">Informações do Gasto</h2>
+          <p id="wdlg-client-id" style="color: var(--text-secondary); font-size: 0.8rem"></p>
+        </div>
+        <i data-lucide="x" class="modal-close" onclick="closeWdlg()"></i>
+      </div>
+      <div class="form-group full">
+        <label>Observações:</label>
+        <div id="wdlg-text-content" class="obs-display"></div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn-block btn-ghost" onclick="closeWdlg()">
+          Fechar
+        </button>
       </div>
     </div>
+  </div>
 
-    <script>
-      lucide.createIcons();
+  <script>
+    lucide.createIcons();
 
-      const API_URL = "http://localhost:8081/gastos-previstos";
-      const CATEGORIA_URL = "http://localhost:8081/categoria-gasto";
+    const API_URL = "http://localhost:8081/gastos-previstos";
+    const CATEGORIA_URL = "http://localhost:8081/categoria-gasto";
 
-      let gastos = [];
-      let selectedMonth = "";
+    let gastos = [];
+    let selectedMonth = "";
 
-      /** =======================
-       *  Modal de Gasto
-       * ======================= */
-      function openModal(edit = false, gasto = null) {
-        const overlay = document.getElementById("modalOverlay");
-        overlay.style.display = "flex";
+    function openModal(edit = false, gasto = null) {
+      const overlay = document.getElementById("modalOverlay");
+      overlay.style.display = "flex";
 
-        const title = document
-          .getElementById("modalTitle")
-          .querySelector("span");
-        title.textContent = edit ? "Editar Gasto" : "Novo Gasto";
+      const title = document
+        .getElementById("modalTitle")
+        .querySelector("span");
+      title.textContent = edit ? "Editar Gasto" : "Novo Gasto";
 
-        if (edit && gasto) {
-          console.log("EDITANDO:", gasto); 
+      if (edit && gasto) {
+        console.log("EDITANDO:", gasto);
 
-          document.getElementById("editId").value = gasto.id;
+        document.getElementById("editId").value = gasto.id;
 
-          document.getElementById("desc").value = gasto.descricaoGasto;
-          document.getElementById("category").value = gasto.idCategoriaGasto;
-          document.getElementById("value").value = gasto.valorGasto;
-          document.getElementById("expenseDate").value = gasto.dataAtual;
-          document.getElementById("date").value = gasto.dataVencimento;
-          document.getElementById
-          document.getElementById("status").value = gasto.pago
-            ? "Pago"
-            : "Pendente";
-          document.getElementById("obs").value = gasto.observacao || "";
-        } else {
-          document.getElementById("gastoForm").reset();
-          document.getElementById("editId").value = "";
-        }
-      }
-
-      function closeModal() {
-        document.getElementById("modalOverlay").style.display = "none";
+        document.getElementById("desc").value = gasto.descricaoGasto;
+        document.getElementById("category").value = gasto.idCategoriaGasto;
+        document.getElementById("value").value = gasto.valorGasto;
+        document.getElementById("expenseDate").value = gasto.dataAtual;
+        document.getElementById("date").value = gasto.dataVencimento;
+        document.getElementById
+        document.getElementById("status").value = gasto.pago
+          ? "Pago"
+          : "Pendente";
+        document.getElementById("obs").value = gasto.observacao || "";
+      } else {
         document.getElementById("gastoForm").reset();
+        document.getElementById("editId").value = "";
       }
+    }
 
-      /** =======================
-       *  Modal de Categoria
-       * ======================= */
-      function openCategoryModal() {
-        document.getElementById("categoryModalOverlay").style.display = "flex";
-        document.getElementById("newCategoryName").focus();
-      }
+    function closeModal() {
+      document.getElementById("modalOverlay").style.display = "none";
+      document.getElementById("gastoForm").reset();
+    }
 
-      function closeCategoryModal() {
-        document.getElementById("categoryModalOverlay").style.display = "none";
-        document.getElementById("categoryForm").reset();
-      }
+    function openCategoryModal() {
+      document.getElementById("categoryModalOverlay").style.display = "flex";
+      document.getElementById("newCategoryName").focus();
+    }
 
-      function showObservation(id) {
-        const gasto = gastos.find((c) => c.id === id);
-        if (!gasto) return;
+    function closeCategoryModal() {
+      document.getElementById("categoryModalOverlay").style.display = "none";
+      document.getElementById("categoryForm").reset();
+    }
 
-        document.getElementById("wdlg-client-name").innerText =
-          gasto.descricaoGasto;
-        document.getElementById("wdlg-text-content").innerText =
-          gasto.observacao || "Nenhuma observação cadastrada.";
+    function showObservation(id) {
+      const gasto = gastos.find((c) => c.id === id);
+      if (!gasto) return;
 
-        wdlgOverlay.style.display = "flex";
-      }
+      document.getElementById("wdlg-client-name").innerText =
+        gasto.descricaoGasto;
+      document.getElementById("wdlg-text-content").innerText =
+        gasto.observacao || "Nenhuma observação cadastrada.";
 
-      function closeWdlg() {
-        wdlgOverlay.style.display = "none";
-      }
-      window.onload = () => {
-        const today = new Date();
-        const year = today.getFullYear();
-        const month = String(today.getMonth() + 1).padStart(2, "0");
-        const formatted = `${year}-${month}`;
+      wdlgOverlay.style.display = "flex";
+    }
 
-        selectedMonth = formatted; // agora a variável global tem valor
-        document.getElementById("monthFilter").value = formatted;
+    function closeWdlg() {
+      wdlgOverlay.style.display = "none";
+    }
+    window.onload = () => {
+      const today = new Date();
+      const year = today.getFullYear();
+      const month = String(today.getMonth() + 1).padStart(2, "0");
+      const formatted = `${year}-${month}`;
 
-        carregarCategorias(); // carrega categorias antes de listar gastos
-        changeGlobalMonth(formatted); // atualiza título e chama carregarGastos()
-      };
+      selectedMonth = formatted;
+      document.getElementById("monthFilter").value = formatted;
 
-      function changeGlobalMonth(val) {
-        selectedMonth = val; // atualiza a variável global
+      carregarCategorias();
+      changeGlobalMonth(formatted);
+    };
 
-        const [ano, mes] = val.split("-");
+    function changeGlobalMonth(val) {
+      selectedMonth = val;
 
-        const date = new Date(ano, mes - 1);
-        const monthName = date.toLocaleString("pt-BR", { month: "long" });
-        const capitalizedMonth =
-          monthName.charAt(0).toUpperCase() + monthName.slice(1);
+      const [ano, mes] = val.split("-");
 
-        document.getElementById("pageTitle").textContent =
-          `Gastos de ${capitalizedMonth} ${ano}`;
-        document
-          .querySelectorAll(".stat-month-label")
-          .forEach((el) => (el.textContent = `Total de ${capitalizedMonth}`));
+      const date = new Date(ano, mes - 1);
+      const monthName = date.toLocaleString("pt-BR", { month: "long" });
+      const capitalizedMonth =
+        monthName.charAt(0).toUpperCase() + monthName.slice(1);
 
-        atualizarEstatisticasMes(parseInt(ano), parseInt(mes));
-        carregarGastos(); // agora selectedMonth já está definido
-      }
-
-      /** =======================
-       *  Toast
-       * ======================= */
-      function showToast(msg, isError = false) {
-        const toast = document.getElementById("toast");
-        const toastMsg = document.getElementById("toastMsg");
-        toastMsg.textContent = msg;
-        toast.style.background = isError ? "#ef4444" : "#1e293b";
-        toast.classList.add("show");
-        setTimeout(() => toast.classList.remove("show"), 3000);
-      }
-
-      /** =======================
-       *  Categorias
-       * ======================= */
-      let categoriasMap = {};
-
-      async function carregarCategorias() {
-        try {
-          const res = await fetch(`${CATEGORIA_URL}/listar`);
-          if (!res.ok) throw new Error("Erro ao buscar categorias");
-          const categorias = await res.json();
-
-          categoriasMap = {}; // reinicia
-          categorias.forEach((cat) => {
-            categoriasMap[cat.id] = cat.descricaoGastom;
-          });
-
-          const selectForm = document.getElementById("category");
-          const selectFilter = document.getElementById("categoryFilter");
-          selectForm.innerHTML =
-            '<option value="">Selecione uma categoria...</option>';
-          selectFilter.innerHTML =
-            '<option value="all">Todas as Categorias</option>';
-
-          categorias.forEach((cat) => {
-            selectForm.innerHTML += `<option value="${cat.id}">${cat.descricaoGastom}</option>`;
-            selectFilter.innerHTML += `<option value="${cat.descricaoGastom}">${cat.descricaoGastom}</option>`;
-          });
-        } catch (err) {
-          console.error(err);
-          showToast("Erro ao carregar categorias!", true);
-        }
-      }
-
+      document.getElementById("pageTitle").textContent =
+        `Gastos de ${capitalizedMonth} ${ano}`;
       document
-        .getElementById("categoryForm")
-        .addEventListener("submit", async (e) => {
-          e.preventDefault();
+        .querySelectorAll(".stat-month-label")
+        .forEach((el) => (el.textContent = `Total de ${capitalizedMonth}`));
 
-          const input = document.getElementById("newCategoryName");
-          const name = input.value;
+      atualizarEstatisticasMes(parseInt(ano), parseInt(mes));
+      carregarGastos();
+    }
 
-          if (!name) {
-            showToast("Digite um nome válido!", true);
-            input.focus();
-            return;
-          }
+    function showToast(msg, isError = false) {
+      const toast = document.getElementById("toast");
+      const toastMsg = document.getElementById("toastMsg");
+      toastMsg.textContent = msg;
+      toast.style.background = isError ? "#ef4444" : "#1e293b";
+      toast.classList.add("show");
+      setTimeout(() => toast.classList.remove("show"), 3000);
+    }
 
-          const payload = { descricaoGastom: name };
+    let categoriasMap = {};
 
-          try {
-            const res = await fetch(CATEGORIA_URL, {
-              method: "POST",
-              headers: { "Content-Type": "application/json" },
-              body: JSON.stringify({
-                descricaoGastom: name,
-              }),
-            });
+    async function carregarCategorias() {
+      try {
+        const res = await fetch(`${CATEGORIA_URL}/listar`);
+        if (!res.ok) throw new Error("Erro ao buscar categorias");
+        const categorias = await res.json();
 
-            if (!res.ok) {
-              const errText = await res.text();
-              console.error("Erro do backend:", errText);
-              throw new Error("Erro ao criar categoria");
-            }
-
-            const categoria = await res.json();
-
-            // Atualiza selects
-            const selectForm = document.getElementById("category");
-            const selectFilter = document.getElementById("categoryFilter");
-            selectForm.add(new Option(categoria.descricaoGastom, categoria.id));
-            selectFilter.add(
-              new Option(categoria.descricaoGastom, categoria.descricaoGastom),
-            );
-            selectForm.value = categoria.id;
-
-            showToast(`Categoria "${categoria.descricaoGastom}" criada!`);
-            closeCategoryModal();
-          } catch (err) {
-            console.error(err);
-            showToast("Erro ao cadastrar categoria!", true);
-          }
+        categoriasMap = {};
+        categorias.forEach((cat) => {
+          categoriasMap[cat.id] = cat.descricaoGastom;
         });
 
-      /** =======================
-       *  Gastos
-       * ======================= */
-      async function carregarGastos() {
-        if (!selectedMonth) return; // evita chamar com valor vazio
+        const selectForm = document.getElementById("category");
+        const selectFilter = document.getElementById("categoryFilter");
+        selectForm.innerHTML =
+          '<option value="">Selecione uma categoria...</option>';
+        selectFilter.innerHTML =
+          '<option value="all">Todas as Categorias</option>';
 
-        try {
-          const [ano, mes] = selectedMonth.split("-");
-
-          const res = await fetch(
-            `${API_URL}/listar-por-data?ano=${ano}&mes=${mes}`,
-          );
-          if (!res.ok) throw new Error("Erro ao carregar gastos");
-          gastos = await res.json();
-
-          renderGastos(gastos);
-        } catch (err) {
-          console.error(err);
-          showToast("Erro ao carregar gastos!", true);
-        }
+        categorias.forEach((cat) => {
+          selectForm.innerHTML += `<option value="${cat.id}">${cat.descricaoGastom}</option>`;
+          selectFilter.innerHTML += `<option value="${cat.descricaoGastom}">${cat.descricaoGastom}</option>`;
+        });
+      } catch (err) {
+        console.error(err);
+        showToast("Erro ao carregar categorias!", true);
       }
+    }
 
-      async function salvarGasto(event) {
-        event.preventDefault();
+    document
+      .getElementById("categoryForm")
+      .addEventListener("submit", async (e) => {
+        e.preventDefault();
 
-        const id = document.getElementById("editId").value;
+        const input = document.getElementById("newCategoryName");
+        const name = input.value;
 
-        const payload = {
-          descricaoGasto: document.getElementById("desc").value.trim(),
-          idCategoriaGasto: parseInt(document.getElementById("category").value),
-          valorGasto: parseFloat(document.getElementById("value").value),
-          dataAtual: document.getElementById("expenseDate").value,
-          dataVencimento: document.getElementById("date").value,
-          pago: document.getElementById("status").value === "Pago",
-          observacao: document.getElementById("obs").value.trim(),
-        };
-
-        if (!payload.descricaoGasto) return alert("Descrição obrigatória");
-        if (!payload.idCategoriaGasto) return alert("Categoria obrigatória");
-        if (!payload.valorGasto || payload.valorGasto <= 0)
-          return alert("Valor inválido");
-
-        try {
-          const url = id ? `${API_URL}/${id}` : API_URL;
-          const method = id ? "PUT" : "POST";
-
-          console.log("ENVIANDO:", method, url, payload); // DEBUG
-
-          const res = await fetch(url, {
-            method,
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(payload),
-          });
-
-          if (!res.ok) {
-            
-            let errorMessage = "Erro ao salvar gasto";
-            try {
-              const errData = await res.json();
-              if (errData?.message) errorMessage = errData.message;
-            } catch (e) {
-              console.error("Erro ao parsear mensagem de erro:", e);
-            }
-
-            console.error("Erro backend:", errorMessage);
-            return showToast(errorMessage, true);
-          }
-
-          showToast("Salvo com sucesso!");
-          await carregarGastos();
-          closeModal();
-        } catch (err) {
-          console.error(err);
-          alert("Erro inesperado ao salvar gasto");
-        }
-      }
-
-      /** =======================
-       *  Render / Filtros
-       * ======================= */
-      function renderGastos(lista) {
-        const tbody = document.getElementById("gastos-list");
-        tbody.innerHTML = "";
-        if (!lista.length) {
-          tbody.innerHTML = `<tr><td colspan="6" style="text-align:center">Nenhum gasto encontrado</td></tr>`;
+        if (!name) {
+          showToast("Digite um nome válido!", true);
+          input.focus();
           return;
         }
 
-        lista.forEach((g) => {
-          const tr = document.createElement("tr");
+        const payload = { descricaoGastom: name };
 
-          tr.innerHTML = `
+        try {
+          const res = await fetch(CATEGORIA_URL, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              descricaoGastom: name,
+            }),
+          });
+
+          if (!res.ok) {
+            const errText = await res.text();
+            console.error("Erro do backend:", errText);
+            throw new Error("Erro ao criar categoria");
+          }
+
+          const categoria = await res.json();
+
+          const selectForm = document.getElementById("category");
+          const selectFilter = document.getElementById("categoryFilter");
+          selectForm.add(new Option(categoria.descricaoGastom, categoria.id));
+          selectFilter.add(
+            new Option(categoria.descricaoGastom, categoria.descricaoGastom),
+          );
+          selectForm.value = categoria.id;
+
+          showToast(`Categoria "${categoria.descricaoGastom}" criada!`);
+          closeCategoryModal();
+        } catch (err) {
+          console.error(err);
+          showToast("Erro ao cadastrar categoria!", true);
+        }
+      });
+
+    async function carregarGastos() {
+      if (!selectedMonth) return;
+
+      try {
+        const [ano, mes] = selectedMonth.split("-");
+
+        const res = await fetch(
+          `${API_URL}/listar-por-data?ano=${ano}&mes=${mes}`,
+        );
+        if (!res.ok) throw new Error("Erro ao carregar gastos");
+        gastos = await res.json();
+
+        renderGastos(gastos);
+      } catch (err) {
+        console.error(err);
+        showToast("Erro ao carregar gastos!", true);
+      }
+    }
+
+    async function salvarGasto(event) {
+      event.preventDefault();
+
+      const id = document.getElementById("editId").value;
+
+      const payload = {
+        descricaoGasto: document.getElementById("desc").value.trim(),
+        idCategoriaGasto: parseInt(document.getElementById("category").value),
+        valorGasto: parseFloat(document.getElementById("value").value),
+        dataAtual: document.getElementById("expenseDate").value,
+        dataVencimento: document.getElementById("date").value,
+        pago: document.getElementById("status").value === "Pago",
+        observacao: document.getElementById("obs").value.trim(),
+      };
+
+      if (!payload.descricaoGasto) return alert("Descrição obrigatória");
+      if (!payload.idCategoriaGasto) return alert("Categoria obrigatória");
+      if (!payload.valorGasto || payload.valorGasto <= 0)
+        return alert("Valor inválido");
+
+      try {
+        const url = id ? `${API_URL}/${id}` : API_URL;
+        const method = id ? "PUT" : "POST";
+
+        console.log("ENVIANDO:", method, url, payload);
+
+        const res = await fetch(url, {
+          method,
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload),
+        });
+
+        if (!res.ok) {
+
+          let errorMessage = "Erro ao salvar gasto";
+          try {
+            const errData = await res.json();
+            if (errData?.message) errorMessage = errData.message;
+          } catch (e) {
+            console.error("Erro ao parsear mensagem de erro:", e);
+          }
+
+          console.error("Erro backend:", errorMessage);
+          return showToast(errorMessage, true);
+        }
+
+        showToast("Salvo com sucesso!");
+        await carregarGastos();
+        closeModal();
+      } catch (err) {
+        console.error(err);
+        alert("Erro inesperado ao salvar gasto");
+      }
+    }
+
+    function renderGastos(lista) {
+      const tbody = document.getElementById("gastos-list");
+      tbody.innerHTML = "";
+      if (!lista.length) {
+        tbody.innerHTML = `<tr><td colspan="6" style="text-align:center">Nenhum gasto encontrado</td></tr>`;
+        return;
+      }
+
+      lista.forEach((g) => {
+        const tr = document.createElement("tr");
+
+        tr.innerHTML = `
           <td>${g.descricaoGasto}</td>
           <!-- Aqui deve ser o nome que você definiu no DTO -->
           <td>${g.descricaoGastom || "Sem Categoria"}</td>
@@ -1409,139 +1350,134 @@
             </button>
           </td>
         `;
-          tbody.appendChild(tr);
+
+        const btnPrev = document.getElementById("prev");
+        const btnNext = document.getElementById("next");
+        const pageInfo = document.getElementById("page-info");
+
+        pageInfo.textContent = `Página ${page + 1} de ${totalPages || 1}`;
+
+        btnPrev.disabled = (page === 0);
+
+        btnNext.disabled = (page >= totalPages - 1);
+        
+        tbody.appendChild(tr);
+      });
+
+      lucide.createIcons();
+    }
+
+    function filterGastos(query) {
+      const filtered = gastos.filter(
+        (g) =>
+          g.descricaoGastom?.toLowerCase().includes(query.toLowerCase()) ||
+          (g.categoriaGastoDescricao || "")
+            .toLowerCase()
+            .includes(query.toLowerCase()),
+      );
+      renderGastos(filtered);
+    }
+
+    function applyFilters() {
+      const status = document.getElementById("statusFilter").value;
+      const categoria = document.getElementById("categoryFilter").value;
+
+      let filtered = [...gastos];
+      if (status !== "all") {
+        filtered = filtered.filter((g) =>
+          status === "Pago" ? g.pago : !g.pago,
+        );
+      }
+      if (categoria !== "all") {
+        filtered = filtered.filter((g) => g.descricaoGastom === categoria);
+      }
+      renderGastos(filtered);
+    }
+
+    async function togglePago(id, pagoAtual) {
+      const acao = pagoAtual ? "pendente" : "pago";
+      const mensagem = pagoAtual
+        ? "Deseja marcar como pendente?"
+        : "Deseja marcar como pago?";
+
+      if (!confirm(mensagem)) return;
+
+      try {
+        const response = await fetch(`${API_URL}/${acao}/${id}`, {
+          method: "PATCH",
+          headers: {
+            "Content-Type": "application/json",
+          },
         });
 
-        lucide.createIcons();
-      }
-
-      function filterGastos(query) {
-        const filtered = gastos.filter(
-          (g) =>
-            g.descricaoGastom?.toLowerCase().includes(query.toLowerCase()) ||
-            (g.categoriaGastoDescricao || "")
-              .toLowerCase()
-              .includes(query.toLowerCase()),
-        );
-        renderGastos(filtered);
-      }
-
-      function applyFilters() {
-        const status = document.getElementById("statusFilter").value;
-        const categoria = document.getElementById("categoryFilter").value;
-
-        let filtered = [...gastos];
-        if (status !== "all") {
-          filtered = filtered.filter((g) =>
-            status === "Pago" ? g.pago : !g.pago,
-          );
+        if (!response.ok) {
+          throw new Error("Erro ao atualizar status");
         }
-        if (categoria !== "all") {
-          filtered = filtered.filter((g) => g.descricaoGastom === categoria);
-        }
-        renderGastos(filtered);
+
+        showToast(`Gasto atualizado para ${acao}!`);
+        carregarGastos();
+      } catch (error) {
+        console.error(error);
+        showToast("Erro ao atualizar status!", true);
       }
+    }
 
-      async function togglePago(id, pagoAtual) {
-        const acao = pagoAtual ? "pendente" : "pago";
-        const mensagem = pagoAtual
-          ? "Deseja marcar como pendente?"
-          : "Deseja marcar como pago?";
+    async function atualizarEstatisticasMes(ano, mes) {
+      try {
+        const responses = await Promise.all([
+          fetch(`${API_URL}/calcular-total-mes?ano=${ano}&mes=${mes}`),
+          fetch(`${API_URL}/calcular-pago-mes?ano=${ano}&mes=${mes}`),
+          fetch(`${API_URL}/calcular-pendente-mes?ano=${ano}&mes=${mes}`),
+          fetch(`${API_URL}/vencimento-proximo-mes?ano=${ano}&mes=${mes}`),
+        ]);
 
-        if (!confirm(mensagem)) return;
+        const safeJson = async (response) => {
+          if (!response.ok) return 0;
+          const text = await response.text();
+          return text ? JSON.parse(text) : 0;
+        };
 
-        try {
-          const response = await fetch(`${API_URL}/${acao}/${id}`, {
-            method: "PATCH",
-            headers: {
-              "Content-Type": "application/json",
-            },
-          });
+        const total = await safeJson(responses[0]);
+        const pagos = await safeJson(responses[1]);
+        const pendentes = await safeJson(responses[2]);
 
-          if (!response.ok) {
-            throw new Error("Erro ao atualizar status");
-          }
+        const proximoResText = await responses[3].text();
+        const proximo = proximoResText ? JSON.parse(proximoResText) : null;
 
-          showToast(`Gasto atualizado para ${acao}!`);
-          carregarGastos(); // recarrega tabela
-        } catch (error) {
-          console.error(error);
-          showToast("Erro ao atualizar status!", true);
-        }
+        document.getElementById("stat-total").textContent =
+          `R$ ${(Number(total) || 0).toFixed(2)}`;
+        document.getElementById("stat-pagos").textContent =
+          `R$ ${(Number(pagos) || 0).toFixed(2)}`;
+        document.getElementById("stat-pendentes").textContent =
+          `R$ ${(Number(pendentes) || 0).toFixed(2)}`;
+
+        document.getElementById("stat-proximo").textContent =
+          proximo && proximo.dataVencimento ? proximo.dataVencimento : "-";
+      } catch (err) {
+        console.error("Erro detalhado:", err);
+        showToast("Erro ao atualizar estatísticas!", true);
       }
-
-      /** =======================
-       *  Estatísticas
-       * ======================= */
-      async function atualizarEstatisticasMes(ano, mes) {
-        try {
-          const responses = await Promise.all([
-            fetch(`${API_URL}/calcular-total-mes?ano=${ano}&mes=${mes}`),
-            fetch(`${API_URL}/calcular-pago-mes?ano=${ano}&mes=${mes}`),
-            fetch(`${API_URL}/calcular-pendente-mes?ano=${ano}&mes=${mes}`),
-            fetch(`${API_URL}/vencimento-proximo-mes?ano=${ano}&mes=${mes}`),
-          ]);
-
-          // Função auxiliar para extrair o JSON com segurança
-          const safeJson = async (response) => {
-            if (!response.ok) return 0; // Se a requisição falhou (404, 500)
-            const text = await response.text();
-            return text ? JSON.parse(text) : 0; // Se texto for vazio, retorna 0
-          };
-
-          const total = await safeJson(responses[0]);
-          const pagos = await safeJson(responses[1]);
-          const pendentes = await safeJson(responses[2]);
-
-          // Para o vencimento, que é um objeto ou string, tratamos diferente do 0
-          const proximoResText = await responses[3].text();
-          const proximo = proximoResText ? JSON.parse(proximoResText) : null;
-
-          // Atualiza o HTML garantindo que são números antes do toFixed
-          document.getElementById("stat-total").textContent =
-            `R$ ${(Number(total) || 0).toFixed(2)}`;
-          document.getElementById("stat-pagos").textContent =
-            `R$ ${(Number(pagos) || 0).toFixed(2)}`;
-          document.getElementById("stat-pendentes").textContent =
-            `R$ ${(Number(pendentes) || 0).toFixed(2)}`;
-
-          document.getElementById("stat-proximo").textContent =
-            proximo && proximo.dataVencimento ? proximo.dataVencimento : "-";
-        } catch (err) {
-          console.error("Erro detalhado:", err);
-          showToast("Erro ao atualizar estatísticas!", true);
-        }
+    }
+    async function deletarGasto(id) {
+      if (!confirm("Deseja realmente excluir este gasto?")) return;
+      try {
+        const res = await fetch(`${API_URL}/${id}`, { method: "DELETE" });
+        if (!res.ok) throw new Error("Erro ao deletar gasto");
+        showToast("Gasto excluído!");
+        carregarGastos();
+      } catch (err) {
+        console.error(err);
+        showToast("Erro ao excluir gasto!", true);
       }
+    }
+    document
+      .getElementById("gastoForm")
+      .addEventListener("submit", salvarGasto);
 
-      /** =======================
-       *  Deletar
-       * ======================= */
-      async function deletarGasto(id) {
-        if (!confirm("Deseja realmente excluir este gasto?")) return;
-        try {
-          const res = await fetch(`${API_URL}/${id}`, { method: "DELETE" });
-          if (!res.ok) throw new Error("Erro ao deletar gasto");
-          showToast("Gasto excluído!");
-          carregarGastos();
-        } catch (err) {
-          console.error(err);
-          showToast("Erro ao excluir gasto!", true);
-        }
-      }
+    atualizarEstatisticasMes();
+    carregarCategorias();
+    carregarGastos();
+  </script>
+</body>
 
-      /** =======================
-       *  Eventos
-       * ======================= */
-      document
-        .getElementById("gastoForm")
-        .addEventListener("submit", salvarGasto);
-
-      /** =======================
-       *  Inicializações
-       * ======================= */
-      atualizarEstatisticasMes();
-      carregarCategorias();
-      carregarGastos();
-    </script>
-  </body>
 </html>

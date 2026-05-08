@@ -1,1134 +1,1158 @@
 <!doctype html>
 <html lang="pt-br">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>PetShop Pro - Itens / Produtos</title>
-    <script src="https://unpkg.com/lucide@latest"></script>
-    <link rel="icon" type="image/png" href="../gato-preto-malvado.png">
-    <link
-      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
-      rel="stylesheet"
-    />
-    <style>
-      :root {
-        --primary: #3a86ff;
-        --primary-hover: #265df2;
-        --primary-bg-light: #eaf2ff;
-        --secondary: #2ec4b6;
-        --secondary-bg-light: #dff7f4;
-        --accent: #ff9f1c;
-        --accent-bg-light: #ffe8cc;
-        --bg-general: #f7f9fc;
-        --white: #ffffff;
-        --text-main: #1e293b;
-        --text-secondary: #64748b;
-        --border: #e2e8f0;
-        --shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1);
-        --danger: #ef4444;
-        --danger-light: #fee2e2;
-        --success: #22c55e;
-        --success-light: #f0fdf4;
-      }
-
-      * {
-        margin: 0;
-        padding: 0;
-        box-sizing: border-box;
-        font-family:
-          "Inter",
-          -apple-system,
-          sans-serif;
-      }
-
-      body {
-        background-color: var(--bg-general);
-        color: var(--text-main);
-        display: flex;
-        min-height: 100vh;
-      }
-
-      /* Sidebar Padronizada */
-      aside {
-        width: 280px;
-        background-color: var(--white);
-        border-right: 1px solid var(--border);
-        display: flex;
-        flex-direction: column;
-        position: fixed;
-        height: 100vh;
-        z-index: 100;
-        box-shadow: 4px 0 20px rgba(0, 0, 0, 0.05);
-      }
-
-      .logo-container {
-        padding: 32px 24px;
-        display: flex;
-        align-items: center;
-        gap: 12px;
-        font-weight: 800;
-        font-size: 1.4rem;
-        color: var(--primary);
-      }
-
-      .menu-label {
-        padding: 0 24px 8px;
-        font-size: 0.7rem;
-        text-transform: uppercase;
-        font-weight: 700;
-        color: var(--text-secondary);
-        letter-spacing: 1px;
-      }
-
-      .input-with-button {
-        display: flex;
-        gap: 8px;
-        align-items: center;
-        width: 100%;
-      }
-
-      .input-with-button select {
-        flex: 1;
-        min-width: 0;
-      }
-
-      nav {
-        flex: 1;
-        padding: 0 16px;
-        overflow-y: auto;
-      }
-
-      .nav-item {
-        display: flex;
-        align-items: center;
-        gap: 12px;
-        padding: 14px 16px;
-        text-decoration: none;
-        color: var(--text-secondary);
-        border-radius: 12px;
-        margin-bottom: 6px;
-        transition: 0.2s;
-        font-weight: 600;
-        font-size: 0.9rem;
-      }
-
-      .nav-item:hover {
-        background-color: var(--primary-bg-light);
-        color: var(--primary);
-      }
-
-      .nav-item.active {
-        background-color: var(--primary);
-        color: var(--white);
-        box-shadow: 0 8px 15px rgba(58, 134, 255, 0.3);
-      }
-
-      /* Conteúdo Principal */
-      main {
-        margin-left: 280px;
-        flex: 1;
-        display: flex;
-        flex-direction: column;
-        min-height: 100vh;
-      }
-
-      .btn-add-inline {
-        height: 44px;
-        width: 44px;
-        min-width: 44px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        background-color: var(--primary-bg-light);
-        color: var(--primary);
-        border: 1px solid var(--primary);
-        border-radius: 10px;
-        cursor: pointer;
-        transition: 0.2s;
-      }
-
-      .btn-add-inline:hover {
-        background-color: var(--primary);
-        color: white;
-      }
-
-      header {
-        padding: 24px 40px;
-        background: var(--white);
-        border-bottom: 1px solid var(--border);
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        position: sticky;
-        top: 0;
-        z-index: 50;
-      }
-
-      .header-info h1 {
-        font-size: 1.5rem;
-        font-weight: 800;
-      }
-      .header-info p {
-        color: var(--text-secondary);
-        font-size: 0.85rem;
-      }
-
-      .btn-primary {
-        background: var(--primary);
-        color: white;
-        border: none;
-        padding: 12px 20px;
-        border-radius: 12px;
-        font-weight: 700;
-        display: flex;
-        align-items: center;
-        gap: 8px;
-        cursor: pointer;
-        transition: 0.2s;
-        box-shadow: 0 4px 12px rgba(58, 134, 255, 0.2);
-      }
-
-      .btn-primary:hover {
-        background: var(--primary-hover);
-        transform: translateY(-2px);
-      }
-
-      .content-container {
-        padding: 32px 40px;
-      }
-
-      /* Controles de Tabela */
-      .table-controls {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        margin-bottom: 24px;
-        gap: 16px;
-      }
-
-      .modal_obs {
-        display: none; /* oculto por padrão */
-        position: fixed;
-        z-index: 1000;
-        left: 0;
-        top: 0;
-        width: 100%;
-        height: 100%;
-        overflow: auto;
-        background-color: rgba(0, 0, 0, 0.5); /* fundo semi-transparente */
-        backdrop-filter: blur(2px); /* efeito de blur */
-      }
-
-      .close-btn {
-        position: absolute;
-        top: 10px;
-        right: 15px;
-        font-size: 24px;
-        cursor: pointer;
-        color: #333;
-        font-weight: bold;
-      }
-
-      .close-btn:hover {
-        color: #e74c3c;
-      }
-
-      .search-input {
-        position: relative;
-        flex: 1;
-        max-width: 400px;
-      }
-
-      .search-input i {
-        position: absolute;
-        left: 16px;
-        top: 50%;
-        transform: translateY(-50%);
-        color: var(--text-secondary);
-        width: 18px;
-      }
-
-      .search-input input {
-        width: 100%;
-        padding: 12px 12px 12px 48px;
-        border-radius: 12px;
-        border: 1px solid var(--border);
-        outline: none;
-        font-weight: 500;
-        transition: 0.2s;
-      }
-
-      .search-input input:focus {
-        border-color: var(--primary);
-        box-shadow: 0 0 0 4px var(--primary-bg-light);
-      }
-
-      /* Design da Tabela */
-      .card-table {
-        background: var(--white);
-        border-radius: 16px;
-        border: 1px solid var(--border);
-        overflow: hidden;
-        box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.05);
-      }
-
-      table {
-        width: 100%;
-        border-collapse: collapse;
-        text-align: left;
-      }
-
-      thead {
-        background: #f8fafc;
-        border-bottom: 1px solid var(--border);
-      }
-
-      th {
-        padding: 16px 24px;
-        font-size: 0.75rem;
-        text-transform: uppercase;
-        letter-spacing: 0.05em;
-        font-weight: 700;
-        color: var(--text-secondary);
-      }
-
-      td {
-        padding: 18px 24px;
-        border-bottom: 1px solid #f1f5f9;
-        font-size: 0.9rem;
-        vertical-align: middle;
-      }
-
-      .badge-status {
-        padding: 4px 10px;
-        border-radius: 20px;
-        font-size: 0.7rem;
-        font-weight: 800;
-        text-transform: uppercase;
-      }
-
-      .btn-info {
-        color: #3b82f6; /* Azul */
-        background: #eff6ff;
-        border: 1px solid #dbeafe;
-      }
-
-      .btn-info:hover {
-        background: #dbeafe;
-      }
-
-      .btn-toggle {
-        color: var(--text-secondary);
-      }
-      .btn-toggle:hover {
-        background: var(--bg-general);
-      }
-
-      .status-active {
-        background: var(--success-light);
-        color: var(--success);
-      }
-      .status-inactive {
-        background: var(--danger-light);
-        color: var(--danger);
-      }
-
-      tr:last-child td {
-        border-bottom: none;
-      }
-      tr:hover td {
-        background-color: #fbfdff;
-      }
-
-      /* Estilos de Células de Produto */
-      .product-info {
-        display: flex;
-        align-items: center;
-        gap: 12px;
-      }
-      .product-icon {
-        width: 40px;
-        height: 40px;
-        background: var(--primary-bg-light);
-        color: var(--primary);
-        border-radius: 10px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-      }
-
-      .product-name {
-        font-weight: 700;
-        color: var(--text-main);
-      }
-      .product-category {
-        color: var(--text-secondary);
-        font-size: 0.8rem;
-      }
-
-      /* Estado ATIVO (Serviço ligado) - Botão Branco com detalhes em Azul */
-      .action-btn.toggle.active {
-        background: var(--white); /* Força o fundo branco */
-        color: var(--primary); /* Cor do ícone em azul */
-        border: 1px solid var(--primary); /* Borda azul para destacar */
-        box-shadow: 0 4px 12px rgba(58, 134, 255, 0.1);
-      }
-
-      .action-btn.toggle.active:hover {
-        background: var(
-          --primary-bg-light
-        ); /* Um azul bem clarinho quase branco ao passar o mouse */
-        border-color: var(--primary-hover);
-        color: var(--primary-hover);
-        transform: translateY(-1px);
-      }
-
-      /* Estado INATIVO (Serviço desligado) - Mantém o padrão neutro */
-      .action-btn.toggle:not(.active) {
-        background: var(--white);
-        color: var(--text-secondary);
-        border: 1px solid var(--border);
-      }
-
-      .price-badge {
-        font-weight: 700;
-        color: var(--secondary);
-      }
-
-      .stock-badge {
-        padding: 4px 12px;
-        border-radius: 6px;
-        font-size: 0.85rem;
-        font-weight: 600;
-        display: inline-block;
-      }
-
-      .stock-normal {
-        background: #dcfce7;
-        color: #166534;
-      } /* Verde */
-      .stock-low {
-        background: #fef9c3;
-        color: #854d0e;
-      } /* Amarelo */
-      .stock-out {
-        background: #fee2e2;
-        color: #991b1b;
-      } /* Vermelho */
-
-      /* Badges de Ativo/Inativo */
-      .status-pill {
-        padding: 2px 10px;
-        border-radius: 99px;
-        font-size: 0.75rem;
-        font-weight: 700;
-        text-transform: uppercase;
-      }
-
-      .status-on {
-        background: #ecfdf5;
-        color: #10b981;
-        border: 1px solid #d1fae5;
-      }
-      .status-off {
-        background: #fef2f2;
-        color: #ef4444;
-        border: 1px solid #fee2e2;
-      }
-
-      .stock-normal {
-        background: var(--secondary-bg-light);
-        color: var(--secondary);
-      }
-      .stock-low {
-        background: var(--accent-bg-light);
-        color: var(--accent);
-      }
-      .stock-out {
-        background: var(--danger-light);
-        color: var(--danger);
-      }
-
-      /* Container das ações na tabela */
-      .actions {
-        display: flex;
-        gap: 8px;
-        justify-content: flex-end;
-      }
-
-      /* Base do botão profissional */
-      .action-btn {
-        position: relative;
-        overflow: hidden;
-        border: none;
-        border-radius: 8px;
-        width: 36px;
-        height: 36px;
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        cursor: pointer;
-        transition: all 0.3s ease;
-      }
-
-      .action-btn::after {
-        content: "";
-        position: absolute;
-        top: -100%;
-        left: -100%;
-        width: 100%;
-        height: 100%;
-        background: rgba(255, 255, 255, 0.25);
-        transform: rotate(45deg);
-        transition: all 0.5s ease;
-      }
-
-      .action-btn:hover::after {
-        top: 100%;
-        left: 100%;
-      }
-
-      .action-btn:hover {
-        transform: translateY(-2px);
-        filter: brightness(1.1);
-      }
-
-      .action-btn.info {
-        background: #eff6ff;
-        color: #2563eb;
-        border: 1px solid #bfdbfe;
-      }
-
-      .action-btn.info:hover {
-        background: #dbeafe;
-        color: #1e3a8a;
-        border-color: #93c5fd;
-        transform: translateY(-2px);
-        box-shadow: 0 4px 10px rgba(37, 99, 235, 0.15);
-      }
 
-      /* EDIT - O que já estava funcionando */
-      .action-btn.edit {
-        background: linear-gradient(135deg, #3b82f6, #2563eb);
-        color: white;
-      }
-
-      /* TOGGLE (Ativar/Inativar) - Cinza/Sóbrio ou Âmbar para atenção */
-      .action-btn.toggle {
-        background: linear-gradient(135deg, #64748b, #475569);
-        color: white;
-        box-shadow: 0 4px 6px -1px rgba(71, 85, 105, 0.2);
-      }
-
-      /* Botão Editar com Gradiente e Efeito de Brilho (Glimmer) */
-      .action-btn.edit {
-        background: linear-gradient(135deg, #3b82f6, #2563eb);
-        color: #ffffff;
-        position: relative;
-        overflow: hidden;
-        box-shadow: 0 4px 6px -1px rgba(37, 99, 235, 0.2);
-      }
-
-      .action-btn.edit::after {
-        content: "";
-        position: absolute;
-        width: 100%;
-        height: 100%;
-        background: rgba(255, 255, 255, 0.3);
-        top: -100%;
-        left: -100%;
-        transform: rotate(45deg);
-        transition: all 0.6s ease;
-      }
-
-      .action-btn.edit:hover::after {
-        top: 100%;
-        left: 100%;
-      }
-
-      .action-btn.edit:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 10px 15px -3px rgba(37, 99, 235, 0.4);
-      }
-
-      /* Botão de Informação (Sutil) */
-      .action-btn.info {
-        background: #eff6ff;
-        color: #2563eb;
-        border: 1px solid #bfdbfe;
-      }
-
-      .action-btn.info:hover {
-        background: #dbeafe;
-        color: #1e3a8a;
-        border-color: #93c5fd;
-        transform: translateY(-2px);
-        box-shadow: 0 4px 10px rgba(37, 99, 235, 0.15);
-      }
-
-      /* Ajuste para inputs que ocupam a linha toda no modal pequeno */
-      .form-group.full {
-        width: 100%;
-      }
-      /* Modal */
-      .modal-overlay {
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background: rgba(15, 23, 42, 0.6);
-        backdrop-filter: blur(4px);
-        display: none;
-        align-items: center;
-        justify-content: center;
-        z-index: 200;
-      }
-
-      .modal {
-        background: var(--white);
-        width: 550px;
-        border-radius: 20px;
-        padding: 32px;
-        animation: modalSlideUp 0.3s ease;
-      }
-
-      @keyframes modalSlideUp {
-        from {
-          opacity: 0;
-          transform: translateY(30px);
-        }
-        to {
-          opacity: 1;
-          transform: translateY(0);
-        }
-      }
-
-      .modal-header {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        margin-bottom: 24px;
-      }
-
-      .form-grid {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 16px;
-      }
-      .form-group {
-        margin-bottom: 20px;
-      }
-      .form-group.full {
-        grid-column: span 2;
-      }
-      .form-group label {
-        display: block;
-        font-size: 0.85rem;
-        font-weight: 700;
-        margin-bottom: 8px;
-      }
-
-      .form-control {
-        width: 100%;
-        padding: 12px 16px;
-        border-radius: 10px;
-        border: 1px solid var(--border);
-        outline: none;
-        transition: 0.2s;
-      }
-
-      .form-control:focus {
-        border-color: var(--primary);
-        box-shadow: 0 0 0 4px var(--primary-bg-light);
-      }
-
-      .btn-block {
-        width: 100%;
-        padding: 14px;
-        border-radius: 12px;
-        font-weight: 700;
-        cursor: pointer;
-        border: none;
-        transition: 0.2s;
-      }
-      .btn-success {
-        background: var(--primary);
-        color: white;
-      }
-      .btn-success:hover {
-        background: var(--primary-hover);
-        transform: translateY(-1px);
-      }
-
-      .modal-content-obs {
-        background-color: var(--white);
-        border-radius: 20px;
-        width: 550px; /* Largura fixa sugerida */
-        max-width: 90%; /* Responsividade para telas menores */
-        display: flex;
-        flex-direction: column; /* Mantém Header, Body e Footer empilhados */
-        box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
-        overflow: hidden; /* Garante que o conteúdo não vaze as bordas arredondadas */
-        animation: modalSlideUp 0.3s ease;
-      }
-
-      /* Toast de Feedback */
-      .toast {
-        position: fixed;
-        bottom: 30px;
-        right: 30px;
-        background: var(--text-main);
-        color: white;
-        padding: 16px 24px;
-        border-radius: 12px;
-        display: flex;
-        align-items: center;
-        gap: 12px;
-        transform: translateY(150px);
-        transition: 0.4s;
-        z-index: 300;
-        box-shadow: var(--shadow);
-      }
-      .toast.show {
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>PetShop Pro - Itens / Produtos</title>
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <link rel="icon" type="image/png" href="../gato-preto-malvado.png" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --primary: #3a86ff;
+      --primary-hover: #265df2;
+      --primary-bg-light: #eaf2ff;
+      --secondary: #2ec4b6;
+      --secondary-bg-light: #dff7f4;
+      --accent: #ff9f1c;
+      --accent-bg-light: #ffe8cc;
+      --bg-general: #f7f9fc;
+      --white: #ffffff;
+      --text-main: #1e293b;
+      --text-secondary: #64748b;
+      --border: #e2e8f0;
+      --shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1);
+      --danger: #ef4444;
+      --danger-light: #fee2e2;
+      --success: #22c55e;
+      --success-light: #f0fdf4;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family:
+        "Inter",
+        -apple-system,
+        sans-serif;
+    }
+
+    body {
+      background-color: var(--bg-general);
+      color: var(--text-main);
+      display: flex;
+      min-height: 100vh;
+    }
+
+    /* Sidebar Padronizada */
+    aside {
+      width: 280px;
+      background-color: var(--white);
+      border-right: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      position: fixed;
+      height: 100vh;
+      z-index: 100;
+      box-shadow: 4px 0 20px rgba(0, 0, 0, 0.05);
+    }
+
+    .logo-container {
+      padding: 32px 24px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-weight: 800;
+      font-size: 1.4rem;
+      color: var(--primary);
+    }
+
+    .menu-label {
+      padding: 0 24px 8px;
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      font-weight: 700;
+      color: var(--text-secondary);
+      letter-spacing: 1px;
+    }
+
+    .input-with-button {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+      width: 100%;
+    }
+
+    .input-with-button select {
+      flex: 1;
+      min-width: 0;
+    }
+
+    nav {
+      flex: 1;
+      padding: 0 16px;
+      overflow-y: auto;
+    }
+
+    .nav-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 14px 16px;
+      text-decoration: none;
+      color: var(--text-secondary);
+      border-radius: 12px;
+      margin-bottom: 6px;
+      transition: 0.2s;
+      font-weight: 600;
+      font-size: 0.9rem;
+    }
+
+    .nav-item:hover {
+      background-color: var(--primary-bg-light);
+      color: var(--primary);
+    }
+
+    .nav-item.active {
+      background-color: var(--primary);
+      color: var(--white);
+      box-shadow: 0 8px 15px rgba(58, 134, 255, 0.3);
+    }
+
+    /* Conteúdo Principal */
+    main {
+      margin-left: 280px;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+
+    .btn-add-inline {
+      height: 44px;
+      width: 44px;
+      min-width: 44px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background-color: var(--primary-bg-light);
+      color: var(--primary);
+      border: 1px solid var(--primary);
+      border-radius: 10px;
+      cursor: pointer;
+      transition: 0.2s;
+    }
+
+    .btn-add-inline:hover {
+      background-color: var(--primary);
+      color: white;
+    }
+
+    header {
+      padding: 24px 40px;
+      background: var(--white);
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: sticky;
+      top: 0;
+      z-index: 50;
+    }
+
+    .header-info h1 {
+      font-size: 1.5rem;
+      font-weight: 800;
+    }
+
+    .header-info p {
+      color: var(--text-secondary);
+      font-size: 0.85rem;
+    }
+
+    .btn-primary {
+      background: var(--primary);
+      color: white;
+      border: none;
+      padding: 12px 20px;
+      border-radius: 12px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      cursor: pointer;
+      transition: 0.2s;
+      box-shadow: 0 4px 12px rgba(58, 134, 255, 0.2);
+    }
+
+    .btn-primary:hover {
+      background: var(--primary-hover);
+      transform: translateY(-2px);
+    }
+
+    .content-container {
+      padding: 32px 40px;
+    }
+
+    /* Controles de Tabela */
+    .table-controls {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 24px;
+      gap: 16px;
+    }
+
+    .modal_obs {
+      display: none;
+      /* oculto por padrão */
+      position: fixed;
+      z-index: 1000;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      overflow: auto;
+      background-color: rgba(0, 0, 0, 0.5);
+      /* fundo semi-transparente */
+      backdrop-filter: blur(2px);
+      /* efeito de blur */
+    }
+
+    .close-btn {
+      position: absolute;
+      top: 10px;
+      right: 15px;
+      font-size: 24px;
+      cursor: pointer;
+      color: #333;
+      font-weight: bold;
+    }
+
+    .close-btn:hover {
+      color: #e74c3c;
+    }
+
+    .search-input {
+      position: relative;
+      flex: 1;
+      max-width: 400px;
+    }
+
+    .search-input i {
+      position: absolute;
+      left: 16px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--text-secondary);
+      width: 18px;
+    }
+
+    .search-input input {
+      width: 100%;
+      padding: 12px 12px 12px 48px;
+      border-radius: 12px;
+      border: 1px solid var(--border);
+      outline: none;
+      font-weight: 500;
+      transition: 0.2s;
+    }
+
+    .search-input input:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 4px var(--primary-bg-light);
+    }
+
+    /* Design da Tabela */
+    .card-table {
+      background: var(--white);
+      border-radius: 16px;
+      border: 1px solid var(--border);
+      overflow: hidden;
+      box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.05);
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      text-align: left;
+    }
+
+    thead {
+      background: #f8fafc;
+      border-bottom: 1px solid var(--border);
+    }
+
+    th {
+      padding: 16px 24px;
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      font-weight: 700;
+      color: var(--text-secondary);
+    }
+
+    td {
+      padding: 18px 24px;
+      border-bottom: 1px solid #f1f5f9;
+      font-size: 0.9rem;
+      vertical-align: middle;
+    }
+
+    .badge-status {
+      padding: 4px 10px;
+      border-radius: 20px;
+      font-size: 0.7rem;
+      font-weight: 800;
+      text-transform: uppercase;
+    }
+
+    .btn-info {
+      color: #3b82f6;
+      /* Azul */
+      background: #eff6ff;
+      border: 1px solid #dbeafe;
+    }
+
+    .btn-info:hover {
+      background: #dbeafe;
+    }
+
+    .btn-toggle {
+      color: var(--text-secondary);
+    }
+
+    .btn-toggle:hover {
+      background: var(--bg-general);
+    }
+
+    .status-active {
+      background: var(--success-light);
+      color: var(--success);
+    }
+
+    .status-inactive {
+      background: var(--danger-light);
+      color: var(--danger);
+    }
+
+    tr:last-child td {
+      border-bottom: none;
+    }
+
+    tr:hover td {
+      background-color: #fbfdff;
+    }
+
+    /* Estilos de Células de Produto */
+    .product-info {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .product-icon {
+      width: 40px;
+      height: 40px;
+      background: var(--primary-bg-light);
+      color: var(--primary);
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .product-name {
+      font-weight: 700;
+      color: var(--text-main);
+    }
+
+    .product-category {
+      color: var(--text-secondary);
+      font-size: 0.8rem;
+    }
+
+    /* Estado ATIVO (Serviço ligado) - Botão Branco com detalhes em Azul */
+    .action-btn.toggle.active {
+      background: var(--white);
+      /* Força o fundo branco */
+      color: var(--primary);
+      /* Cor do ícone em azul */
+      border: 1px solid var(--primary);
+      /* Borda azul para destacar */
+      box-shadow: 0 4px 12px rgba(58, 134, 255, 0.1);
+    }
+
+    .action-btn.toggle.active:hover {
+      background: var(--primary-bg-light);
+      /* Um azul bem clarinho quase branco ao passar o mouse */
+      border-color: var(--primary-hover);
+      color: var(--primary-hover);
+      transform: translateY(-1px);
+    }
+
+    /* Estado INATIVO (Serviço desligado) - Mantém o padrão neutro */
+    .action-btn.toggle:not(.active) {
+      background: var(--white);
+      color: var(--text-secondary);
+      border: 1px solid var(--border);
+    }
+
+    .price-badge {
+      font-weight: 700;
+      color: var(--secondary);
+    }
+
+    .stock-badge {
+      padding: 4px 12px;
+      border-radius: 6px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      display: inline-block;
+    }
+
+    .stock-normal {
+      background: #dcfce7;
+      color: #166534;
+    }
+
+    /* Verde */
+    .stock-low {
+      background: #fef9c3;
+      color: #854d0e;
+    }
+
+    /* Amarelo */
+    .stock-out {
+      background: #fee2e2;
+      color: #991b1b;
+    }
+
+    /* Vermelho */
+
+    /* Badges de Ativo/Inativo */
+    .status-pill {
+      padding: 2px 10px;
+      border-radius: 99px;
+      font-size: 0.75rem;
+      font-weight: 700;
+      text-transform: uppercase;
+    }
+
+    .status-on {
+      background: #ecfdf5;
+      color: #10b981;
+      border: 1px solid #d1fae5;
+    }
+
+    .status-off {
+      background: #fef2f2;
+      color: #ef4444;
+      border: 1px solid #fee2e2;
+    }
+
+    .stock-normal {
+      background: var(--secondary-bg-light);
+      color: var(--secondary);
+    }
+
+    .stock-low {
+      background: var(--accent-bg-light);
+      color: var(--accent);
+    }
+
+    .stock-out {
+      background: var(--danger-light);
+      color: var(--danger);
+    }
+
+    /* PAGINAÇÃO MELHORADA */
+    .pagination {
+      display: flex;
+      justify-content: flex-end;
+      align-items: center;
+      gap: 12px;
+      padding: 20px;
+      border-top: 1px solid #f1f5f9;
+    }
+
+    /* Indicador de página (opcional, para dar contexto) */
+    .page-indicator {
+      font-size: 0.85rem;
+      color: var(--text-secondary);
+      font-weight: 600;
+    }
+
+    .pagination button {
+      background: var(--primary-light);
+      color: var(--primary);
+      border: 1px solid transparent;
+      padding: 10px 18px;
+      border-radius: 12px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      font-weight: 700;
+      font-size: 0.85rem;
+      letter-spacing: 0.3px;
+    }
+
+    .pagination button:hover:not(:disabled) {
+      background: var(--primary);
+      color: var(--white);
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(58, 134, 255, 0.2);
+    }
+
+    .pagination button:disabled {
+      background: #f1f5f9;
+      color: var(--border);
+      cursor: not-allowed;
+      opacity: 0.7;
+    }
+
+
+    /* Container das ações na tabela */
+    .actions {
+      display: flex;
+      gap: 8px;
+      justify-content: flex-end;
+    }
+
+    /* Base do botão profissional */
+    .action-btn {
+      position: relative;
+      overflow: hidden;
+      border: none;
+      border-radius: 8px;
+      width: 36px;
+      height: 36px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .action-btn::after {
+      content: "";
+      position: absolute;
+      top: -100%;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: rgba(255, 255, 255, 0.25);
+      transform: rotate(45deg);
+      transition: all 0.5s ease;
+    }
+
+    .action-btn:hover::after {
+      top: 100%;
+      left: 100%;
+    }
+
+    .action-btn:hover {
+      transform: translateY(-2px);
+      filter: brightness(1.1);
+    }
+
+    .action-btn.info {
+      background: #eff6ff;
+      color: #2563eb;
+      border: 1px solid #bfdbfe;
+    }
+
+    .action-btn.info:hover {
+      background: #dbeafe;
+      color: #1e3a8a;
+      border-color: #93c5fd;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 10px rgba(37, 99, 235, 0.15);
+    }
+
+    /* EDIT - O que já estava funcionando */
+    .action-btn.edit {
+      background: linear-gradient(135deg, #3b82f6, #2563eb);
+      color: white;
+    }
+
+    /* TOGGLE (Ativar/Inativar) - Cinza/Sóbrio ou Âmbar para atenção */
+    .action-btn.toggle {
+      background: linear-gradient(135deg, #64748b, #475569);
+      color: white;
+      box-shadow: 0 4px 6px -1px rgba(71, 85, 105, 0.2);
+    }
+
+    /* Botão Editar com Gradiente e Efeito de Brilho (Glimmer) */
+    .action-btn.edit {
+      background: linear-gradient(135deg, #3b82f6, #2563eb);
+      color: #ffffff;
+      position: relative;
+      overflow: hidden;
+      box-shadow: 0 4px 6px -1px rgba(37, 99, 235, 0.2);
+    }
+
+    .action-btn.edit::after {
+      content: "";
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      background: rgba(255, 255, 255, 0.3);
+      top: -100%;
+      left: -100%;
+      transform: rotate(45deg);
+      transition: all 0.6s ease;
+    }
+
+    .action-btn.edit:hover::after {
+      top: 100%;
+      left: 100%;
+    }
+
+    .action-btn.edit:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 15px -3px rgba(37, 99, 235, 0.4);
+    }
+
+    /* Botão de Informação (Sutil) */
+    .action-btn.info {
+      background: #eff6ff;
+      color: #2563eb;
+      border: 1px solid #bfdbfe;
+    }
+
+    .action-btn.info:hover {
+      background: #dbeafe;
+      color: #1e3a8a;
+      border-color: #93c5fd;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 10px rgba(37, 99, 235, 0.15);
+    }
+
+    /* Ajuste para inputs que ocupam a linha toda no modal pequeno */
+    .form-group.full {
+      width: 100%;
+    }
+
+    /* Modal */
+    .modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(15, 23, 42, 0.6);
+      backdrop-filter: blur(4px);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 200;
+    }
+
+    .modal {
+      background: var(--white);
+      width: 550px;
+      border-radius: 20px;
+      padding: 32px;
+      animation: modalSlideUp 0.3s ease;
+    }
+
+    @keyframes modalSlideUp {
+      from {
+        opacity: 0;
+        transform: translateY(30px);
+      }
+
+      to {
+        opacity: 1;
         transform: translateY(0);
       }
-      /* Estilização Refinada para o Modal de Observações */
-      .modal_obs {
-        display: none;
-        position: fixed;
-        z-index: 1000;
-        left: 0;
-        top: 0;
-        width: 100%;
-        height: 100%;
-        background-color: rgba(15, 23, 42, 0.6);
-        backdrop-filter: blur(4px);
-        align-items: center;
-        justify-content: center;
-      }
+    }
 
-      .modal-content-obs {
-        background-color: var(--white);
-        border-radius: 20px;
-        width: 500px;
-        max-width: 90%;
-        box-shadow:
-          0 20px 25px -5px rgba(0, 0, 0, 0.1),
-          0 10px 10px -5px rgba(0, 0, 0, 0.04);
-        overflow: hidden;
-        animation: modalSlideUp 0.3s ease;
-        position: relative;
-      }
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 24px;
+    }
 
-      .obs-header {
-        padding: 20px 24px;
-        background: var(--primary-bg-light);
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        border-bottom: 1px solid var(--border);
-      }
+    .form-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
 
-      .obs-header h3 {
-        display: flex;
-        align-items: center;
-        gap: 10px;
-        color: var(--primary);
-        font-size: 1.1rem;
-        font-weight: 700;
-      }
+    .form-group {
+      margin-bottom: 20px;
+    }
 
-      .obs-body {
-        padding: 24px;
-        color: var(--text-main);
-        line-height: 1.6;
-        font-size: 0.95rem;
+    .form-group.full {
+      grid-column: span 2;
+    }
 
-        /* Ajustes para quebra de linha e rolagem */
-        max-height: 400px; /* Limita a altura do conteúdo */
-        overflow-y: auto; /* Adiciona barra de rolagem se o texto crescer */
-        word-wrap: break-word; /* Força a quebra de palavras muito longas */
-        white-space: pre-wrap; /* Mantém as quebras de linha enviadas pelo banco/input */
-      }
+    .form-group label {
+      display: block;
+      font-size: 0.85rem;
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
 
-      .obs-footer {
-        padding: 16px 24px;
-        background: #f8fafc;
-        display: flex;
-        justify-content: flex-end;
-        border-top: 1px solid var(--border);
-      }
+    .form-control {
+      width: 100%;
+      padding: 12px 16px;
+      border-radius: 10px;
+      border: 1px solid var(--border);
+      outline: none;
+      transition: 0.2s;
+    }
 
-      /* Personalização da barra de rolagem (Opcional, para ficar mais bonito) */
-      .obs-body::-webkit-scrollbar {
-        width: 6px;
-      }
+    .form-control:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 4px var(--primary-bg-light);
+    }
 
-      .obs-body::-webkit-scrollbar-track {
-        background: #f1f1f1;
-        border-radius: 10px;
-      }
+    .btn-block {
+      width: 100%;
+      padding: 14px;
+      border-radius: 12px;
+      font-weight: 700;
+      cursor: pointer;
+      border: none;
+      transition: 0.2s;
+    }
 
-      .obs-body::-webkit-scrollbar-thumb {
-        background: #cbd5e1;
-        border-radius: 10px;
-      }
+    .btn-success {
+      background: var(--primary);
+      color: white;
+    }
 
-      .obs-body::-webkit-scrollbar-thumb:hover {
-        background: var(--primary);
-      }
+    .btn-success:hover {
+      background: var(--primary-hover);
+      transform: translateY(-1px);
+    }
 
-      .close-obs-btn {
-        background: var(--white);
-        border: 1px solid var(--border);
-        padding: 8px 16px;
-        border-radius: 8px;
-        font-weight: 600;
-        cursor: pointer;
-        transition: 0.2s;
-        color: var(--text-secondary);
-      }
+    .modal-content-obs {
+      background-color: var(--white);
+      border-radius: 20px;
+      width: 550px;
+      /* Largura fixa sugerida */
+      max-width: 90%;
+      /* Responsividade para telas menores */
+      display: flex;
+      flex-direction: column;
+      /* Mantém Header, Body e Footer empilhados */
+      box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+      overflow: hidden;
+      /* Garante que o conteúdo não vaze as bordas arredondadas */
+      animation: modalSlideUp 0.3s ease;
+    }
 
-      .close-obs-btn:hover {
-        background: var(--bg-general);
-        color: var(--text-main);
-      }
-    </style>
-  </head>
-  <body>
-    <!-- Sidebar Reutilizada -->
-    <aside>
-      <div class="logo-container">
-        <i data-lucide="dog" style="width: 32px; height: 32px"></i>
-        <span>PetShop Pro</span>
+    /* Toast de Feedback */
+    .toast {
+      position: fixed;
+      bottom: 30px;
+      right: 30px;
+      background: var(--text-main);
+      color: white;
+      padding: 16px 24px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      transform: translateY(150px);
+      transition: 0.4s;
+      z-index: 300;
+      box-shadow: var(--shadow);
+    }
+
+    .toast.show {
+      transform: translateY(0);
+    }
+
+    /* Estilização Refinada para o Modal de Observações */
+    .modal_obs {
+      display: none;
+      position: fixed;
+      z-index: 1000;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(15, 23, 42, 0.6);
+      backdrop-filter: blur(4px);
+      align-items: center;
+      justify-content: center;
+    }
+
+    .modal-content-obs {
+      background-color: var(--white);
+      border-radius: 20px;
+      width: 500px;
+      max-width: 90%;
+      box-shadow:
+        0 20px 25px -5px rgba(0, 0, 0, 0.1),
+        0 10px 10px -5px rgba(0, 0, 0, 0.04);
+      overflow: hidden;
+      animation: modalSlideUp 0.3s ease;
+      position: relative;
+    }
+
+    .obs-header {
+      padding: 20px 24px;
+      background: var(--primary-bg-light);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .obs-header h3 {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      color: var(--primary);
+      font-size: 1.1rem;
+      font-weight: 700;
+    }
+
+    .obs-body {
+      padding: 24px;
+      color: var(--text-main);
+      line-height: 1.6;
+      font-size: 0.95rem;
+
+      /* Ajustes para quebra de linha e rolagem */
+      max-height: 400px;
+      /* Limita a altura do conteúdo */
+      overflow-y: auto;
+      /* Adiciona barra de rolagem se o texto crescer */
+      word-wrap: break-word;
+      /* Força a quebra de palavras muito longas */
+      white-space: pre-wrap;
+      /* Mantém as quebras de linha enviadas pelo banco/input */
+    }
+
+    .obs-footer {
+      padding: 16px 24px;
+      background: #f8fafc;
+      display: flex;
+      justify-content: flex-end;
+      border-top: 1px solid var(--border);
+    }
+
+    /* Personalização da barra de rolagem (Opcional, para ficar mais bonito) */
+    .obs-body::-webkit-scrollbar {
+      width: 6px;
+    }
+
+    .obs-body::-webkit-scrollbar-track {
+      background: #f1f1f1;
+      border-radius: 10px;
+    }
+
+    .obs-body::-webkit-scrollbar-thumb {
+      background: #cbd5e1;
+      border-radius: 10px;
+    }
+
+    .obs-body::-webkit-scrollbar-thumb:hover {
+      background: var(--primary);
+    }
+
+    .close-obs-btn {
+      background: var(--white);
+      border: 1px solid var(--border);
+      padding: 8px 16px;
+      border-radius: 8px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: 0.2s;
+      color: var(--text-secondary);
+    }
+
+    .close-obs-btn:hover {
+      background: var(--bg-general);
+      color: var(--text-main);
+    }
+  </style>
+</head>
+
+<body>
+  <!-- Sidebar Reutilizada -->
+  <aside>
+    <div class="logo-container">
+      <i data-lucide="dog" style="width: 32px; height: 32px"></i>
+      <span>PetShop Pro</span>
+    </div>
+
+    <nav>
+      <p class="menu-label">Painel</p>
+      <a href="/TelaInicial/index.html" class="nav-item"><i data-lucide="layout-dashboard"></i> Dashboard</a>
+      <a href="/Agenda/Agenda.html" class="nav-item"><i data-lucide="calendar"></i> Agenda Teams</a>
+
+      <p class="menu-label" style="margin-top: 24px">Vendas e Serviços</p>
+      <a href="/Carrinho/Carrinho.html" class="nav-item"><i data-lucide="shopping-cart"></i> Carrinho / PDV</a>
+      <a href="/CatalogoServico/CatalogoServico.html" class="nav-item"><i data-lucide="scissors"></i> Catálogo de
+        Serviços</a>
+
+      <p class="menu-label" style="margin-top: 24px">Cadastros</p>
+      <a href="../Clientes/Cliente.html" class="nav-item"><i data-lucide="users"></i> Clientes</a>
+      <a href="../Pet/Pet.html" class="nav-item"><i data-lucide="paw-print"></i> Animais</a>
+      <a href="../Produtos/Produto.html" class="nav-item active"><i data-lucide="package"></i> Itens / Produtos</a>
+
+      <p class="menu-label" style="margin-top: 24px">Gestão</p>
+      <a href="../Estoque/Estoque.html" class="nav-item"><i data-lucide="boxes"></i> Controle de Estoque</a>
+      <a href="../GastosPrevistos/GastosPrevistos.html" class="nav-item"><i data-lucide="trending-down"></i> Gastos
+        Previstos</a>
+      <a href="../HistoricoVendas/HistoricoVendas.html" class="nav-item"><i data-lucide="wallet"></i> <span>Histórico de
+          Vendas</span></a>
+    </nav>
+  </aside>
+
+  <main>
+    <header>
+      <div class="header-info">
+        <h1>Itens / Produtos</h1>
+        <p>Gerencie o inventário e preços dos produtos do seu petshop</p>
       </div>
+      <button class="btn-primary" onclick="openModal('add')">
+        <i data-lucide="plus-circle"></i> Novo Produto
+      </button>
+    </header>
 
-      <nav>
-        <p class="menu-label">Painel</p>
-        <a href="/TelaInicial/index.html" class="nav-item"
-          ><i data-lucide="layout-dashboard"></i> Dashboard</a
-        >
-        <a href="/Agenda/Agenda.html" class="nav-item"
-          ><i data-lucide="calendar"></i> Agenda Teams</a
-        >
-
-        <p class="menu-label" style="margin-top: 24px">Vendas e Serviços</p>
-        <a href="/Carrinho/Carrinho.html" class="nav-item"
-          ><i data-lucide="shopping-cart"></i> Carrinho / PDV</a
-        >
-        <a href="/CatalogoServico/CatalogoServico.html" class="nav-item"
-          ><i data-lucide="scissors"></i> Catálogo de Serviços</a
-        >
-
-        <p class="menu-label" style="margin-top: 24px">Cadastros</p>
-        <a href="/Clientes/Cliente.html" class="nav-item"
-          ><i data-lucide="users"></i> Clientes</a
-        >
-        <a href="../Pet/Pet.html" class="nav-item"
-          ><i data-lucide="paw-print"></i> Animais</a
-        >
-        <a href="../Produtos/Produto.html" class="nav-item active"
-          ><i data-lucide="package"></i> Itens / Produtos</a
-        >
-
-        <p class="menu-label" style="margin-top: 24px">Gestão</p>
-        <a href="../Estoque/Estoque.html" class="nav-item"
-          ><i data-lucide="boxes"></i> Controle de Estoque</a
-        >
-        <a href="../GastosPrevistos/GastosPrevistos.html" class="nav-item"
-          ><i data-lucide="trending-down"></i> Gastos Previstos</a
-        >
-                <a href="../HistoricoVendas/HistoricoVendas.html" class="nav-item"
-          ><i data-lucide="wallet"></i>
-          <span>Histórico de Vendas</span></a
-        >
-      </nav>
-    </aside>
-
-    <main>
-      <header>
-        <div class="header-info">
-          <h1>Itens / Produtos</h1>
-          <p>Gerencie o inventário e preços dos produtos do seu petshop</p>
+    <div class="content-container">
+      <div class="table-controls">
+        <div class="search-input">
+          <i data-lucide="search"></i>
+          <input type="text" placeholder="Buscar por nome do produto ou categoria..." id="searchBar" />
         </div>
-        <button class="btn-primary" onclick="openModal('add')">
-          <i data-lucide="plus-circle"></i> Novo Produto
-        </button>
-      </header>
 
-      <div class="content-container">
-        <div class="table-controls">
-          <div class="search-input">
-            <i data-lucide="search"></i>
-            <input
-              type="text"
-              placeholder="Buscar por nome do produto ou categoria..."
-              id="searchBar"
-            />
-          </div>
-          <div
-            style="
-              font-weight: 600;
-              color: var(--text-secondary);
-              font-size: 0.85rem;
-            "
-          >
+        <div style="display: flex; gap: 10px; align-items: center">
+          <button class="btn-add-inline" id="sortAz" title="Ordenar A-Z" style="
+                width: auto;
+                padding: 0 10px;
+                gap: 5px;
+                font-size: 0.8rem;
+                font-weight: 600;
+              ">
+            <i data-lucide="sort-asc" style="width: 16px"></i> A-Z
+          </button>
+          <div style="
+                font-weight: 600;
+                color: var(--text-secondary);
+                font-size: 0.85rem;
+              ">
             Exibindo
-            <span id="count-items" style="color: var(--primary)">0</span> itens
+            <span id="count-items" style="color: var(--primary)">0</span>
+            itens
           </div>
-        </div>
-
-        <div class="card-table">
-          <table>
-            <thead>
-              <tr>
-                <th>Produto</th>
-                <th>Categoria</th>
-                <th>Preço Unitário</th>
-                <th>Estoque</th>
-                <th>Status</th>
-                <th style="text-align: right">Ações</th>
-              </tr>
-            </thead>
-            <tbody id="products-list"></tbody>
-          </table>
         </div>
       </div>
-    </main>
 
-    <!-- Modais -->
-    <div class="modal-overlay" id="modalOverlay">
-      <div class="modal">
-        <div class="modal-header">
-          <h2 id="modalTitle">Novo Produto</h2>
-          <i data-lucide="x" class="cursor-pointer" onclick="closeModal()"></i>
-        </div>
-        <form id="productForm">
-          <input type="hidden" id="productId" />
-          <div class="form-grid">
-            <div class="form-group full">
-              <label for="prodName">Nome do Produto *</label>
-              <input
-                type="text"
-                id="prodName"
-                class="form-control"
-                required
-                placeholder="Ex: Ração Golden Adulto 15kg"
-              />
-            </div>
-            <div class="form-group">
-              <label for="category">Categoria</label>
-              <div class="input-with-button">
-                <select id="category" class="form-control"></select>
-                <button
-                  type="button"
-                  class="btn-add-inline"
-                  onclick="toggleModal('categoryModalOverlay', true)"
-                  title="Nova Categoria"
-                >
-                  <i data-lucide="plus" style="width: 18px"></i>
-                </button>
-              </div>
-            </div>
-            <div class="form-group">
-              <label for="price">Preço (R$) *</label>
-              <input
-                type="number"
-                id="price"
-                class="form-control"
-                step="0.01"
-                required
-                placeholder="0,00"
-              />
-            </div>
-            <div class="form-group">
-              <label for="stock">Qtd. em Estoque *</label>
-              <input
-                type="number"
-                id="stock"
-                class="form-control"
-                required
-                placeholder="Ex: 50"
-              />
-            </div>
-            <div class="form-group">
-              <label for="minStock">Estoque Mínimo</label>
-              <input
-                type="number"
-                id="minStock"
-                class="form-control"
-                placeholder="Aviso de reposição"
-              />
-            </div>
-            <div class="form-group full">
-              <label for="description">Descrição do Item</label>
-              <textarea
-                id="description"
-                class="form-control"
-                rows="3"
-                placeholder="Detalhes técnicos, validade, etc..."
-              ></textarea>
-            </div>
-          </div>
-          <div class="flex gap-12 mt-10">
-            <button
-              type="button"
-              class="btn-block bg-slate"
-              onclick="closeModal()"
-            >
-              Cancelar
-            </button>
-            <button type="submit" class="btn-block btn-success">
-              Salvar Produto
-            </button>
-          </div>
-        </form>
+      <div class="card-table">
+        <table>
+          <thead>
+            <tr>
+              <th>Produto</th>
+              <th>Categoria</th>
+              <th>Preço Unitário</th>
+              <th>Estoque</th>
+              <th>Status</th>
+              <th style="text-align: right">Ações</th>
+            </tr>
+          </thead>
+          <tbody id="products-list"></tbody>
+        </table>
       </div>
+
+      <div class="pagination">
+        <span class="page-indicator" id="page-info">Página 1 de 1</span>
+        <button id="prev">Anterior</button>
+        <button id="next">Próxima</button>
+      </div>
+
     </div>
+  </main>
 
-    <!-- Modal Categoria -->
-    <div class="modal-overlay" id="categoryModalOverlay" style="z-index: 210">
-      <div class="modal small">
-        <div class="modal-header">
-          <h2>Nova Categoria</h2>
-          <i
-            data-lucide="x"
-            class="cursor-pointer"
-            onclick="toggleModal('categoryModalOverlay', false)"
-          ></i>
-        </div>
-        <form id="categoryForm">
+  <!-- Modais -->
+  <div class="modal-overlay" id="modalOverlay">
+    <div class="modal">
+      <div class="modal-header">
+        <h2 id="modalTitle">Novo Produto</h2>
+        <i data-lucide="x" class="cursor-pointer" onclick="closeModal()"></i>
+      </div>
+      <form id="productForm">
+        <input type="hidden" id="productId" />
+        <div class="form-grid">
           <div class="form-group full">
-            <label for="newCategoryName">Nome da Categoria *</label>
-            <input
-              type="text"
-              id="newCategoryName"
-              class="form-control"
-              required
-              placeholder="Ex: Roupas, Petiscos..."
-            />
+            <label for="prodName">Nome do Produto *</label>
+            <input type="text" id="prodName" class="form-control" required placeholder="Ex: Ração Golden Adulto 15kg" />
           </div>
-          <div class="flex gap-12 mt-10">
-            <button
-              type="button"
-              class="btn-block bg-slate"
-              onclick="toggleModal('categoryModalOverlay', false)"
-            >
-              Cancelar
-            </button>
-            <button type="submit" class="btn-block btn-success">
-              Adicionar
-            </button>
+          <div class="form-group">
+            <label for="category">Categoria</label>
+            <div class="input-with-button">
+              <select id="category" class="form-control"></select>
+              <button type="button" class="btn-add-inline" onclick="toggleModal('categoryModalOverlay', true)"
+                title="Nova Categoria">
+                <i data-lucide="plus" style="width: 18px"></i>
+              </button>
+            </div>
           </div>
-        </form>
+          <div class="form-group">
+            <label for="price">Preço (R$) *</label>
+            <input type="number" id="price" class="form-control" step="0.01" required placeholder="0,00" />
+          </div>
+          <div class="form-group">
+            <label for="stock">Qtd. em Estoque *</label>
+            <input type="number" id="stock" class="form-control" required placeholder="Ex: 50" />
+          </div>
+          <div class="form-group">
+            <label for="minStock">Estoque Mínimo</label>
+            <input type="number" id="minStock" class="form-control" placeholder="Aviso de reposição" />
+          </div>
+          <div class="form-group full">
+            <label for="description">Descrição do Item</label>
+            <textarea id="description" class="form-control" rows="3"
+              placeholder="Detalhes técnicos, validade, etc..."></textarea>
+          </div>
+        </div>
+        <div class="flex gap-12 mt-10">
+          <button type="button" class="btn-block bg-slate" onclick="closeModal()">
+            Cancelar
+          </button>
+          <button type="submit" class="btn-block btn-success">
+            Salvar Produto
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modal Categoria -->
+  <div class="modal-overlay" id="categoryModalOverlay" style="z-index: 210">
+    <div class="modal small">
+      <div class="modal-header">
+        <h2>Nova Categoria</h2>
+        <i data-lucide="x" class="cursor-pointer" onclick="toggleModal('categoryModalOverlay', false)"></i>
+      </div>
+      <form id="categoryForm">
+        <div class="form-group full">
+          <label for="newCategoryName">Nome da Categoria *</label>
+          <input type="text" id="newCategoryName" class="form-control" required placeholder="Ex: Roupas, Petiscos..." />
+        </div>
+        <div class="flex gap-12 mt-10">
+          <button type="button" class="btn-block bg-slate" onclick="toggleModal('categoryModalOverlay', false)">
+            Cancelar
+          </button>
+          <button type="submit" class="btn-block btn-success">
+            Adicionar
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Toast & Obs -->
+  <div class="toast" id="toast">
+    <i data-lucide="check-circle"></i>
+    <span id="toastMsg"></span>
+  </div>
+
+  <!-- Modal de Observações Refatorado -->
+  <div id="obsModal" class="modal_obs" style="display: none">
+    <div class="modal-content-obs">
+      <div class="obs-header">
+        <h3>
+          <i data-lucide="info" style="width: 20px"></i> Observações do
+          Produto
+        </h3>
+        <i data-lucide="x" style="cursor: pointer; width: 20px; color: var(--text-secondary)" onclick="closeObs()"></i>
+      </div>
+      <div class="obs-body">
+        <p id="obsText"></p>
+      </div>
+      <div class="obs-footer">
+        <button class="close-obs-btn" onclick="closeObs()">Fechar</button>
       </div>
     </div>
+  </div>
 
-    <!-- Toast & Obs -->
-    <div class="toast" id="toast">
-      <i data-lucide="check-circle"></i>
-      <span id="toastMsg"></span>
-    </div>
+  <script>
+    let products = [];
+    let inventory = []; // array global
 
-    <!-- Modal de Observações Refatorado -->
-    <div id="obsModal" class="modal_obs" style="display: none">
-      <div class="modal-content-obs">
-        <div class="obs-header">
-          <h3>
-            <i data-lucide="info" style="width: 20px"></i> Observações do
-            Produto
-          </h3>
-          <i
-            data-lucide="x"
-            style="cursor: pointer; width: 20px; color: var(--text-secondary)"
-            onclick="closeObs()"
-          ></i>
-        </div>
-        <div class="obs-body">
-          <p id="obsText"></p>
-        </div>
-        <div class="obs-footer">
-          <button class="close-obs-btn" onclick="closeObs()">Fechar</button>
-        </div>
-      </div>
-    </div>
+    const API_URL = "http://localhost:8081/produto";
+    const el = (id) => document.getElementById(id);
 
-    <script>
-      let products = [];
-      let inventory = []; // array global
+    // Helpers de UI
+    function toggleModal(id, show) {
+      el(id).style.display = show ? "flex" : "none";
+      if (id === "categoryModalOverlay" && !show) el("categoryForm").reset();
+    }
 
-      const API_URL = "http://localhost:8081/produto";
-      const el = (id) => document.getElementById(id);
+    function showToast(msg) {
+      el("toastMsg").innerText = msg;
+      el("toast").classList.add("show");
+      setTimeout(() => el("toast").classList.remove("show"), 3000);
+    }
 
-      // Helpers de UI
-      function toggleModal(id, show) {
-        el(id).style.display = show ? "flex" : "none";
-        if (id === "categoryModalOverlay" && !show) el("categoryForm").reset();
+    // Inicialização
+    lucide.createIcons();
+    carregarCategorias();
+    fetchProducts();
+
+    async function carregarCategorias() {
+      try {
+        const res = await fetch("http://localhost:8081/categoria");
+        const categorias = await res.json();
+        const select = el("category");
+        select.innerHTML = categorias
+          .map(
+            (c) => `<option value="${c.id}">${c.descricaoCategoria}</option>`,
+          )
+          .join("");
+      } catch (err) {
+        console.error(err);
+        showToast("Erro ao carregar categorias!");
       }
+    }
 
-      function showToast(msg) {
-        el("toastMsg").innerText = msg;
-        el("toast").classList.add("show");
-        setTimeout(() => el("toast").classList.remove("show"), 3000);
+    async function fetchProducts() {
+      try {
+        const res = await fetch(`${API_URL}/listar`);
+        products = await res.json();
+        renderProducts(products);
+      } catch (err) {
+        console.error(err);
+        showToast("Erro ao carregar produtos!");
       }
+    }
 
-      // Inicialização
-      lucide.createIcons();
-      carregarCategorias();
-      fetchProducts();
+    function renderProducts(data = products) {
+      const list = document.getElementById("products-list");
 
-      async function carregarCategorias() {
-        try {
-          const res = await fetch("http://localhost:8081/categoria");
-          const categorias = await res.json();
-          const select = el("category");
-          select.innerHTML = categorias
-            .map(
-              (c) => `<option value="${c.id}">${c.descricaoCategoria}</option>`,
-            )
-            .join("");
-        } catch (err) {
-          console.error(err);
-          showToast("Erro ao carregar categorias!");
-        }
-      }
+      list.innerHTML = data
+        .map((p) => {
+          // 1. Lógica de Status (Ativo/Inativo)
+          const isActive =
+            String(p.ativo).toLowerCase() === "true" || p.ativo === 1;
 
-      async function fetchProducts() {
-        try {
-          const res = await fetch(`${API_URL}/listar`);
-          products = await res.json();
-          renderProducts(products);
-        } catch (err) {
-          console.error(err);
-          showToast("Erro ao carregar produtos!");
-        }
-      }
+          // 2. Lógica de Estoque Dinâmica (Cores e Texto)
+          let stockClass = "stock-normal";
+          let stockStatus = "Em dia";
 
-      function renderProducts(data = products) {
-        const list = document.getElementById("products-list");
+          if (p.quantidadeProduto <= 0) {
+            stockClass = "stock-out";
+            stockStatus = "Esgotado";
+          } else if (p.quantidadeProduto < 5) {
+            // Alerta se tiver menos de 5 itens
+            stockClass = "stock-low";
+            stockStatus = "Baixo";
+          }
 
-        list.innerHTML = data
-          .map((p) => {
-            // 1. Lógica de Status (Ativo/Inativo)
-            const isActive =
-              String(p.ativo).toLowerCase() === "true" || p.ativo === 1;
-
-            // 2. Lógica de Estoque Dinâmica (Cores e Texto)
-            let stockClass = "stock-normal";
-            let stockStatus = "Em dia";
-
-            if (p.quantidadeProduto <= 0) {
-              stockClass = "stock-out";
-              stockStatus = "Esgotado";
-            } else if (p.quantidadeProduto < 5) {
-              // Alerta se tiver menos de 5 itens
-              stockClass = "stock-low";
-              stockStatus = "Baixo";
-            }
-
-            // 3. Retorno do HTML formatado com as classes profissionais
-            return `
+          // 3. Retorno do HTML formatado com as classes profissionais
+          return `
       <tr>
         <td>
           <div class="product-info">
@@ -1186,149 +1210,186 @@
   </div>
 </td>
       </tr>`;
-          })
-          .join("");
+        })
+        .join("");
 
-        // Recarrega os ícones do Lucide para que apareçam na tabela
-        lucide.createIcons();
-      }
+      const btnPrev = document.getElementById("prev");
+      const btnNext = document.getElementById("next");
+      const pageInfo = document.getElementById("page-info");
 
-      // Ações de Produto
-      function openModal(mode, id = null) {
-        toggleModal("modalOverlay", true);
-        const isEdit = mode === "edit";
-        el("modalTitle").innerText = isEdit ? "Editar Produto" : "Novo Produto";
-        if (!isEdit) return el("productForm").reset();
+      pageInfo.textContent = `Página ${page + 1} de ${totalPages || 1}`;
 
-        const p = products.find((item) => item.id === id);
-        el("productId").value = p.id;
-        el("prodName").value = p.nomeProduto;
-        el("category").value = p.categoriaProdutoId;
-        el("price").value = p.precoProduto;
-        el("stock").value = p.quantidadeProduto;
-        el("minStock").value = p.quantidadeMinimoProduto || 0;
-        el("description").value = p.descricaoProduto || "";
-      }
+      btnPrev.disabled = (page === 0);
 
-      function closeModal() {
-        toggleModal("modalOverlay", false);
-      }
+      btnNext.disabled = (page >= totalPages - 1);
 
-      el("productForm").onsubmit = async (e) => {
-        e.preventDefault();
-        const id = el("productId").value;
-        const productData = {
-          id: id ? parseInt(id) : null,
-          nomeProduto: el("prodName").value,
-          categoriaProdutoId: parseInt(el("category").value),
-          precoProduto: parseFloat(el("price").value),
-          quantidadeProduto: parseInt(el("stock").value),
-          quantidadeMinimoProduto: parseInt(el("minStock").value || 0),
-          descricaoProduto: el("description").value || "",
-        };
+      // Recarrega os ícones do Lucide para que apareçam na tabela
+      lucide.createIcons();
+    }
 
-        try {
-          const res = await fetch(
-            `${API_URL}/${id ? "atualizar" : "cadastrar"}`,
-            {
-              method: id ? "PUT" : "POST",
-              headers: { "Content-Type": "application/json" },
-              body: JSON.stringify(productData),
-            },
-          );
-          if (!res.ok) throw new Error();
-          showToast(`Produto ${id ? "atualizado" : "cadastrado"} com sucesso!`);
-          closeModal();
-          fetchProducts();
-        } catch (err) {
-          showToast("Erro ao salvar produto!");
-        }
+    // Ações de Produto
+    function openModal(mode, id = null) {
+      toggleModal("modalOverlay", true);
+      const isEdit = mode === "edit";
+      el("modalTitle").innerText = isEdit ? "Editar Produto" : "Novo Produto";
+      if (!isEdit) return el("productForm").reset();
+
+      const p = products.find((item) => item.id === id);
+      el("productId").value = p.id;
+      el("prodName").value = p.nomeProduto;
+      el("category").value = p.categoriaProdutoId;
+      el("price").value = p.precoProduto;
+      el("stock").value = p.quantidadeProduto;
+      el("minStock").value = p.quantidadeMinimoProduto || 0;
+      el("description").value = p.descricaoProduto || "";
+    }
+
+    function closeModal() {
+      toggleModal("modalOverlay", false);
+    }
+
+    el("productForm").onsubmit = async (e) => {
+      e.preventDefault();
+      const id = el("productId").value;
+      const productData = {
+        id: id ? parseInt(id) : null,
+        nomeProduto: el("prodName").value,
+        categoriaProdutoId: parseInt(el("category").value),
+        precoProduto: parseFloat(el("price").value),
+        quantidadeProduto: parseInt(el("stock").value),
+        quantidadeMinimoProduto: parseInt(el("minStock").value || 0),
+        descricaoProduto: el("description").value || "",
       };
 
-      // Gestão de Status e Observação
-      el("products-list").onclick = (e) => {
-        const btn = e.target.closest(".btn-toggle");
-        if (!btn) return;
-        const id = parseInt(btn.dataset.id);
-        const p = products.find((prod) => prod.id === id);
-        if (p) toggleStatus(id, p.ativo);
-      };
-
-      async function toggleStatus(id, active) {
-        try {
-          const res = await fetch(
-            `http://localhost:8081/produto/${active ? "inativar" : "ativar"}/${id}`,
-            { method: "PATCH" },
-          );
-          const updated = await res.json();
-          const idx = products.findIndex((p) => p.id == id);
-          if (idx !== -1) products[idx] = updated;
-          renderProducts();
-          showToast(`Produto ${updated.ativo ? "Ativado" : "Inativado"}!`);
-        } catch (err) {
-          alert("Falha na comunicação com o servidor.");
-        }
-      }
-
-      function showObservation(id) {
-        inventory = products;
-        const product = inventory.find((p) => p.id == id);
-        console.log("Inventory:", inventory, "Procurando id:", id);
-
-        const obsText = product ? product.descricaoProduto : "Sem observações";
-
-        const obsModal = document.getElementById("obsModal");
-        obsModal.querySelector(".obs-body").innerText = obsText;
-        obsModal.style.display = "flex";
-      }
-
-      function closeObs() {
-        el("obsModal").style.display = "none";
-      }
-
-      // Atualize também o window.onclick para suportar o fechar clicando fora
-      window.onclick = (e) => {
-        if (e.target === el("obsModal")) closeObs();
-        if (e.target === el("modalOverlay")) closeModal();
-        if (e.target === el("categoryModalOverlay"))
-          toggleModal("categoryModalOverlay", false);
-      };
-
-      // Filtro e Categorias
-      el("searchBar").oninput = (e) => {
-        const term = e.target.value.toLowerCase();
-        renderProducts(
-          products.filter(
-            (p) =>
-              p.nomeProduto.toLowerCase().includes(term) ||
-              (p.descricaoCategoria &&
-                p.descricaoCategoria.toLowerCase().includes(term)),
-          ),
-        );
-      };
-
-      el("categoryForm").onsubmit = async (e) => {
-        e.preventDefault();
-        const name = el("newCategoryName").value.trim();
-        try {
-          const res = await fetch("http://localhost:8081/categoria", {
-            method: "POST",
+      try {
+        const res = await fetch(
+          `${API_URL}/${id ? "atualizar" : "cadastrar"}`,
+          {
+            method: id ? "PUT" : "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ descricaoCategoria: name }),
-          });
-          const cat = await res.json();
-          el("category").add(new Option(cat.descricaoCategoria, cat.id));
-          el("category").value = cat.id;
-          showToast("Categoria criada!");
-          toggleModal("categoryModalOverlay", false);
-        } catch (err) {
-          showToast("Erro ao criar categoria!");
-        }
-      };
+            body: JSON.stringify(productData),
+          },
+        );
+        if (!res.ok) throw new Error();
+        showToast(`Produto ${id ? "atualizado" : "cadastrado"} com sucesso!`);
+        closeModal();
+        fetchProducts();
+      } catch (err) {
+        showToast("Erro ao salvar produto!");
+      }
+    };
 
-      window.onclick = (e) => {
-        if (e.target === el("obsModal")) el("obsModal").style.display = "none";
-      };
-    </script>
-  </body>
+    // Gestão de Status e Observação
+    el("products-list").onclick = (e) => {
+      const btn = e.target.closest(".btn-toggle");
+      if (!btn) return;
+      const id = parseInt(btn.dataset.id);
+      const p = products.find((prod) => prod.id === id);
+      if (p) toggleStatus(id, p.ativo);
+    };
+
+    async function toggleStatus(id, active) {
+      try {
+        const res = await fetch(
+          `http://localhost:8081/produto/${active ? "inativar" : "ativar"}/${id}`,
+          { method: "PATCH" },
+        );
+        const updated = await res.json();
+        const idx = products.findIndex((p) => p.id == id);
+        if (idx !== -1) products[idx] = updated;
+        renderProducts();
+        showToast(`Produto ${updated.ativo ? "Ativado" : "Inativado"}!`);
+      } catch (err) {
+        alert("Falha na comunicação com o servidor.");
+      }
+    }
+
+    function showObservation(id) {
+      inventory = products;
+      const product = inventory.find((p) => p.id == id);
+      console.log("Inventory:", inventory, "Procurando id:", id);
+
+      const obsText = product ? product.descricaoProduto : "Sem observações";
+
+      const obsModal = document.getElementById("obsModal");
+      obsModal.querySelector(".obs-body").innerText = obsText;
+      obsModal.style.display = "flex";
+    }
+
+    function closeObs() {
+      el("obsModal").style.display = "none";
+    }
+
+    // Atualize também o window.onclick para suportar o fechar clicando fora
+    window.onclick = (e) => {
+      if (e.target === el("obsModal")) closeObs();
+      if (e.target === el("modalOverlay")) closeModal();
+      if (e.target === el("categoryModalOverlay"))
+        toggleModal("categoryModalOverlay", false);
+    };
+
+    // Filtro e Categorias
+    el("searchBar").oninput = (e) => {
+      const term = e.target.value.toLowerCase();
+      renderProducts(
+        products.filter(
+          (p) =>
+            p.nomeProduto.toLowerCase().includes(term) ||
+            (p.descricaoCategoria &&
+              p.descricaoCategoria.toLowerCase().includes(term)),
+        ),
+      );
+    };
+
+    el("categoryForm").onsubmit = async (e) => {
+      e.preventDefault();
+      const name = el("newCategoryName").value.trim();
+      try {
+        const res = await fetch("http://localhost:8081/categoria", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ descricaoCategoria: name }),
+        });
+        const cat = await res.json();
+        el("category").add(new Option(cat.descricaoCategoria, cat.id));
+        el("category").value = cat.id;
+        showToast("Categoria criada!");
+        toggleModal("categoryModalOverlay", false);
+      } catch (err) {
+        showToast("Erro ao criar categoria!");
+      }
+    };
+
+    function sortProductsAlphabetically() {
+      products.sort((a, b) => {
+        const nameA = a.nomeProduto.toLowerCase();
+        const nameB = b.nomeProduto.toLowerCase();
+        if (nameA < nameB) return -1;
+        if (nameA > nameB) return 1;
+        return 0;
+      });
+      renderProducts(products); // Renderiza a lista já ordenada
+      showToast("Produtos ordenados de A a Z");
+    }
+
+    // Evento de clique no botão de ordenação
+    document
+      .getElementById("sortAz")
+      .addEventListener("click", sortProductsAlphabetically);
+
+    // Ajuste na renderização para atualizar o contador (que estava travado em 0 no seu print)
+    const originalRender = renderProducts;
+    renderProducts = function (data) {
+      originalRender(data);
+      const countEl = document.getElementById("count-items");
+      if (countEl) countEl.innerText = data.length;
+      lucide.createIcons(); // Recria os ícones para as novas linhas
+    };
+
+    window.onclick = (e) => {
+      if (e.target === el("obsModal")) el("obsModal").style.display = "none";
+    };
+  </script>
+</body>
+
 </html>
